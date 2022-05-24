@@ -1,0 +1,352 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+@{
+    ViewData["Title"] = @_localizer["層架設定"];
+}
+
+<div id="LayerVue">
+    <!--列表搜尋-->
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["搜尋條件"]</span></legend>
+
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label">@_localizer["層架代碼"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.LayerCode" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["貨架"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.ShelfId">
+                            <option value="null">@_localizer["全部"]</option>                            
+                            <option v-for="shelf in Shelfs" v-bind:value="shelf.ShelfId">{{shelf.ShelfCode}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["層數"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.CurrentLayer" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["狀態"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.IsStop">
+                            <option value="">@_localizer["全部"]</option>
+                            <option v-for="s in IsStop" v-bind:value="s.IsStop">{{s.Text}}</option>
+                        </select>                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="BtnCommon mid">
+                <div class="search"><span><input type="submit" value="@_localizer["搜尋"]" v-on:click="onSearch" /></span></div>
+                @*<div class="cancel"><span><input type="reset" value="清除" v-on:click="onReset" /></span></div>*@
+            </div>
+            @*<div class="toggle_btn"></div>*@
+        </fieldset>
+    </div>
+
+    <!--列表-->
+    <div class="ListTable" v-show="arrResult.length>0">
+        <div class="table_title">
+            <div class="btnBox">
+                <div>
+                    <div class=""><a v-bind:class="{'btn_disabled':noSelect || !noEdit }" v-on:click.prevent="onDelete">@_localizer["刪除"]</a></div>
+                    @*<div class=""><a v-bind:class="{'btn_disabled':noSelect || !noEdit }">複製</a></div>*@
+                    <div class=""><a v-bind:class="{'btn_disabled':noSelect}" v-on:click.prevent="editSet">@_localizer["修改"]</a></div>
+                </div>
+            </div>
+        </div>
+        <table id="dataTable" class="table dataTable stripe">
+        </table>
+    </div>
+
+    <!--基本資料-->
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["基本資料"]</span></legend>
+            <div class="btnBox">
+                <div>
+                    <div class=""><a v-bind:class="{'btn_disabled':disAdd}" v-on:click.prevent="addReset">@_localizer["新增"]</a></div>
+                    <div class=""><a v-bind:class="{'btn_disabled':noEdit}" v-on:click.prevent="onSubmit">@_localizer["儲存"]</a></div>
+                    <div class=""><a v-bind:class="{'btn_disabled':noEdit}" v-on:click.prevent="onCancel">@_localizer["離開"]</a></div>
+                </div>
+            </div>
+            <div class="FormTable">
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["層架代碼"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.LayerCode" />
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["貨架"]</div>
+                    <div class="cont">
+                        <select v-model="objInfo.ShelfId">
+                            <option v-for="shelf in Shelfs" v-bind:value="shelf.ShelfId">{{shelf.ShelfCode}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["層數"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.CurrentLayer" />
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["儲位隔數"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.Fields" />
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["高度"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.Height" />
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["深度"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.Depth" />
+                    </div>
+                </div>                
+                <div class="item two">
+                    <div class="label">@_localizer["備註"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.Remarks" />
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["狀態"]</div>
+                    <div class="cont">
+                        <select v-model="objInfo.IsStop">
+                            <option v-for="s in IsStop" v-bind:value="s.IsStop">{{s.Text}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </fieldset>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        /*Main*/
+        var vm = new Vue({
+            el: '#LayerVue',
+            components: {
+            },
+            computed: {
+                // 尚未選擇列
+                noSelect: function () {
+                    return (Object.keys(this.rowSelect).length === 0)
+                },
+                // 尚未點選新增或編輯
+                noEdit: function () {
+                    return (Object.keys(this.objInfo).length === 0)
+                },
+            },
+            data: function () {
+                return {
+                    // 新增按鈕樣式
+                    disAdd: false,
+                    // 查詢條件
+                    queryInfo: {
+                        LayerCode:"",
+                        ShelfId:null,
+                        CurrentLayer:null,
+                        IsStop:""
+                    },
+                    // 查詢結果
+                    arrResult: [],
+                    // 新增/編輯
+                    objInfo: {},
+                    rowSelect: {},
+                    //貨架選單
+                    Shelfs: [],
+                    //狀態
+                    IsStop:[{IsStop:"N",Text:"@_localizer["啟用"]"},{IsStop:"Y",Text:"@_localizer["停用"]"}]
+                }
+            },
+            methods: {
+                onReset: function () {
+                    this.disAdd = false
+                    this.rowSelect = {}
+                    this.objInfo = {}
+                    this.arrResult = []
+                    this.queryInfo = {
+                        LayerCode:"",
+                        ShelfId:null,
+                        CurrentLayer:null,
+                        IsStop:""
+                    }
+                    $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                },
+                onSearch: function () {
+                    let thisVue = this;
+                    if(thisVue.queryInfo.ShelfId == 'null')
+                        thisVue.queryInfo.HouseId = null;
+                    let coulmnSet = [
+                        {
+                            title: "@_localizer["層架代碼"]",
+                            data: "LayerCode"
+                        },
+                        {
+                            title: "@_localizer["貨架"]",
+                            data: "ShelfId"
+                        },
+                        {
+                            title: "@_localizer["層數"]",
+                            data: "CurrentLayer"
+                        },
+                        {
+                            title: "@_localizer["狀態"]",
+                            data: "IsStop"
+                        }
+                    ];
+
+                    let columnDef = [
+                        {
+                            "className": "text-center",
+                            "targets": [1],
+                            mRender: function (value) {
+                                return thisVue.ShelfText(value);
+                            }
+                        },
+                        {
+                            "className": "text-center",
+                            "targets": [3],
+                            mRender: function (value) {
+                                return thisVue.IsStopText(value);
+                            }
+                        },
+                    ];
+                    LoadDataTable('@Url.Action("QueryLayer","LayerApi",new { Area = "BasicSet" })', this.queryInfo, coulmnSet, columnDef, false)
+                        .then(function () {
+                            thisVue.arrResult = $('#dataTable').DataTable().rows().data();
+                            $('#dataTable tbody').on('click', 'tr', function () {
+                                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                                $(this).toggleClass('selected');
+                                //console.log($('#dataTable').DataTable().rows('.selected').data().length);
+                                if ($('#dataTable').DataTable().rows('.selected').data().length > 0) {
+                                    thisVue.rowSelect = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows('.selected').data()[0]));
+                                    //console.log(this.rowSelect);
+                                } else
+                                    thisVue.rowSelect = {};
+                            });
+                        });
+                },
+                // 修改
+                editSet: function () {
+                    if (this.noSelect) {
+                        _AlertMsg(false, '@_localizer["請選擇資料"]')
+                        return false
+                    }
+                    this.disAdd = !this.disAdd
+                    this.objInfo = JSON.parse(JSON.stringify(this.rowSelect))
+                },
+                onDelete: function () {
+                    if (this.noSelect) {
+                        _AlertMsg(false, '@_localizer["請選擇資料"]')
+                        return false
+                    }
+                    axios.post('/api/BasicSet/LayerApi/LayerRoom', this.rowSelect)
+                        .then(function (res) {
+                            //this.arrResult = res.data.dt
+                            // 刪除成功，清空選擇資料
+                            if (res.data.isOk) {
+                                let RemoveIndex = this.arrResult.findIndex(e=>e.RoomId == this.rowSelect.RoomId);
+                                this.arrResult.splice(RemoveIndex,1);
+                                this.rowSelect = {}
+                            }
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 新增按鈕
+                addReset: function () {
+                    this.disAdd = !this.disAdd
+                    this.objInfo = {
+                        RoomId: 0,
+                        RoomCode: '',
+                        RoomName: '',
+                        RoomTypeId: 0,
+                        TempLayerId: 0,
+                        HouseId: 0,
+                        Remarks: '',
+                        IsStop: 'N'
+                    }
+                },
+                // 儲存
+                onSubmit: function () {
+                    if (this.noEdit) {
+                        _AlertMsg(false, '@_localizer["請點選新增或選擇列後點選修改"]')
+                        return false
+                    }
+                    axios.post('/api/BasicSet/LayerApi/UpdateLayer', this.objInfo)
+                        .then(function (res) {
+                            _AlertMsg(res.data.isOk, res.data.msg)
+                            // 編輯成功，清空選擇資料
+                            if (res.data.isOk) {
+                                this.rowSelect = {}
+                                this.onSearch()
+
+                            }
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 離開
+                onCancel: function () {
+                    if (this.noEdit) {
+                        _AlertMsg(false, '@_localizer["請點選新增或選擇列後點選修改"]')
+                        return false
+                    }
+                    this.objInfo = {}
+                    this.rowSelect = {}
+                    this.disAdd = !this.disAdd
+                },
+                QueryShelf:function() {
+                    let thisVue = this;
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryShelf", "ShelfApi", new { Area = "BasicSet" })',
+                        data: JSON.stringify({IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    }).then(function (res) {
+                        if (res.isOk) {
+                            thisVue.Shelfs = res.dt;
+                        }
+                    });                    
+                },
+                ShelfText:function(ShelfId) {
+                    if(this.Shelfs.findIndex(x=>x.ShelfId == ShelfId) == -1)
+                        return "";
+                    return this.Shelfs.find(x=>x.ShelfId == ShelfId).ShelfCode;
+                },                
+                IsStopText: function (isStop){
+                    if(this.IsStop.findIndex(x=>x.IsStop == isStop) == -1)
+                        return "";
+                    return this.IsStop.find(x=>x.IsStop == isStop).Text;
+                }
+            },
+            created: function () {
+                this.QueryShelf();
+            },
+            updated: function () {
+            }
+        });
+    </script>
+}
+

@@ -1,0 +1,357 @@
+﻿@model SAFETYModel.DBModels.UserRole
+@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+@{
+    ViewData["Title"] = @_localizer["功能權限設定"];
+}
+
+<div id="FullRoleVue">
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["基本資料"]</span></legend>
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label">@_localizer["角色名稱"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.UserRoleName" disabled />
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <!--基本資料-->
+    <div class="FormGroupWarp" id="divData">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["功能列表"]</span></legend>
+            
+            <div class="FormTable">
+                <div class="item">
+                    <ul class="list">
+                        <li class="" v-for="f in objFun">
+                            <h3><input type="checkbox" v-bind:id="'cb_'+f.FnGroup" v-model="objParentSelect" v-bind:value="f.FnGroup" v-on:change="SelectPart($event)" /><label v-bind:for="'cb_'+f.FnGroup"><span>{{f.FnGroupName}}</span></label></h3>
+                            <br />
+                            <ul class="">
+                                <li v-for="n in f.SysFunctionVM">&nbsp;&nbsp;&nbsp;<input type="checkbox" v-bind:id="f.FnGroup+'_'+n.FunctionId" v-model="objselect" v-bind:value="n.FunctionId" v-on:change="SelectAll()" /><label v-bind:for="f.FnGroup+'_'+n.FunctionId">{{n.FunctionName}}</label></li>
+                            </ul>
+                            <br /><br />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="btnBox tc">
+        <div>
+            <div class="check"><a href="javascript:;" v-on:click="SaveRoleFunction()">@_localizer["儲存"]</a></div>
+            <div class="cancel"><a asp-area="SysUsers" asp-controller="Home" asp-action="AddUserRole">@_localizer["離開"]</a></div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts{ 
+    <script>
+        var AreaVue = new Vue({
+            el: '#FullRoleVue',
+            data: {
+                objInfo: [],
+                objFun: [],
+                objselect: [],
+                objParentSelect:[]
+            },
+            computed:{
+                //console.log($('input[id*=BasicSetList_]').length);
+
+            },
+            created: function () {
+                this.GetRoleData();
+                this.GetRoleFunctionData();
+
+            },
+            methods: {
+                GetRoleData: function () {
+                    var roleid = '@Model.UserRoleId';
+
+                    axios.get('/api/SysUsers/SysUserApi/GetRoleData',
+                        {
+                            params: { userRoleid: roleid }
+                        })
+                        .then(function (res) {
+                            if (res.data.isOk) {
+                                if (res.data.dt == null) {
+                                    window.location.href = '@Url.Content("~/")' + 'SysUsers/Home/AddUserRole';
+                                    return;
+                                }
+                                this.objInfo = res.data.dt;
+                            }
+                            else
+                                _AlertMsg(false, res.data.msg)
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        });
+                },
+                GetRoleFunctionData: function () {
+                    var roleid = '@Model.UserRoleId';
+
+                    axios.get('/api/SysUsers/SysUserApi/GetRoleFunctionData',
+                        {
+                            params: { userRoleid: roleid }
+                        })
+                        .then(function (res) {
+                            if (res.data.isOk) {
+                                if (res.data.dt == null) {
+                                    window.location.href = '@Url.Content("~/")' + 'SysUsers/Home/AddUserRole';
+                                    return;
+                                }
+                                this.objFun = res.data.dt.resfun;
+                                this.objselect = res.data.dt.resSelect;
+                                this.SelectAll();
+                            }
+                            else
+                                _AlertMsg(false, res.data.msg)
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        });
+                },
+                SelectAll: function () {
+                    var y = 0;
+                    //基本資料管理
+                    var item = 'BasicSetList';
+                    for (var i = 1; i <= 11; i++) {
+                        if (this.objselect.includes(i)) {
+                            y++;
+                        }
+                    }
+                    console.log(y);
+                    if (y == 11) {
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                        this.objParentSelect.push(item);
+                    }
+                    else
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                    //客戶管理
+                    y = 0;
+                    item = 'CustMgmtList';
+                    for (var i = 12; i <= 17; i++) {
+                        if (this.objselect.includes(i)) {
+                            y++;
+                        }
+                    }
+                    if (y == 6)
+                    {
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                        this.objParentSelect.push(item);
+                    }
+                    else
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                    //進貨驗收作業
+                    y = 0;
+                    item = 'PurchaseList';
+                    for (var i = 18; i <= 18; i++) {
+                        if (this.objselect.includes(i)) {
+                            y++;
+                        }
+                    }
+                    if (y == 1)
+                    {
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                        this.objParentSelect.push(item);
+                    }
+                    else
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                    //入庫上架作業
+                    y = 0;
+                    item = 'Purchase2List';
+                    for (var i = 19; i <= 19; i++) {
+                        if (this.objselect.includes(i)) {
+                            y++;
+                        }
+                    }
+                    if (y == 1)
+                    {
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                        this.objParentSelect.push(item);
+                    }
+                    else
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                    //出貨揀貨作業
+                    y = 0;
+                    item = 'ShippingList';
+                    for (var i = 20; i <= 21; i++) {
+                        if (this.objselect.includes(i)) {
+                            y++;
+                        }
+                    }
+                    if (y == 2)
+                    {
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                        this.objParentSelect.push(item);
+                    }
+                    else
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                    //庫存作業
+                    y = 0;
+                    item = 'InventoryList';
+                    for (var i = 22; i <= 24; i++) {
+                        if (this.objselect.includes(i)) {
+                            y++;
+                        }
+                    }
+                    if (y == 3)
+                    {
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                        this.objParentSelect.push(item);
+                    }
+                    else
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                    //儲位管理
+                    y = 0;
+                    item = 'StorageMgntList';
+                    for (var i = 25; i <= 27; i++) {
+                        if (this.objselect.includes(i)) {
+                            y++;
+                        }
+                    }
+                    if (y == 3)
+                    {
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                        this.objParentSelect.push(item);
+                    }
+                    else
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                    //退貨驗收作業
+                    y = 0;
+                    item = 'ReturnList';
+                    for (var i = 28; i <= 28; i++) {
+                        if (this.objselect.includes(i)) {
+                            y++;
+                        }
+                    }
+                    if (y == 1)
+                    {
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                        this.objParentSelect.push(item);
+                    }
+                    else
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                    //帳號作業
+                    y = 0;
+                    item = 'SysUser';
+                    for (var i = 29; i <= 30; i++) {
+                        if (this.objselect.includes(i)) {
+                            y++;
+                        }
+                    }
+                    if (y == 2)
+                    {
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+                        this.objParentSelect.push(item);
+                    }
+                    else
+                        this.objParentSelect = jQuery.grep(this.objParentSelect, function (value) {
+                            return value != item;
+                        });
+
+                },
+                SaveRoleFunction: function () {
+
+                    if (this.objselect.length == 0) {
+                        _AlertMsg(false, "@_localizer["請勾選功能列表"]");
+                        return false;
+                    }
+
+                    var roleid = '@Model.UserRoleId';
+
+                    var postData = {
+                        UserRoleId: roleid,
+                        lstFunSelect: this.objselect
+                    }
+
+                    axios.post('/api/SysUsers/SysUserApi/SaveUserRoleFunction', postData)
+                        .then(function (res) {
+                            if (res.data.isOk) {
+                                    _AlertMsg(res.data.isOk, res.data.msg, function () {
+                                        window.location.href = '@Url.Content("~/")' + 'SysUsers/Home/SetUserRoleFunction/' + res.data.dt;
+                                    })
+                            }
+                            else
+                                _AlertMsg(false, res.data.msg);
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+
+                },
+                SelectPart: function (e) {
+                    var thisvue = this;
+                    var strGroup = $(e)[0].target.id.replace('cb_', '');
+                    //console.log($($(e)[0].target).prop('checked'));
+
+                    var b= $($(e)[0].target).prop('checked');
+
+                    var lstcb = $('input[id*=' + strGroup + '_]');
+                    $.each(lstcb, function (index) {
+                        $($(lstcb)[index]).prop('checked', b);
+                        //console.log($($(lstcb)[index]).val());
+                        var item = $($(lstcb)[index]).val();
+                        if (!b) {
+                            thisvue.objselect = jQuery.grep(thisvue.objselect, function (value) {
+                                return value != item;
+                            });
+                        }
+                        else {
+                            thisvue.objselect = jQuery.grep(thisvue.objselect, function (value) {
+                                return value != item;
+                            });
+                            thisvue.objselect.push(item);
+                        }
+                    });
+
+                }
+            }
+        })
+
+
+    </script>
+
+}

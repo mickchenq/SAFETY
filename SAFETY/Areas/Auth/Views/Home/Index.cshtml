@@ -1,0 +1,168 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+
+<div id="ColumnCenter">
+    測試多國語系: @_localizer["AccountExist"]
+    <!--列表搜尋-->
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>查詢條件</span></legend>
+
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label">請購院區</div>
+                    <div class="cont">
+                        <select>
+                            <option>仁愛院區</option>
+                            <option>忠孝院區</option>
+                            <option>昆明院區</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">請購單位</div>
+                    <div class="cont">
+                        <select>
+                            <option>麻醉科</option>
+                            <option>外科</option>
+                            <option>資訊中心 – 行政服務組</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">請購人員</div>
+                    <div class="cont">
+                        <select>
+                            <option>部門人員A</option>
+                            <option>部門人員B</option>
+                            <option>部門人員C</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">請購單號</div>
+                    <div class="cont">
+                        <input type="text" />
+                    </div>
+                </div>
+                <!--在想要 當"收合查詢條件"的div上加入"sub" class,即可收合-->
+                <div class="item deadline sub">
+                    <div class="label">請購日期</div>
+                    <div class="cont">
+                        <input type="text" placeholder="YYYY/MM/DD" title="開始日期" class="date dev-calendar" /><span class="dash">~</span><input type="text" placeholder="YYYY/MM/DD" title="結束日期" class="date dev-calendar" />
+                    </div>
+                </div>
+                <div class="item sub">
+                    <div class="label">請購資料來源</div>
+                    <div class="cont">
+                        <select>
+                            <option>一般請購登錄</option>
+                            <option>低於安全存量轉請購</option>
+                            <option>寄售批價轉請購</option>
+                            <option>請領轉請購</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item sub">
+                    <div class="label">來源單號</div>
+                    <div class="cont">
+                        <input type="text" />
+                    </div>
+                </div>
+                <div class="item sub">
+                    <div class="label">庫別資訊</div>
+                    <div class="cont">
+                        <select>
+                            <option>請選擇</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item has_inline_btn sub">
+                    <!--當有加入按鈕時，加上has_inline_btn這個class-->
+                    <div class="label">料品代碼</div>
+                    <div class="cont">
+                        <input type="text" />
+                        <a href="javascript:;" class="btn_style btn_search open_box1" title="查詢料品代碼"></a>
+                        <!--open_box1這個class只是為了demo展開popup用，套程式時可刪除-->
+                    </div>
+                </div>
+                <div class="item two sub">
+                    <div class="label">料品名稱</div>
+                    <div class="cont">
+                        <input type="text" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="BtnCommon mid">
+                <div class="search"><span><input type="submit" value="查詢" /></span></div>
+                <div class="cancel"><span><input type="reset" value="清空" /></span></div>
+            </div>
+            <div class="toggle_btn"></div>
+        </fieldset>
+    </div>
+
+    <div class="ListTable">
+        <div class="table_title">
+            <div class="btnBox">
+                <div>
+                    <div class="add"><a href="/auth/home/edit">新增請購申請單</a></div>
+                    <div class="add"><a href="/auth/home/edit">新增緊急藥品申請單</a></div>
+                </div>
+            </div>
+        </div>
+        <table>
+            <tr>
+                <th class="sort">請購單號</th>
+                <th>請購院區</th>
+                <th>請購單位</th>
+                <th>請購人員</th>
+                <th class="date sort">請購日期</th>
+                <th>請購資料來源</th>
+                <th class="sort">來源單號</th>
+                <th>請購原因</th>
+                <th>案件歷程</th>
+                <th>管理維護</th>
+            </tr>
+            <tr>
+                <td><a href="manage_edit.html">F202004100001</a></td>
+                <td>A客戶</td>
+                <td>XX科</td>
+                <td>部門人員A</td>
+                <td class="date">2020/06/23</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <a href="javascript:;" class="btn_style btn_list open_box2" title="案件歷程"></a>
+                    <!--open_box2這個class只是為了demo展開popup用，套程式時可刪除-->
+                </td>
+                <td>
+                    <ul class="edit_btns">
+                        <li><a href="manage_edit.html" class="edit" title="編輯"></a></li>
+                        <li><a href="" class="del" title="刪除"></a></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><a href="">F202004100002</a></td>
+                <td>B客戶</td>
+                <td>XX組</td>
+                <td>部門人員B</td>
+                <td class="date">2020/06/23</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><a href="" class="btn_style btn_list"></a></td>
+                <td>
+                    <ul class="edit_btns">
+                        <li><a href="" class="edit" title="編輯"></a></li>
+                        <li><a href="" class="del" title="刪除"></a></li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+@section Scripts{}

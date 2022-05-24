@@ -1,0 +1,414 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+
+@{
+    ViewData["Title"] = @_localizer["儲位資料"];
+}
+
+<div id="LocationVue">
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["搜尋條件"]</span></legend>
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label">@_localizer["代碼"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.LocationCode" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["層架"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.LayerId">
+                            <option value="">@_localizer["請選擇"]</option>
+                            <option v-for="(bItem,index) in arrLayer" v-if="bItem.IsStop=='N'" :value="bItem.LayerId">{{bItem.LayerCode}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["堆疊"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.IsStackable">
+                            <option value="">@_localizer["請選擇"]</option>
+                            <option value="N">@_localizer["否"]</option>
+                            <option value="Y">@_localizer["是"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["狀態"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.IsStop">
+                            <option value="">@_localizer["請選擇"]</option>
+                            <option value="N">@_localizer["啟用"]</option>
+                            <option value="Y">@_localizer["停用"]</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="BtnCommon mid">
+                <div class="search"><span><input type="submit" value="@_localizer["搜尋"]" v-on:click="onSearch" /></span></div>
+                @*<div class="cancel"><span><input type="reset" value="清除" /></span></div>*@
+            </div>
+
+        </fieldset>
+    </div>
+
+    <div class="ListTable" v-show="arrResult.length>0">
+        <div class="table_title">
+            <div class="btnBox">
+                <div>
+                    <div class=""><a href="javascript:;" v-bind:class="{'btn_disabled':noSelect || !noEdit }" v-on:click="onDelete">@_localizer["刪除"]</a></div>
+                    <div class=""><a href="javascript:;" v-bind:class="{'btn_disabled':noSelect}" v-on:click="editSet">@_localizer["修改"]</a></div>
+                </div>
+            </div>
+        </div>
+        <table id="dataTable" class="table dataTable stripe">
+        </table>
+    </div>
+
+    <!--基本資料-->
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["基本資料"]</span></legend>
+            <div class="btnBox">
+                <div>
+                    <div class=""><a v-bind:class="{'btn_disabled':disAdd}" href="javascript:;" v-on:click="addReset">@_localizer["新增"]</a></div>
+                    <div class=""><a v-bind:class="{'btn_disabled':noEdit}" href="javascript:;" v-on:click="onSubmit">@_localizer["儲存"]</a></div>
+                    <div class=""><a v-bind:class="{'btn_disabled':noEdit}" href="javascript:;" v-on:click="onCancel">@_localizer["離開"]</a></div>
+                </div>
+            </div>
+            <div class="FormTable">
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["代碼"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.LocationCode" />
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["層架"]</div>
+                    <div class="cont">
+                        <select v-model="objInfo.LayerId">
+                            <option value="">@_localizer["請選擇"]</option>
+                            <option v-for="(bItem,index) in arrLayer" v-if="bItem.IsStop=='N'" :value="bItem.LayerId">{{bItem.LayerCode}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["狀態"]</div>
+                    <div class="cont">
+                        <select v-model="objInfo.IsStop">
+                            <option value="">@_localizer["請選擇"]</option>
+                            <option value="N">@_localizer["啟用"]</option>
+                            <option value="Y">@_localizer["停用"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["儲位閘道"]</div>
+                    <div class="cont">
+                        <input type="number" v-model="objInfo.TagGateWay" min="1" max="99" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["儲位地址"]</div>
+                    <div class="cont">
+                        <input type="number" v-model="objInfo.TagAddr" min="1" max="999" />
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="label">@_localizer["第幾格"] (m)</div>
+                    <div class="cont">
+                        <input type="number" v-model="objInfo.SequenceNo" min="0" max="65535" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["最大棧板數"] (m)</div>
+                    <div class="cont">
+                        <input type="number" v-model="objInfo.PlateQuantity" min="0" max="65535" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["x中間值"] (m)</div>
+                    <div class="cont">
+                        <input type="number" v-model="objInfo.MedianX" min="0.00" max="100000.00" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["y中間值"] (m)</div>
+                    <div class="cont">
+                        <input type="number" v-model="objInfo.MedianY" min="0.00" max="100000.00" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["寬度"] (m)</div>
+                    <div class="cont">
+                        <input type="number" v-model="objInfo.Width" min="0.00" max="1000.00" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["堆疊"] (m)</div>
+                    <div class="cont">
+                        <select v-model="objInfo.IsStackable">
+                            <option value="">@_localizer["請選擇"]</option>
+                            <option value="N">@_localizer["否"]</option>
+                            <option value="Y">@_localizer["是"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["是否可存放多種商品"] (m)</div>
+                    <div class="cont">
+                        <select v-model="objInfo.IsMixable">
+                            <option value="">@_localizer["請選擇"]</option>
+                            <option value="N">@_localizer["否"]</option>
+                            <option value="Y">@_localizer["是"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["容積"] (m³)</div>
+                    <div class="cont">
+                        <input type="number" v-model="objInfo.Square" min="0.00" max="100000.00" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["載重"] (m)</div>
+                    <div class="cont">
+                        <input type="number" v-model="objInfo.Weight" min="0.00" max="100000.00" />
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label">@_localizer["備註"]</div>
+                    <div class="cont">
+                        <textarea rows="2" style="width:100%" v-model="objInfo.Remarks" maxlength="200"></textarea>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+
+</div>
+
+@section Scripts{
+    <script>
+        var tv = new Vue({
+            el: '#LocationVue',
+            computed: {
+                // 尚未選擇列
+                noSelect: function () {
+                    return (Object.keys(this.rowSelect).length === 0)
+                },
+                // 尚未點選新增或編輯
+                noEdit: function () {
+                    return (Object.keys(this.objInfo).length === 0)
+                },
+            },
+            data: {
+                // 新增按鈕樣式
+                disAdd: false,
+                // 查詢條件
+                queryInfo: {
+                    LocationCode: '',
+                    LayerId: 0,
+                    IsStackable: '',
+                    IsStop: ''
+                },
+                // 查詢結果
+                arrResult: [],
+                // 新增/編輯
+                objInfo: {},
+                rowSelect: {},
+                coulmnSet: [],
+                columnDef: [],
+                arrLayer: []        // 層架下拉選單
+            },
+            created: function () {
+                // 層架下拉選單
+                this.getLayerData();
+            },
+            methods: {
+                // 儲區下拉選單
+                getLayerData: function () {
+                    axios.get('/api/Common/Options/GetLayerData')
+                        .then(function (res) {
+                            this.arrLayer = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                onSearch: function () {
+                    let thisvue = this;
+                    thisvue.disAdd = false;
+                    thisvue.rowSelect = {};
+                    thisvue.objInfo = {};
+                    thisvue.arrResult = [];
+
+                    thisvue.coulmnSet = [
+                        {
+                            title: "@_localizer["代碼"]",
+                            "data": "LocationCode"
+                        },
+                        {
+                            title: "@_localizer["層架"]",
+                            "data": "LayerCode"
+                        },
+                        {
+                            title: "@_localizer["第幾格"]",
+                            "data": "SequenceNo"
+                        },
+                        {
+                            title: "@_localizer["堆疊"]",
+                            "data": "IsStackable"
+                        },
+                        {
+                            title: "@_localizer["狀態"]",
+                            "data": "IsStop"
+                        }
+                    ];
+
+                    thisvue.columnDef = [
+                        {
+                            "className": "text-center",
+                            "targets": [3],
+                            mRender: function (result) {
+                                if (result != null) {
+                                    //console.log(result);
+                                    var sbtn = result == "N" ? "@_localizer["否"]" : "@_localizer["是"]";
+
+                                    return sbtn;
+                                }
+                            }
+                        },
+                        {
+                            "className": "text-center",
+                            "targets": [4],
+                            mRender: function (result) {
+                                if (result != null) {
+                                    //console.log(result);
+                                    var sbtn = result == "N" ? "@_localizer["啟用"]" : "@_localizer["停用"]";
+
+                                    return sbtn;
+                                }
+                            }
+                        }
+                    ];
+
+                    var issearch = false;
+                    console.log(this.queryInfo);
+                    LoadDataTable('@Url.Action("QueryLocation", "LocationApi", new { Area = "BasicSet" })', thisvue.queryInfo, thisvue.coulmnSet, thisvue.columnDef, issearch)
+                        .then(function () {
+                            thisvue.arrResult = $('#dataTable').DataTable().rows().data();
+                            $('#dataTable tbody').on('click', 'tr', function () {
+                                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                                $(this).toggleClass('selected');
+                                if ($('#dataTable').DataTable().rows('.selected').data().length > 0) {
+                                    thisvue.rowSelect = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows('.selected').data()[0]));
+                                } else
+                                    thisvue.rowSelect = {};
+                            });
+                        });
+            },
+            onDelete: function () {
+                let thisvue = this;
+                if (thisvue.noSelect) {
+                    _AlertMsg(false, '@_localizer["請選擇資料"]')
+                    return false
+                }
+                _ConfirmAlert('w', '@_localizer["警告"]', '@_localizer["確定刪除嗎?"]', true, function () {
+                    axios.post('/api/BasicSet/ShelfApi/DeleteLocation', thisvue.rowSelect)
+                        .then(function (res) {
+                            //this.arrResult = res.data.dt
+                            // 刪除成功，清空選擇資料
+                            console.log(res);
+
+                            if (res.data.isOk) {
+                                let RemoveIndex;
+                                var filteredElements = thisvue.arrResult.filter(function (item, index) { RemoveIndex = index; return item.ShelfId == thisvue.rowSelect.ShelfId; });
+                                //console.log(RemoveIndex);
+                                //let RemoveIndex = thisvue.arrResult.findIndex(e => e.ShelfTypeId == thisvue.rowSelect.ShelfTypeId);
+                                thisvue.arrResult.splice(RemoveIndex, 1);
+                                thisvue.rowSelect = {}
+                                $('#dataTable').DataTable().rows('.selected').remove().draw(false);
+                            }
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                });
+            },
+            // 新增按鈕
+            addReset: function () {
+                this.disAdd = !this.disAdd
+                this.objInfo = {
+                    'LocationId': 0,
+                    'LocationCode': '',
+                    'LayerId': 0,
+                    'TagGateWay': 0,
+                    'TagAddr': 0,
+                    'SequenceNo': 0,
+                    'PlateQuantity': 0,
+                    'MedianX': 0,
+                    'MedianY': 0,
+                    'Width': 0,
+                    'IsStackable': '',
+                    'IsMixable': '',
+                    'Square': 0,
+                    'Weight': 0,
+                    'IsStop': 'N',
+                    'Remarks': ''
+                };
+                this.rowSelect = {};
+                if (!this.noSelect)
+                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+            },
+            // 修改
+            editSet: function () {
+                if (this.noSelect) {
+                    _AlertMsg(false, '@_localizer["請選擇資料"]')
+                    return false
+                }
+                this.disAdd = !this.disAdd
+                this.objInfo = JSON.parse(JSON.stringify(this.rowSelect));
+            },
+            // 儲存
+            onSubmit: function () {
+                if (this.noEdit) {
+                    _AlertMsg(false, '@_localizer["請點選新增或選擇列後點選修改"]')
+                    return false
+                }
+                axios.post('/api/BasicSet/LocationApi/UpdateLocation', this.objInfo)
+                    .then(function (res) {
+                        _AlertMsg(res.data.isOk, res.data.msg)
+                        // 編輯成功，清空選擇資料
+                        if (res.data.isOk) {
+                            this.rowSelect = {}
+                            this.onSearch()
+                        }
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    })
+            },
+            // 離開
+            onCancel: function () {
+                if (this.noEdit) {
+                    _AlertMsg(false, '@_localizer["請點選新增或選擇列後點選修改"]')
+                    return false
+                }
+                this.objInfo = {}
+                this.rowSelect = {}
+                this.disAdd = false;
+                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+            }
+            }
+        });
+
+    </script>
+
+}

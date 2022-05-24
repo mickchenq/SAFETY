@@ -1,0 +1,475 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+@{
+    ViewData["Title"] = @_localizer["商品包裝資料維護"];
+}
+<div id="PackageVue">
+    <!--列表搜尋-->
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["搜尋條件"]</span></legend>
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label">@_localizer["包裝名稱"]</div>
+                    <div class="cont">
+                        <input type="text" placeholder="@_localizer["可模糊查詢"]" v-model="queryInfo.PackageName" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["客戶"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.CustomerId" v-on:change="changeCustomer2()">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(item,index) in arrCustomer" v-if="item.IsStop=='N'" :value="item.CustomerId">{{item.CustomerName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["商品"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.ProductId">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(item,index) in arrQueryProduct" v-if="item.IsStop=='N'" :value="item.ProductId">{{item.ProductName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["狀態"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.IsStop">
+                            <option value="">@_localizer["請選擇"]</option>
+                            <option value="N">@_localizer["啟用"]</option>
+                            <option value="Y">@_localizer["停用"]</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="BtnCommon mid">
+                <div class="search"><span><input type="submit" value="@_localizer["搜尋"]" v-on:click="onSearch" /></span></div>
+            </div>
+
+            <div class="btnBox">
+                <div class="add">
+                    <a href="javascript:;" v-on:click="Add">@_localizer["新增"]</a>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <!--列表資料-->
+    <div class="ListTable" v-show="arrResult.length>0">
+        <table id="dataTable" class="table dataTable stripe">
+        </table>
+    </div>
+
+    @*新增/編輯視窗*@
+    <div class="popup_box large boxDetail">
+        <div class="box_wrap">
+            <div class="FormTable">
+                <div class="popup_title">{{objInfo.PackageId=='0'?'@_localizer["新增"]':'@_localizer["修改"]'}} @_localizer["商品包裝資料"]</div>
+                <div class="popup_cont">
+                    <div class="SearchItems FormElmt">
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["包裝名稱"]</div>
+                            <div class="cont">
+                                <input type="text" maxlength="20" v-model="objInfo.PackageName">
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label">@_localizer["客戶"]</div>
+                            <div class="cont">
+                                <select v-model="objInfo.CustomerId" v-on:change="changeCustomer()" v-bind:disabled="objInfo.PackageId!=0">
+                                    <option value="0">@_localizer["請選擇"]</option>
+                                    <option v-for="(item,index) in arrCustomer" v-if="item.IsStop=='N'" :value="item.CustomerId">{{item.CustomerName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["商品"]</div>
+                            <div class="cont">
+                                <select v-model="objInfo.ProductId" v-on:change="changeProduct()" v-bind:disabled="objInfo.PackageId!=0">
+                                    <option value="0">@_localizer["請選擇"]</option>
+                                    <option v-for="(item,index) in arrProduct" v-if="item.IsStop=='N' || item.ProductId==objInfo.ProductId" :value="item.ProductId">{{item.ProductName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["狀態"]</div>
+                            <div class="cont">
+                                <select v-model="objInfo.IsStop">
+                                    <option value="N">@_localizer["啟用"]</option>
+                                    <option value="Y">@_localizer["停用"]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["包裝長度"]</div>
+                            <div class="cont" style="display:inline-flex">
+                                <!--可輸小數(兩位小數)-->
+                                <input type="text" maxlength="8" onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')" v-model="objInfo.Length" style="width:80%">&nbsp;m
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["包裝寬度"]</div>
+                            <div class="cont" style="display:inline-flex">
+                                <!--可輸小數(兩位小數)-->
+                                <input type="text" maxlength="8" onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')" v-model="objInfo.Width" style="width:80%">&nbsp;m
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["包裝高度"]</div>
+                            <div class="cont" style="display:inline-flex">
+                                <!--可輸小數(兩位小數)-->
+                                <input type="text" maxlength="8" onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')" v-model="objInfo.Height" style="width:80%">&nbsp;m
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["重量"]</div>
+                            <div class="cont" style="display:inline-flex">
+                                <!--可輸小數(兩位小數)-->
+                                <input type="text" maxlength="8" onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')" v-model="objInfo.Weight" style="width:80%">&nbsp;kg
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label">@_localizer["上層包裝"]</div>
+                            <div class="cont">
+                                <select v-model="objInfo.ParentPackageId">
+                                    <option value="0">@_localizer["請選擇"]</option>
+                                    <option v-for="(item,index) in arrPackage" v-if="(item.IsStop=='N' || item.PackageId==objInfo.ParentPackageId) && item.PackageId !=objInfo.PackageId" :value="item.PackageId">{{item.PackageName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label">@_localizer["上層包裝入數"]</div>
+                            <div class="cont">
+                                <!--整數-->
+                                <input type="text" maxlength="8" oninput="value=value.replace(/[^\d]/g,'')" v-model="objInfo.ParentPackageQuantity">
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["是否為最小單位包裝"]</div>
+                            <div class="cont">
+                                <select v-model="objInfo.IsMinSku">
+                                    <option value="">@_localizer["請選擇"]</option>
+                                    <option value="N">@_localizer["否"]</option>
+                                    <option value="Y">@_localizer["是"]</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="item fullwidth">
+                            <div class="label">@_localizer["備註"]</div>
+                            <div class="cont">
+                                <textarea rows="2" class="fullwidth" maxlength="200" v-model="objInfo.Remarks"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="BtnCommon mid">
+                        <div class="submit"><span><input type="button" value="@_localizer["送出"]" v-on:click="onSubmit" /></span></div>
+                        <div class="cancel"><span><input type="button" value="@_localizer["取消"]" /></span></div>
+                    </div>
+                </div>
+            </div><a class="close" title="@_localizer["關閉"]">@_localizer["關閉"]</a>
+        </div>
+    </div>
+    @*新增/編輯視窗end*@
+</div>
+@section Scripts{
+    <script>
+        var vm = new Vue({
+            el: '#PackageVue',
+            components: {
+            },
+            data: function () {
+                return {
+                    // 查詢條件
+                    queryInfo: {
+                        PackageName: '',
+                        CustomerId: '0',
+                        ProductId: '0',
+                        ParentPackageId: '0',
+                        IsMinSku: '',
+                        IsStop: ''
+                    },
+                    // 查詢結果
+                    arrResult: [],
+                    arrCustomer: [],            // 客戶選項
+                    arrQueryProduct: [],   // 商品選項
+                    arrProduct: [],               // 商品選項
+                    arrPackage: [],             // 包裝選項
+                    // 新增/編輯
+                    objInfo: {
+                        PackageId:'0',
+                        PackageName: '',
+                        CustomerId: '0',
+                        ProductId: '0',
+                        ParentPackageId: '0',
+                        IsMinSku: '',
+                        IsStop: 'N'
+                    }
+                }
+            },
+            created: function () {
+                // 取得客戶下拉選單
+                this.getCustData()
+            },
+            methods: {
+                // 客戶選單
+                getCustData: function () {
+                    axios.get('/api/Common/Options/GetCustomerData')
+                        .then(function (res) {
+                            this.arrCustomer = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 變更客戶時=>抓取同一客戶下的商品資料
+                changeCustomer2: function () {
+                    this.queryInfo.ProductId = 0;
+                    axios.get('/api/Common/Options/GetProductDataByCust', { params: { CustId: this.queryInfo.CustomerId } })
+                        .then(function (res) {
+                            this.arrQueryProduct = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 變更客戶時=>抓取同一客戶下的商品資料
+                changeCustomer: function () {
+                    this.objInfo.ProductId = 0;
+                    this.objInfo.ParentPackageId = 0;
+                    axios.get('/api/Common/Options/GetProductDataByCust', { params: { CustId: this.objInfo.CustomerId } })
+                        .then(function (res) {
+                            this.arrProduct = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 變更商品時=>抓取同一商品下的包裝資料
+                changeProduct: function () {
+                    this.objInfo.ParentPackageId = 0;
+                    axios.get('/api/Common/Options/GetProductPackageData', { params: { ProductId: this.objInfo.ProductId } })
+                        .then(function (res) {
+                            this.arrPackage = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                //抓取客戶下的商品及該商品的包裝資料
+                GetProductAndPackageData: function () {
+                    axios.get('/api/CustMgmt/ProdPackageApi/GetProductAndPackageData', { params: { CustomerId: this.objInfo.CustomerId , ProductId: this.objInfo.ProductId } })
+                        .then(function (res) {
+                            this.arrProduct = res.data.dt.product;
+                            this.arrPackage = res.data.dt.package;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 新增
+                Add: function () {
+                    this.objInfo = {
+                        PackageId: '0',
+                        PackageName: '',
+                        CustomerId: '0',
+                        ProductId: '0',
+                        ParentPackageId: '0',
+                        IsMinSku: '',
+                        IsStop: 'N'
+                    };
+                    $('.boxDetail').addClass('show');
+                    $('body').addClass('fixed');
+                },
+                onSearch: function () {
+                    let thisvue = this;
+                    thisvue.objInfo = {};
+                    thisvue.arrResult = [];
+
+                    thisvue.coulmnSet = [
+                        {
+                            title: "@_localizer["包裝名稱"]",
+                            "data": "PackageName"
+                        },
+                        {
+                            title: "@_localizer["客戶名稱"]",
+                            "data": "CustomerName"
+                        },
+                        {
+                            title: "@_localizer["商品名稱"]",
+                            "data": "ProductName"
+                        },
+                        {
+                            title: "@_localizer["包裝長度"]",
+                            "data": "Length"
+                        },
+                        {
+                            title: "@_localizer["包裝寬度"]",
+                            "data": "Width"
+                        },
+                        {
+                            title: "@_localizer["包裝高度"]",
+                            "data": "Height"
+                        },
+                        {
+                            title: "@_localizer["重量"]",
+                            "data": "Weight"
+                        },
+                        {
+                            title: "@_localizer["上層包裝"]",
+                            "data": "ParentPackageName"
+                        },
+                        {
+                            title: "@_localizer["上層包裝入數"]",
+                            "data": "ParentPackageQuantity"
+                        },
+                        {
+                            title: "@_localizer["最小單位包裝"]",
+                            "data": "IsMinSku"
+                        },
+                        {
+                            title: "@_localizer["狀態"]",
+                            "data": "IsStop"
+                        },
+                        {
+                            title: "@_localizer["操作"]",
+                            "data": "PackageId"
+                        },
+                        {
+                            title: "CustomerId",
+                            "data": "CustomerId"
+                        }
+                    ];
+
+                    thisvue.columnDef = [
+                        {
+                            "className": "text-center",
+                            "targets": [10],
+                            mRender: function (result) {
+                                if (result != null) {
+                                     var sbtn = result == "N" ? "@_localizer["啟用"]" : "@_localizer["停用"]";
+                                    return sbtn;
+                                }
+                            }
+                        },
+                        {
+                            "className": "text-center",
+                            "targets": [11],
+                            mRender: function (result) {
+                                if (result != null) {
+                                    var sbtn = '<ul class=\"edit_btns\"><li><a href=\"javascript:;\" class=\"edit\" title=\"@_localizer["編輯"]\" onclick=\"vm.editSet()\"></a></li><li><a href=\"javascript:;\" class=\"del\" title=\"@_localizer["刪除"]\" onclick=\"vm.onDelete()\"></a></li></ul>';
+                                    return sbtn;
+                                }
+                            }
+                        },
+                        {
+                            "targets": [12],
+                            "visible": false
+                        }
+                    ];
+
+                    var issearch = false;
+                    LoadDataTable('@Url.Action("QueryProductPackage", "ProdPackageApi", new { Area = "CustMgmt" })', this.queryInfo, this.coulmnSet, this.columnDef, issearch)
+                        .then(function () {
+                            thisvue.arrResult = $('#dataTable').DataTable().rows().data();
+                            $('#dataTable tbody').on('click', 'tr', function () {
+                                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                                $(this).toggleClass('selected');
+                                if ($('#dataTable').DataTable().rows('.selected').data().length > 0) {
+                                    thisvue.objInfo = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows('.selected').data()[0]));
+                                    thisvue.GetProductAndPackageData();
+                                } else
+                                    thisvue.objInfo = {};
+                            });
+                        });
+                },
+                //讀取
+                editSet: function () {
+                    $('.boxDetail').addClass('show');
+                    $('body').addClass('fixed');
+                },
+                // 儲存
+                onSubmit: function () {
+                    // 驗證欄位是否已填寫
+                    if (!this.VerifyData()) return;
+
+                    axios.post('/api/CustMgmt/ProdPackageApi/SaveProductPackage', this.objInfo)
+                        .then(function (res) {
+                            _AlertMsg(res.data.isOk, res.data.msg)
+                            // 編輯成功，清空選擇資料
+                            if (res.data.isOk) {
+                                $('.boxDetail').removeClass('show')
+                                $('body').removeClass('fixed')
+                                this.onSearch();
+                            }
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 驗證必填欄位是否有填寫
+                VerifyData: function () {
+                    var msg = "";
+                    if (this.objInfo.ProductId === "0" || this.objInfo.ProductId === "") {
+                        msg += "@_localizer["請選擇商品"]<br />";
+                    }
+                    if (this.objInfo.Length ==null || this.objInfo.Length === "") {
+                        msg += "@_localizer["請填寫包裝長度"]<br />";
+                    }
+                    if (this.objInfo.Width == null || this.objInfo.Width === "") {
+                        msg += "@_localizer["請填寫包裝寬度"]<br />";
+                    }
+                    if (this.objInfo.Height == null || this.objInfo.Height === "") {
+                        msg += "@_localizer["請填寫包裝高度"]<br />";
+                    }
+                    if (this.objInfo.Weight == null || this.objInfo.Weight === "") {
+                        msg += "@_localizer["請填寫重量"]<br />";
+                    }
+                    if (this.objInfo.ParentPackageId === "0" || this.objInfo.ParentPackageId === "") {
+                        msg += "@_localizer["請選擇上層包裝"]<br />";
+                    }
+                    if (this.objInfo.ParentPackageQuantity == null || this.objInfo.ParentPackageQuantity === "") {
+                        msg += "@_localizer["請填寫上層包裝入數"]<br />";
+                    }
+                    if (this.objInfo.IsMinSku == null || this.objInfo.IsMinSku === "") {
+                        msg += "@_localizer["請選擇是否為最小單位包裝"]<br />";
+                    }
+
+                    if (msg.trim() != "") {
+                        _AlertMsg(false, msg);
+                        return false
+                    }
+                    return true
+                },
+                onDelete: function () {
+                    let thisvue = this;
+                    _ConfirmAlert('w', '@_localizer["警告"]', '@_localizer["確定刪除嗎?"]', true, function () {
+                        axios.post('/api/CustMgmt/ProdPackageApi/DeleteProductPackage', thisvue.objInfo)
+                            .then(function (res) {
+                                // 刪除成功，清空選擇資料
+                                if (res.data.isOk) {
+                                    let RemoveIndex;
+                                    var filteredElements = thisvue.arrResult.filter(function (item, index) { RemoveIndex = index; return item.PackageId == thisvue.objInfo.PackageId; });
+                                    thisvue.arrResult.splice(RemoveIndex, 1);
+                                    thisvue.objInfo = {};
+                                    $('#dataTable').DataTable().rows('.selected').remove().draw(false);
+                                }
+                                else {
+                                    _AlertMsg(false, res.data.msg);
+                                }
+                            }.bind(this))
+                            .catch(function (err) {
+                                console.error(err);
+                            })
+                    });
+                }
+
+            }
+        })
+    </script>
+}

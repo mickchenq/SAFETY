@@ -1,0 +1,140 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+<script type="text/template" id="ShippingNoticeUpload">
+    <div>
+        {{refreshVal}}
+        {{refreshSeq}}
+        <div class="ListTable">
+            <div class="tableFlex">
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>@_localizer["序號"]</th>
+                            <th>@_localizer["檔案名稱"]</th>
+                            <th>@_localizer["操作"]</th>
+                        </tr>
+                        <tr v-for="(itemF,indexF) in objMainFiles" v-if="itemF.FormId !=-99">
+                            <td>{{itemF.SHOW_SEQ}}</td>
+                            <td><a :href="'/api/Common/Options/GetDownloadFile?selfPath='+ itemF.FilePath +'&fileName='+ itemF.FileName" target="_blank">{{itemF.FileName}}</a></td>
+                            <td>
+                                <ul class="edit_btns">
+                                    <li>
+                                        <a href="javascript:void(0);" class="del" title="@_localizer["刪除"]" v-on:click="DeleteMainFiles(itemF)" v-show="!isView"></a>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr v-for="(itemF,indexF) in objNewFiles">
+                            <td>{{itemF.SHOW_SEQ}}</td>
+                            <td>{{itemF.FILE_DATA.name}}</td>
+                            <td>
+                                <ul class="edit_btns">
+                                    <li>
+                                        <a href="javascript:void(0);" class="del" title="@_localizer["刪除"]" v-on:click="DeleteNewFiles(indexF)"></a>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr class="add_tr" v-show="!isView">
+                            <td colspan="3">
+                                @*上傳檔案*@
+                                <input id="basicFileId" type='file' multiple hidden v-on:change="FilesChange($event.target.files)" />
+                                <a href="javascript:void(0);" class="btn_style btn_add " v-on:click="UpFileClick()"></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</script>
+
+<script>
+    var ShippingNoticeUpload = {
+        template: '#ShippingNoticeUpload',
+        props: {
+            value: {
+                type: Object
+            }
+        },
+        components: {
+        },
+        data: function () {
+            return {
+                // 主檔
+                objBasicInfo: {},
+                // 所有明細資訊
+                objDetailInfos: [],
+                // 已上傳附件
+                objMainFiles: [],
+                // 新上傳附件
+                objNewFiles: []
+            }
+        },
+        computed: {
+            // 取得父組件v-model資料
+            refreshVal() {
+                this.objBasicInfo = this.value.basicinfo;
+                this.objDetailInfos = this.value.objDetailInfos;
+                this.objMainFiles = this.value.objMainFiles;
+                this.objNewFiles = this.value.objNewFiles;
+                this.isView = this.value.isView;
+            },
+            //  更新序號
+            refreshSeq: function () {
+                var n = 0;
+                // 更新已上傳附件序號
+                for (var i = 0; i < this.objMainFiles.length; i++) {
+                    if (this.objMainFiles[i].FormId != -99)
+                        this.objMainFiles[i].SHOW_SEQ = ++n;
+                }
+                // 更新新上傳附件序號
+                for (var i = 0; i < this.objNewFiles.length; i++) {
+                    this.objNewFiles[i].SHOW_SEQ = ++n;
+                }
+            }
+        },
+        created: function () {
+        },
+        methods: {
+            // 點擊上傳檔案按鈕顯示
+            UpFileClick: function (index) {
+                document.getElementById('basicFileId').click();
+            },
+            // 檔案上傳
+            FilesChange(fileList) {
+                // handle file changes
+                if (!fileList.length) return;
+                for (var i = 0; i < fileList.length; i++) {
+                    this.objNewFiles.push({ 'FILE_DATA': fileList[i] })
+                }
+            },
+            // 刪除已上傳檔案
+            DeleteMainFiles(item) {
+                Swal.fire({
+                    title: '@_localizer["確定移除此筆附件資料"]',
+                    html: '',
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: '@_localizer["確定"]',
+                    cancelButtonText: '@_localizer["取消"]'
+                }).then(
+                    function (result) {
+                        if (result.isConfirmed) {
+                            for (var i = 0; i < this.objMainFiles.length; i++) {
+                                if (this.objMainFiles[i].UploadId == item.UploadId)
+                                    this.objMainFiles[i].FormId = -99;            //以便刪除判斷
+                            }
+                        }
+                    }.bind(this));
+            },
+            // 刪除選擇檔案
+            DeleteNewFiles(index) {
+                this.objNewFiles.splice(index, 1)
+            }
+
+        }
+    }
+</script>

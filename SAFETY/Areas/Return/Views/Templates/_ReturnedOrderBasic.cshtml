@@ -1,0 +1,308 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+
+<script type="text/template" id="ReturnedOrderBasic">
+    <div class="FormGroupWarp" id="divBasic">
+        {{refreshVal}}
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["退貨通知單"]</span></legend>
+            <div class="FormTable">
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["系統出貨單號"]</div>
+                    <div class="cont">
+                        <input type="text" placeholder="@_localizer["系統自動產生"]" v-model="objBasicInfo.OrderNo" maxlength="20" disabled />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["物流中心"]</div>
+                    <div class="cont">
+                        <select v-model="objBasicInfo.DcId" v-on:change="getShippingOrder(1)">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(bItem,index) in arrDataCenter" v-if="bItem.IsStop=='N' || bItem.DcId==objBasicInfo.DcId" :value="bItem.DcId">{{bItem.DcName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["客戶"]</div>
+                    <div class="cont">
+                        <select v-model="objBasicInfo.CustomerId" v-on:change="getShippingOrder(1)">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(item,index) in arrCustomer" v-if="item.IsStop=='N' || item.CustomerId==objBasicInfo.CustomerId" :value="item.CustomerId">{{item.CustomerName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["出貨通知單號"]</div>
+                    <div class="cont">
+                        <select v-model="objBasicInfo.RelatedId" v-on:change="changeShippingOrder()">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(item,index) in arrShippingOrder" :value="item.OrderId">{{item.OrderNo}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["客戶退貨單號"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objBasicInfo.CustomerOrderNo" maxlength="20" />
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["退貨接單日期"]</div>
+                    <div class="cont">
+                        <input type="date" v-bind:value="filterDate(objBasicInfo.ReturnedDate)"
+                               v-on:input="objBasicInfo.ReturnedDate=$event.target.value" />
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["預計到貨日期"]</div>
+                    <div class="cont">
+                        <input type="date" v-bind:value="filterDate(objBasicInfo.EstimatedReceiveDate)"
+                               v-on:input="objBasicInfo.EstimatedReceiveDate=$event.target.value" />
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["作業方式"]</div>
+                    <div class="cont">
+                        <select v-model="objBasicInfo.OperateType">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option value="1">@_localizer["一般作業"]</option>
+                            <option value="2">@_localizer["內部作業"]</option>
+                            <option value="3">@_localizer["內部出貨"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["退貨方式"]</div>
+                    <div class="cont">
+                        <select v-model="objBasicInfo.ReturnType">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option value="1">@_localizer["貨運-客戶"]</option>
+                            <option value="2">@_localizer["貨運-DC"]</option>
+                            <option value="3">@_localizer["專車"]</option>
+                            <option value="4">@_localizer["其他"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["退貨狀態"]</div>
+                    <div class="cont">
+                        <select v-model="objBasicInfo.ReturnStatus" disabled>
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option value="1">@_localizer["待驗收"]</option>
+                            <option value="2">@_localizer["待退貨入庫"]</option>
+                            <option value="3">@_localizer["退貨入庫中"]</option>
+                            <option value="4">@_localizer["退貨入庫完成"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["聯絡人"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objBasicInfo.ContactName" maxlength="20" />
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["聯絡人電話"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objBasicInfo.ContactPhone" maxlength="20" />
+                    </div>
+                </div>
+                <div class="item fullwidth">
+                    <div class="label"><span class="red">*</span>@_localizer["聯絡人地址"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objBasicInfo.ContactAddress" maxlength="100" />
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["驗收日期"]</div>
+                    <div class="cont">
+                        <input type="date" v-bind:value="filterDate(objBasicInfo.AcceptDate)"
+                               v-on:input="objBasicInfo.AcceptDate=$event.target.value" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["驗收人員"]</div>
+                    <div class="cont">
+                        <select v-model="objBasicInfo.AcceptId">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(item,index) in arrUser" v-if="item.IsStop=='N'  || item.UserId==objBasicInfo.AcceptId" :value="item.UserId">{{item.UserName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item fullwidth">
+                    <div class="label">@_localizer["備註"]</div>
+                    <div class="cont">
+                        <textarea rows="2" class="fullwidth" maxlength="200" v-model="objBasicInfo.Remarks"></textarea>
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+    </div>
+</script>
+
+<script>
+    var ReturnedOrderBasic = {
+        template: '#ReturnedOrderBasic',
+        props: {
+            value: {
+                type: Object
+            }
+        },
+        components: {
+        },
+        data: function () {
+            return {
+                // 主檔
+                objBasicInfo: {
+                    OrderId: '0',
+                    OrderNo: '',
+                    DcId: '0',
+                    CustomerId: '0',
+                    OperateType: '0',
+                    ReturnType: '0',
+                    RelatedId: '0',
+                    ReturnStatus: '1',
+                    AcceptId: '0',
+                    isChangeCustomer: false,
+                },
+                // 所有明細資訊
+                objDetailInfos: [],
+                arrCustomer: [],                 // 客戶選項
+                arrDataCenter: [],              // 物流中心下拉選單
+                arrShippingOrder: [],       // 出貨完成之通知單下拉選單
+                arrUser: [],                            // 使用者選項
+                selectCustomerId: '0',      //目前所選的客戶
+            }
+        },
+        computed: {
+            // 取得父組件v-model資料
+            refreshVal() {
+                this.objBasicInfo = this.value.basicinfo;
+                this.objDetailInfos = this.value.objDetailInfos;
+                this.isView = this.value.isView;
+                this.selectCustomerId = this.value.selectCustomerId;
+                this.oldRelatedId = this.value.oldRelatedId;
+                this.getShippingOrder(0);
+                // 只能檢視
+                if (this.isView) {
+                    $("#divBasic input").prop('disabled', true);
+                    $("#divBasic textarea").prop('disabled', true);
+                    $("#divBasic select").prop('disabled', true);
+                    $(".uploadFile").css('display', 'none')
+                }
+            }
+        },
+        created: function () {
+            // 取得客戶下拉選單
+            this.getCustData()
+            // 取得物流中心下拉選單
+            this.GetDataCenterData();
+            // 取得使用者下拉選單
+            this.GetUserData();
+        },
+        methods: {
+            filterDate: function (val) {
+                return val ? val.replace('T00:00:00', '') : ''
+            },
+            // 客戶選單
+            getCustData: function () {
+                axios.get('/api/Common/Options/GetCustomerData')
+                    .then(function (res) {
+                        this.arrCustomer = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    })
+            },
+            GetDataCenterData: function () {
+                // 取得物流中心下拉選單
+                axios.get('/api/Common/Options/GetDataCenterData')
+                    .then(function (res) {
+                        this.arrDataCenter = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    });
+            },
+            GetUserData: function () {
+                // 取得使用者下拉選單
+                axios.get('/api/Common/Options/GetUserData')
+                    .then(function (res) {
+                        this.arrUser = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    });
+            },
+            //待出庫的通知單
+            getShippingOrder: function (kind) {
+                let queryinfo = {
+                    OrderId: this.objBasicInfo.OrderId == 0 ? 0 : this.oldRelatedId,
+                    CustomerId: this.objBasicInfo.CustomerId,
+                    DcId: this.objBasicInfo.DcId
+                }
+                if (kind == 1) {
+                    this.objDetailInfos.splice(0);          //清空
+                    this.objBasicInfo.RelatedId = 0;
+                }
+                axios.post('/api/Return/ReturnedOrderApi/GetShippingOrder', queryinfo)
+                    .then(function (res) {
+                        this.arrShippingOrder = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    });
+            },
+            // 變更出貨通知單時
+            changeShippingOrder: function () {
+                axios.get('/api/Return/ReturnedOrderApi/GetShippingDetail',
+                    {
+                        params: { orderid: this.objBasicInfo.RelatedId }
+                    })
+                    .then(function (res) {
+                        if (res.data.isOk) {
+                            this.objDetailInfos.splice(0);          //清空
+                            //明細
+                            for (var i = 0; i < res.data.dt.length; i++) {
+                                this.detail = {
+                                    DetailSeq: '',
+                                    OrderDetailId: 0,
+                                    OrderId: 0,
+                                    ProductId: 0,
+                                    ProductLotNo: '',
+                                    Unit: 0,
+                                    Quantity: 0,
+                                    ProductStatus: '',
+                                    DetailId: 0,
+                                    LocationId: 0,
+                                    LocationQuantity: 0,
+                                    Remarks: '',
+                                    DetailStatus: 1
+                                };
+                                this.detail.DetailId = res.data.dt[i].DetailId;
+                                this.detail.ProductId = res.data.dt[i].ProductId;
+                                this.detail.ProductLotNo = res.data.dt[i].ProductLotNo;
+                                this.detail.Unit = res.data.dt[i].Unit;
+                                this.detail.Quantity = res.data.dt[i].Quantity;
+                                this.detail.LocationQuantity = res.data.dt[i].Quantity;
+                                this.detail.ProductStatus = res.data.dt[i].ProductStatus;
+                                this.detail.ProductCode = res.data.dt[i].ProductCode;
+                                this.detail.ProductName = res.data.dt[i].ProductName;
+                                this.detail.Barcode = res.data.dt[i].Barcode;
+                                this.detail.PackageName = res.data.dt[i].PackageName;
+                                this.objDetailInfos.push(JSON.parse(JSON.stringify(this.detail)));
+                            }
+                        }
+                        else
+                            _AlertMsg(false, res.data.msg)
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    });
+            }
+
+        }
+    }
+</script>

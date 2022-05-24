@@ -1,0 +1,263 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+@{
+    ViewData["Title"] = @_localizer["進貨通知資料維護"];
+}
+<div id="PurchaseNoticeVue">
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["搜尋條件"]</span></legend>
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label">@_localizer["系統進貨單號"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.OrderNo" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["物流中心"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.DcId">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(bItem,index) in arrDataCenter" v-if="bItem.IsStop=='N'" :value="bItem.DcId">{{bItem.DcName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["客戶"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.CustomerId">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(item,index) in arrCustomer" v-if="item.IsStop=='N'" :value="item.CustomerId">{{item.CustomerName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["客戶進貨單號"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.CustomerOrderNo" />
+                    </div>
+                </div>
+                <div class="item deadline">
+                    <div class="label">@_localizer["預計到貨日期"]</div>
+                    <div class="cont">
+                        <input type="date" placeholder="YYYY/MM/DD" title="@_localizer["開始日期"]" v-model="queryInfo.ReceiveDateStart" class="date dev-calendar"><span class="dash">~</span><input type="date" placeholder="YYYY/MM/DD" title="@_localizer["結束日期"]" v-model="queryInfo.ReceiveDateEnd" class="date dev-calendar">
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["進貨狀態"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.NotificationStatus">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option value="2">@_localizer["待入庫"]</option>
+                            <option value="3">@_localizer["入庫中"]</option>
+                            <option value="4">@_localizer["進貨完成"]</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="BtnCommon mid">
+                <div class="search"><span><input type="submit" value="@_localizer["搜尋"]" v-on:click="onSearch" /></span></div>
+            </div>
+
+            <div class="btnBox">
+                <div class="add">
+                    <div class="add"><a asp-area="Purchase" asp-controller="Home" asp-action="PurchaseNotice">@_localizer["新增進貨通知"]</a></div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <!--列表資料-->
+    <div class="ListTable" v-show="arrResult.length>0">
+        <table id="dataTable" class="table dataTable stripe">
+        </table>
+    </div>
+
+</div>
+
+@section Scripts{
+    <script>
+        var vm = new Vue({
+            el: '#PurchaseNoticeVue',
+            components: {
+            },
+            data: function () {
+                return {
+                    // 查詢條件
+                    queryInfo: {
+                        OrderNo: '',
+                        CustomerId: '0',
+                        DcId: '0',
+                        CustomerOrderNo: '',
+                        NotificationStatus: '0'
+                    },
+                    objInfo: {},
+                    // 查詢結果
+                    arrResult: [],
+                    arrCustomer: [],            // 客戶選項
+                    arrDataCenter: []         // 物流中心下拉選單
+                }
+            },
+            created: function () {
+                // 取得客戶下拉選單
+                this.getCustData()
+                // 取得物流中心下拉選單
+                this.GetDataCenterData();
+            },
+            methods: {
+                // 客戶選單
+                getCustData: function () {
+                    axios.get('/api/Common/Options/GetCustomerData')
+                        .then(function (res) {
+                            this.arrCustomer = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                GetDataCenterData: function () {
+                    // 取得物流中心下拉選單
+                    axios.get('/api/Common/Options/GetDataCenterData')
+                        .then(function (res) {
+                            this.arrDataCenter = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        });
+                },
+                onSearch: function () {
+                    let thisvue = this;
+                    if (thisvue.queryInfo.ReceiveDateStart == "")
+                        thisvue.queryInfo.ReceiveDateStart = null;
+                    if (thisvue.queryInfo.ReceiveDateEnd == "")
+                        thisvue.queryInfo.ReceiveDateEnd = null;
+                    thisvue.objInfo = {};
+                    thisvue.arrResult = [];
+
+                    thisvue.coulmnSet = [
+                        {
+                            title: "@_localizer["客戶名稱"]",
+                            "data": "CustomerName"
+                        },
+                        {
+                            title: "@_localizer["客戶進貨單號"]",
+                            "data": "CustomerOrderNo"
+                        },
+                        {
+                            title: "@_localizer["系統進貨單號"]",
+                            "data": "OrderNo"
+                        },
+                        {
+                            title: "@_localizer["物流中心"]",
+                            "data": "DcName"
+                        },
+                        {
+                            title: "@_localizer["預計到貨日期"]",
+                            "data": "EstimatedReceiveDate"
+                        },
+                        {
+                            title: "@_localizer["聯絡人"]",
+                            "data": "ContactName"
+                        },
+                        {
+                            title: "@_localizer["聯絡人電話"]",
+                            "data": "ContactPhone"
+                        },
+                        {
+                            title: "@_localizer["進貨狀態"]",
+                            "data": "NotificationStatus"
+                        },
+                        {
+                            title: "@_localizer["操作"]",
+                            "data": "OrderId"
+                        }
+                    ];
+
+                    thisvue.columnDef = [
+                        {
+                            "className": "text-center",
+                            "targets": [4],
+                            mRender: function (result) {
+                                if (result != null) {
+                                    return result.replace('T00:00:00', '');
+                                }
+                            }
+                        },
+                        {
+                            "className": "text-center",
+                            "targets": [7],
+                            mRender: function (result) {
+                                if (result != null) {
+                                    var sbtn = "";
+                                    switch (result)
+                                    {
+                                        //case 1: sbtn = "待驗收"; break;
+                                        case 2: sbtn = "@_localizer["待入庫"]"; break;
+                                        case 3: sbtn = "@_localizer["入庫中"]"; break;
+                                        case 4: sbtn = "@_localizer["進貨完成"]"; break;
+                                    }
+                                    return sbtn;
+                                }
+                            }
+                        },
+                        {
+                            "className": "text-center",
+                            "targets": [8],
+                            mRender: function (result) {
+                                if (result != null) {
+                                    var sbtn = '<ul class=\"edit_btns\"><li><a href=\"javascript:;\" class=\"edit\" title=\"@_localizer["編輯"]\" onclick=\"vm.goEdit(' + result + ')\"></a></li><li><a href=\"javascript:;\" class=\"del\" title=\"@_localizer["刪除"]\" onclick=\"vm.onDelete()\"></a></li></ul>';
+                                    return sbtn;
+                                }
+                            }
+                        }
+                    ];
+
+                    var issearch = false;
+                    LoadDataTable('@Url.Action("QueryNotice", "PurchaseNoticeApi", new { Area = "Purchase" })', this.queryInfo, this.coulmnSet, this.columnDef, issearch)
+                        .then(function () {
+                            thisvue.arrResult = $('#dataTable').DataTable().rows().data();
+                            $('#dataTable tbody').on('click', 'tr', function () {
+                                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                                $(this).toggleClass('selected');
+                                if ($('#dataTable').DataTable().rows('.selected').data().length > 0) {
+                                    thisvue.objInfo = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows('.selected').data()[0]));
+                                } else
+                                    thisvue.objInfo = {};
+                            });
+                        });
+                },
+                goEdit: function (orderid) {
+                    let thisvue = this;
+                    window.location.href = '@Url.Content("~/")' + 'Purchase/Home/PurchaseNotice/' + orderid;
+                },
+                onDelete: function () {
+                    let thisvue = this;
+                    _ConfirmAlert('w', '@_localizer["警告"]', '@_localizer["確定刪除嗎?"]', true, function () {
+                        axios.post('/api/Purchase/PurchaseNoticeApi/DeleteNotice', thisvue.objInfo)
+                            .then(function (res) {
+                                    // 刪除成功，清空選擇資料
+                                    if (res.data.isOk) {
+                                        let RemoveIndex;
+                                        var filteredElements = thisvue.arrResult.filter(function (item, index) { RemoveIndex = index; return item.OrderId == thisvue.objInfo.OrderId; });
+                                        thisvue.arrResult.splice(RemoveIndex, 1);
+                                        thisvue.objInfo = {};
+                                    $('#dataTable').DataTable().rows('.selected').remove().draw(false);
+                                    }
+                                    else {
+                                        _AlertMsg(false, res.data.msg);
+                                    }
+                                }.bind(this))
+                            .catch(function (err) {
+                                    console.error(err);
+                                })
+                    });
+                            }
+
+                        }
+                    })
+    </script>
+}

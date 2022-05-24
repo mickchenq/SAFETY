@@ -1,0 +1,390 @@
+﻿@charset "utf-8";
+/* CSS Document */
+
+/*----------------------------------------------------------------------*/
+/* 內頁 */
+#MainBar::after { content: ''; clear: both; display: block; margin-bottom: 10px; }
+#MainBar h2 { float: left; }
+#MainBar #Breadcrumbs { float: right; margin-top: 3px; }
+
+/*----------------------------------------------------------------------*/
+/* 標題列 */
+#MainBar h1, #MainBar h2 { font-size: 1.5em; letter-spacing: .025em; }
+
+/* 導覽列(麵包屑) */
+#Breadcrumbs ul { overflow:hidden; padding:10px 0; display: inline-block; }
+#Breadcrumbs ul li { float:left; padding-right:16px; font-size:0.875em; color:#707070; line-height:1.25em; position:relative; }
+#Breadcrumbs ul li:last-child { padding-right:0; }
+#Breadcrumbs ul li a { display:block; color:#707070; text-decoration:none; }
+	#Breadcrumbs ul li:after { content:'/'; font-family: 'Georgia'; font-size: 1.125rem; position:absolute; top:-1px; right:4px; color:#a9a8a8; }
+	#Breadcrumbs ul li a:hover { text-decoration:underline; }
+#Breadcrumbs ul li:last-child, #Breadcrumbs ul li:last-child a { color:#239777; font-weight: bold; }
+	#Breadcrumbs ul li:last-child:after { content:''; }
+
+/*----------------------------------------------------------------------*/
+/* 標題 */
+.article_title { padding:0.25em 0; margin-bottom:5px; line-height:1.25em; letter-spacing: .0875em; border-top:1px solid #dcdcdc; color: #0c8c92; font-size: 1.875em; }
+h4.title { margin:15px 0 5px; font-size:1.325em; letter-spacing: .0875em; color:#03938f; }
+
+.post_info { font-size:0.8125em; }
+.post_info span { display:inline-block; border-left:1px solid #dcdcdc; padding-left:14px; margin-left:12px; line-height:20px; color:#8b8b8b; color: #6d6d6d; }
+.post_info span:first-child { border-left:0; padding-left:0; margin-left:0; }
+.post_info span.country img { margin-right: 7px; height: 20px; vertical-align: middle; margin-bottom: 2px; }
+.post_info.below { text-align:right; font-size:0.875em; }
+.post_info.below span { line-height:30px; }
+
+/*----------------------------------------------------------------------*/
+/* 列表搜尋 */
+.ListSearch {
+    margin-bottom: 20px; box-sizing:border-box; position:relative; background: #fff; padding:12px 20px 2px;
+	-webkit-box-shadow:0 0 10px rgba(0,0,0,.1);
+	-moz-box-shadow:0 0 10px rgba(0,0,0,.1);
+	box-shadow:0 0 10px rgba(0,0,0,.1);
+    -webkit-border-radius:8px; -moz-border-radius:8px; border-radius:8px;
+}
+.ListSearch:after { content:""; display:block; clear:both; }
+.ListSearch .title { display: none; }
+.ListSearch .item { float:left; margin-right:25px; margin-bottom:5px; font-size:0.9375em; line-height:40px; }
+.ListSearch .item .label { font-size:0.875rem; line-height:30px; font-weight: bold; }
+.ListSearch .BtnCommon { float:left; clear:none; padding-top: 30px; margin-bottom:8px; margin-left: -10px; }
+.ListSearch.FormElmt input[type="text"] { width:240px; }
+
+/* 列表搜尋-一排4個item */
+.SearchBox {
+    margin-bottom: 20px; box-sizing:border-box; position:relative; background: #fff; padding:12px 20px 12px; width: 100%;
+	-webkit-box-shadow:0 0 10px rgba(0,0,0,.1);
+	-moz-box-shadow:0 0 10px rgba(0,0,0,.1);
+	box-shadow:0 0 10px rgba(0,0,0,.1);
+    -webkit-border-radius:8px; -moz-border-radius:8px; border-radius:8px;
+}
+.SearchItems .label { font-size:0.875rem; line-height:30px; font-weight: bold; }
+.SearchItems .item { float: left; width: 25%; padding: 5px 10px; box-sizing: border-box; }
+.SearchItems .item.deadline { width: 50%; }
+.SearchItems .item.two { width: 50%; }
+.SearchItems .item.fiveone { width: 20%; }
+.SearchItems .item.threeQuarters { width: 75%; }
+.SearchItems .item.fullwidth { width: 100%; }
+.SearchItems .item select , .SearchItems .item input { width: 100%; }
+.SearchItems .item .cont { line-height: 36px; box-sizing: border-box; }
+.SearchItems.result .item .cont {
+    line-height: 1.5em; background: #eee; padding: 6px 8px; min-height: 36px;
+    -webkit-border-radius:8px; -moz-border-radius:8px; border-radius:8px;
+}
+.SearchBox.FormElmt .deadline .dev-calendar { max-width: 48%; }
+.SearchBox.FormElmt .deadline span.dash { width: 4%; text-align: center; display: inline-block; }
+.SearchItems { overflow: hidden; }
+
+.SearchBox .toggle_btn:hover { color: #239777; border-color: #ddd; }
+.SearchBox .toggle_btn:hover::before { border-color: #239777; }
+
+.SearchBox .toggle_btn, .SearchBox .toggle_btn::before { -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; transition: all 0.3s ease; }
+
+/*----------------------------------------------------------------------*/
+/* 分類下拉 */
+.CatTitle { margin:15px 0; }
+.CatTitle::after { content:''; display:block; width:100%; clear:both; }
+.CatTitle h3 { display:inline-block; font-weight:normal; line-height:2.25rem; font-size:1.375em; }
+.CatTitle .cat_select { line-height:36px; }
+.CatTitle .cat_select select, .CatTitle .cat_select .btn { vertical-align:top; font-size:1em; font-weight:400; }
+.cat_select.FormElmt select { background-color:#eee; -webkit-box-shadow:none; -moz-box-shadow:none;	box-shadow:none; border:1px solid #eee; }
+.cat_select.FormElmt select:focus { border:1px solid #aaa; }
+.CatTitle .cat_select .btn { color:#fff; background-color:#333; margin:0 0 0 5px; padding:0 12px; height:36px; line-height:36px; font-size:0.9375em; }
+.CatTitle .cat_select .btn:hover { background-color:#1eb9ee; }
+
+/*----------------------------------------------------------------------*/
+/* 頁碼 */
+#Pagination { clear:both; text-align:center; position: relative; padding-top: 10px; margin-top:10px; }
+#Pagination .pages { display:inline-block; font-size:0.875em; }
+#Pagination a { display:inline-block; width:30px; text-decoration:none; line-height:30px; color:#555; margin: 0 2px; font-weight: bold; -webkit-border-radius:16px; -moz-border-radius:16px; border-radius:16px; }
+#Pagination a:hover, #Pagination a:focus { color:#239777; }
+#Pagination a.focuz {
+    color:#fff;
+    background: linear-gradient(to bottom, #4ab895, #239777);
+}
+	#Pagination a.first, #Pagination a.prev, #Pagination a.next, #Pagination a.last { width:auto; padding:0 13px; border: 1px solid #d9d9d9; font-size: 0.8125rem; }
+    #Pagination a.first:hover, #Pagination a.prev:hover, #Pagination a.next:hover, #Pagination a.last:hover { background: #239777; color: #fff; border: 1px solid #239777; cursor: pointer;}
+    #Pagination a.first:focus, #Pagination a.prev:focus, #Pagination a.next:focus, #Pagination a.last:focus { background: #239777; color: #fff; border: 1px solid #239777; }
+
+#Pagination .current { width:auto; background-color:transparent; cursor:default; }
+	#Pagination .current:hover { color:#333; background-color:transparent; }
+	
+#Pagination .setting { display:block; clear:both; line-height:30px; color:#6d6d6d; font-size:0.8125em; padding-top:12px; }
+#Pagination .setting select { padding:5px 0 5px 4px; height:30px; vertical-align:top; }
+#Pagination .setting input { vertical-align:top; }
+#Pagination .setting input[type="text"] { width:36px; height:30px; padding:0 6px; }
+#Pagination .setting select, #Pagination .setting input[type="text"] {
+	border:1px solid #d9d9d9; box-sizing: border-box;
+	-webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none;
+    -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;
+}
+#Pagination .setting select:focus, #Pagination .setting input[type="text"]:focus { outline: none; border: 1px solid #239777; }
+#Pagination .setting input[type="button"] {
+    height:30px; padding:0 8px; margin-left:3px; background-color:#888; color:#fff; font-size:1em;
+    -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;	
+}
+#Pagination .setting input[type="button"]:hover, #Pagination .setting input[type="button"]:focus { background: #239777; }
+
+#Pagination a.prev { margin-right:10px; }
+#Pagination a.next { margin-left:10px; }
+
+#Pagination a, #Pagination .setting select, #Pagination .setting input[type="text"], #Pagination .setting input[type="button"] { -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; transition: all 0.3s ease; }
+
+/*----------------------------------------------------------------------*/
+/* 文字列表 */
+
+
+/*----------------------------------------------------------------------*/
+/* 按鈕們 */
+.btnBox { overflow:hidden; padding-bottom: 10px; position:relative; }
+.btnBox > div { float:right; }
+.btnBox > div > div { float:left; margin-left:10px; margin-bottom: 10px; position:relative; }
+.btnBox > div > div:first-child { margin-left:0; }
+.btnBox.tc { text-align:center; }
+.btnBox.tl { float:left; }
+.btnBox.tc > div { float:none; display:inline-block; }
+.btnBox a, .btnBox input {
+	display:block; background:#fff; color:#333; height:36px; font-size:1rem; letter-spacing:0.5px; border:2px solid #555; padding:0 20px; text-align:center;
+	-webkit-border-radius:20px; -moz-border-radius:20px; -o-border-radius:20px; border-radius:20px;
+	transition:all 0.3s ease; -moz-transition:all 0.3s ease; -webkit-transition:all 0.3s ease; -o-transition:all 0.3s ease;
+}
+.btnBox a { text-decoration:none; line-height:36px; text-align:center; }
+.btnBox a:hover { text-decoration:none; background:#239777; border:2px solid #239777; color: #fff; }
+
+.btnBox a::before { font-family:"Font Awesome 5 Pro"; font-weight:900; margin-right: 5px; }
+.btnBox .add a::before { content: "\f067"; }
+.btnBox .edit a::before { content: "\f044"; }
+.btnBox .del a::before { content: "\f2ed"; }
+.btnBox .save a::before { content: "\f0c7"; }
+.btnBox .cancel a::before { content: "\f00d"; }
+.btnBox .check a::before { content: "\f00c"; }
+.btnBox .back a::before { content: "\f0e2"; }
+.btnBox .search a::before { content: "\f002"; }
+
+.btnBox input { line-height:34px; position:relative; }
+.btnBox input:hover { background:#239777; border:2px solid #239777; color: #fff; }
+
+.FormGroupWarp + .btnBox { padding-top: 15px; }
+
+/* 通用a連結按鈕 */
+a.btn_style { display: block; text-decoration: none; padding:0 12px; background: #454545; color: #fff; transition:all 0.3s ease; -moz-transition:all 0.3s ease; -webkit-transition:all 0.3s ease; -o-transition:all 0.3s ease; }
+a.btn_style + a.btn_style { margin-left: 10px; }
+input[type="text"] + a.btn_style { margin-left: 10px; }
+a.btn_style:hover { background:#239777; cursor:pointer;}
+a.btn_reset::before { font-family:"Font Awesome 5 Pro"; font-weight:900; margin-right: 5px; content: "\f2f1"; }
+.FormTableInfo a.btn_style { font-size: 0.9375em; -webkit-border-radius:20px; -moz-border-radius:20px; -o-border-radius:20px; border-radius:20px; }
+.FormTable a.btn_style { font-size: 0.9375em; -webkit-border-radius:8px; -moz-border-radius:8px; -o-border-radius:8px; border-radius:8px; display: inline-block; vertical-align: top; margin-right: 8px; margin-bottom: 8px; }
+a.btn_search::before { font-family:"Font Awesome 5 Pro"; font-weight:900; content: "\f002"; }
+a.btn_del::before { font-family:"Font Awesome 5 Pro"; font-weight:900; content: "\f2ed"; }
+.ListTable a.btn_style { height: 35px; line-height: 35px; display: inline-block; text-align: center; padding: 0 12px; -webkit-border-radius:8px; -moz-border-radius:8px; -o-border-radius:8px; border-radius:8px; }
+.ListTable a.btn_style.red { background: #b1342b; }
+.ListTable a.btn_style.red:hover { background: #e76666; }
+.ListTable a.btn_style.green { background: #0f8230; }
+.ListTable a.btn_style.green:hover { background: #3fa75d; }
+a.btn_download::before { font-family:"Font Awesome 5 Pro"; font-weight:900; content: "\f019"; }
+a.btn_money::before { font-family:"Font Awesome 5 Pro"; font-weight:900; content: "\f155"; }
+a.btn_add::before { font-family:"Font Awesome 5 Pro"; font-weight:900; content: "\f067"; }
+
+/*----------------------------------------------------------------------*/
+/* 產品列表 */
+.ProItemList { padding: 5px 0; }
+.ItemBigTitle { padding: 15px 0; position: relative; }
+.ItemBigTitle .text { font-size: 1.375em; letter-spacing: .025em; font-weight: bold; color: #239777; }
+.ItemBigTitle .btnBox { position: absolute; top: 5px; right: 0; padding-bottom: 0; }
+.ItemBigTitle .labeltitle { font-size: 1.2em; letter-spacing: .025em;  background-color: rgb(200, 232, 245); color: black; margin-left: 5pt;}
+.ItemBigTitle .label { font-size: 1.2em; letter-spacing: .025em;  background-color: rgb(253, 229, 192); color: black; margin-left: 5pt;}
+.ListTable .ItemBigTitle { margin-bottom: 10px; }
+.ProItem {
+	line-height: 1.5em; background: #fff; padding: 12px 20px 0; margin-bottom: 25px;  
+	-webkit-border-radius:8px; -moz-border-radius:8px; border-radius:8px;
+	-webkit-box-shadow:0 0 10px rgba(0,0,0,0.1);
+	-moz-box-shadow:0 0 10px rgba(0,0,0,0.1);
+	box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+.first_tr { display: table; width: 100%; }
+.first_tr > div { display: table-cell; padding: 0 8px; }
+.ProItem .label { font-size:0.9375rem; padding: 7px 0; font-weight: bold; color: #005735; }
+.ProItem .first_tr { padding-bottom: 10px; }
+.ProItem .second_tr {
+    padding: 3px 0 10px;
+    transform:scaleY(0); height:0; visibility:hidden; opacity:0; transform-origin: top;
+}
+.ProItem.show .second_tr {
+    transform:scaleY(1); height:auto; visibility:visible; opacity:1;
+    -webkit-transition: all 0.3s linear; -moz-transition: all 0.3s linear; transition: all 0.3s linear;
+}
+.second_tr table { width: 100%; }
+.second_tr table th { text-align: left; font-size:0.9375rem; background: #e0f2ec; }
+.second_tr table th, .ProItem table td { padding: 8px; border-bottom: 1px dotted #eee; }
+.second_tr table td.tc { text-align: center; }
+
+/* 管理維護 */
+.ProItem ul.edit_btns { display: flex; justify-content: left; }
+ul.edit_btns { display: flex; justify-content: center; }
+ul.edit_btns li { margin: 0 5px; }
+ul.edit_btns li a { text-decoration: none; color: #333; }
+ul.edit_btns li a:hover { color: #239777; }
+ul.edit_btns li a::before { font-family:"Font Awesome 5 Pro"; font-weight:900; }
+ul.edit_btns li a.edit::before { content: "\f044"; }
+ul.edit_btns li a.copy::before { content: "\f0c5"; }
+ul.edit_btns li a.del::before { content: "\f2ed"; }
+ul.edit_btns li a.add::before { content: "\f055"; }
+ul.edit_btns li a.close::before { content: "\f057"; }
+ul.edit_btns li a.save::before { content: "\f0c7"; }
+ul.edit_btns li a.cancel::before {content: "\f00d";}
+
+.ProItem a.btn_style {
+		display: inline-block;
+		border-radius: 30px;
+		font-size: .9375em;
+		padding: 0 12px;		
+	}
+.ProItem .btn_search { text-decoration: none; color: #333; }
+.ProItem .btn_search:hover { color: #239777;}
+
+/*----------------------------------------------------------------------*/
+/* popup_box */
+.box_wrap { position: absolute; left: 50%; top: 50%; }
+@media screen and (min-width: 1520px) {
+	.box_wrap { width: 1200px; height: 650px; margin: -325px 0 0 -600px; padding: 25px 40px; }
+}
+@media screen and (max-width: 1519px) {
+	.box_wrap { width: 900px; height: 600px; margin: -300px 0 0 -450px; padding: 25px 35px; }
+}
+.popup_cont { padding: 0 10px; }
+.popup_cont .SearchItems { margin: 10px -10px; }
+
+.popup_cont .ListSearch {
+    padding: 12px 0 2px;
+	-webkit-box-shadow:none; -moz-box-shadow:none; box-shadow:none;
+}
+.popup_cont .ListSearch::before { content: ''; position: absolute; bottom: -10px; width: 100%; height: 1px; background: #ccc; }
+
+.popup_cont .ListTable caption { padding-top: 5px; }
+
+/*----------------------------------------------------------------------*/
+/* 虛擬單位建立與維護 */
+.TwoColumnsBox { display: table; width: 100%; padding-top: 20px; }
+.TwoColumnsBox > div { display: table-cell; vertical-align: top; width: 50%; }
+.TwoColumnsBox > div:first-child { padding-right: 30px; }
+.TwoColumnsBox > div:last-child { padding-left: 30px; }
+.TwoColumnsBox .overview { overflow-x: auto; height: 400px; }
+.TwoColumnsBox .overview::-webkit-scrollbar { -webkit-appearance:none; width:14px; height:14px; }
+.TwoColumnsBox .overview::-webkit-scrollbar-thumb { border-radius:8px; border:3px solid #fff; background-color:rgba(0, 0, 0, .3); }
+.TwoColumnsBox .overview::-webkit-scrollbar-thumb:hover { background-color:#000; }
+.TwoColumnsBox .ListTable { margin-bottom: 0; margin-top: 10px; }
+
+table.FormTable_st2 { width: 100%; }
+.TwoColumnsBox .FormTable_st2 { margin: 20px 0 10px; }
+.FormTable_st2 tr, .FormTable_st2 th, .FormTable_st2 td { display: block; text-align: left; }
+.FormTable_st2 th, .FormTable_st2 td { border-bottom: 5px solid #fff; }
+.FormTable_st2 th { background: #e0f2ec; padding:8px 12px; line-height: 1.5em; -webkit-border-radius:8px 8px 0 0; -moz-border-radius:8px 8px 0 0; border-radius:8px 8px 0 0; }
+.FormTable_st2 td { padding:10px 12px 5px; line-height: 36px; }
+
+/*----------------------------------------------------------------------*/
+/* 虛擬單位設定 + 角色權限設定 */
+.TreeMenuBox {
+	width: 290px; float: left; box-sizing: border-box; padding: 10px; background: #fff;
+	-webkit-border-radius:20px; -moz-border-radius:20px; border-radius:20px;
+	-webkit-box-shadow:0 0 10px rgba(0,0,0,.1);
+	-moz-box-shadow:0 0 10px rgba(0,0,0,.1);
+	box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+.TreeMenuBox + .ContRight { margin-left: 300px; }
+.TreeMenuBox + .ContRight::after { content: ''; display: block; clear: both; }
+.ContRight .SearchBox { padding: 12px 20px 16px; margin-bottom: 10px; -webkit-border-radius:20px; -moz-border-radius:20px; border-radius:20px; }
+.TreeMenuBox .overview { height: 76vh; overflow-x: auto; padding-right: 10px; }
+.TreeMenuBox .overview::-webkit-scrollbar { -webkit-appearance:none; width:14px; height:14px; }
+.TreeMenuBox .overview::-webkit-scrollbar-thumb { border-radius:8px; border:3px solid #fff; background-color:rgba(0, 0, 0, .3); }
+.TreeMenuBox .overview::-webkit-scrollbar-thumb:hover { background-color:#000; }
+
+.ContRight .TwoColumnsBox > div:first-child { padding-right: 20px; }
+.ContRight .TwoColumnsBox > div:last-child { padding-left: 20px; }
+
+/* 頁籤樣式 */
+.tabs { margin-bottom: 25px; }
+.tabs ul { display: table; width: 100%; }
+.tabs li { display: table-cell; width: 25%; text-align: center; border-bottom: 2px solid #ccc; }
+.tabs li a { display: block; text-decoration: none; color: #999; padding: .5em 1em; font-weight: bold; font-size: 1.25em; line-height: 1.25em; }
+.tabs li:hover { border-bottom: 2px solid #777; }
+.tabs li:hover a { color: #555; }
+.tabs li.active { border-bottom: 2px solid #239777; }
+.tabs li.active a { color: #239777; }
+
+/* 收合Box */
+.slideBox .slideTitle .text {
+	display: inline-block; cursor: pointer; padding: 8px 12px; margin: 10px 0; background: #eee; font-weight: bold;
+	-webkit-border-radius:8px; -moz-border-radius:8px; border-radius:8px;
+}
+.slideBox .slideTitle .text:hover { color: #239777; }
+.slideBox .slideTitle .text::after { font-family:"Font Awesome 5 Pro"; font-weight:900; content: '\f106'; margin-left: 5px; font-size: 1.125rem; }
+.slideBox .slideTitle.show .text::after { content: '\f107'; }
+.slideBox .slideCont { overflow: hidden; width: 100%; display: none; }
+.slideBox .slideCont li { line-height: 1.5em; padding: 5px; float: left; width: 50%; box-sizing: border-box; }
+
+.slideBox .btn_flie { cursor: pointer; }
+.slideBox .btn_flie::before { font-family:"Font Awesome 5 Pro"; font-weight:900; content: "\f65b"; font-size: 1.125rem; }
+.slideBox .btn_flie:hover { color: #239777; }
+
+/* treeview */
+.treeview { font-size: 0.9375em; }
+.treeview ul { margin-top: 4px; }
+/*.treeview ul ul { display: none; }*/
+.treeview li { margin: 0; padding: 3px 0px 3px 18px; line-height: 1.375em; }
+.treeview .hitarea { height: 16px; width: 16px; margin-left: -19px; float: left; cursor: pointer; position: relative; margin-top: 6px; }
+.treeview .hitarea::before { font-family:"Font Awesome 5 Pro"; font-weight:900; font-size: .75rem; color: #666; content: "\f146"; position: absolute; width: 100%; height: 100%; text-align: center; line-height: 16px; background: #fff; }
+.treeview .selected { background: #eee; font-weight: bold; }
+.treeview .hover { color: #239777; cursor: pointer; }
+
+#treecontrol { margin: 1em 0; display: none; }
+
+.treeview li { background: url(../images/treeview/treeview-default-line.gif) 0 0 no-repeat; }
+.treeview li.collapsable, .treeview li.expandable { background-position: 0 -174px; }
+
+.treeview .expandable-hitarea::before { content: "\f0fe"; }
+
+.treeview li.last { background-position: 0 -1760px }
+.treeview li.lastCollapsable, .treeview li.lastExpandable { background-image: url(../images/treeview/treeview-default.gif); background-repeat:no-repeat; }
+
+.treeview div.lastCollapsable-hitarea, .treeview div.lastExpandable-hitarea { background-position: 0; }
+.treeview div.lastCollapsable-hitarea::before, .treeview div.lastExpandable-hitarea::before { content: "\f0fe"; }
+.treeview .collapsable-hitarea.lastCollapsable-hitarea::before { content: "\f146"; }
+
+.treeview .placeholder { background: url(../images/treeview/ajax-loader.gif) 0 0 no-repeat;	height: 16px; width: 16px; display: block; }
+
+.treeview_style span[class] { display: inline-block; padding: 3px 2px; }
+.treeview_style span[class]::before { font-family:"Font Awesome 5 Pro"; font-weight:900; font-size: 1.125em; width: 1.375em; text-align: center; display: inline-block; color: #239777; }
+.treeview_style span.house::before { content: "\f015"; }
+.treeview_style span.users::before { content: "\f0c0"; color: #976023; }
+.treeview_style span.user::before { content: "\f007"; color: #d49b5c; }
+
+
+.treeview_style .item_node:hover {
+	background-color: #CCEEFF;
+	cursor: pointer;
+	/* 圓角 */
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	/* padding 是為了避開圓角的顯示範圍
+	padding: 6px;*/
+}
+
+.treeview_style .hitnode {
+	cursor: pointer;
+}
+
+/* 會計科目樹狀結構 */
+.AccTreeMenuBox {
+	width: 90%; float: left; box-sizing: border-box; margin: 10px;padding: 10px; background: #fff;
+	-webkit-border-radius:20px; -moz-border-radius:20px; border-radius:20px;
+	-webkit-box-shadow:0 0 10px rgba(0,0,0,.1);
+	-moz-box-shadow:0 0 10px rgba(0,0,0,.1);
+	box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+.AccTreeMenuBox + .ContRight { margin-left: 300px; }
+.AccTreeMenuBox + .ContRight::after { content: ''; display: block; clear: both; }
+.AccTreeMenuBox .ContRight .SearchBox { padding: 12px 20px 16px; margin-bottom: 10px; -webkit-border-radius:20px; -moz-border-radius:20px; border-radius:20px; }
+.AccTreeMenuBox .overview { height: 100%; overflow-x: auto; padding-right: 10px; }
+.AccTreeMenuBox .overview::-webkit-scrollbar { -webkit-appearance:none; width:14px; height:14px; }
+.AccTreeMenuBox .overview::-webkit-scrollbar-thumb { border-radius:8px; border:3px solid #fff; background-color:rgba(0, 0, 0, .3); }
+.AccTreeMenuBox .overview::-webkit-scrollbar-thumb:hover { background-color:#000; }

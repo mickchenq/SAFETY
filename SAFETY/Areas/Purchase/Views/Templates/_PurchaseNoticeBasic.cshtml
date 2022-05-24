@@ -1,0 +1,270 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+<script type="text/template" id="PurchaseNoticeBasic">
+    <div class="FormGroupWarp" id="divBasic">
+        {{refreshVal}}
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["進貨通知單"]</span></legend>
+            <div class="FormTable">
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["系統進貨單號"]</div>
+                    <div class="cont">
+                        <input type="text" placeholder="@_localizer["系統自動產生"]" v-model="objBasicInfo.OrderNo" maxlength="20" disabled />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["物流中心"]</div>
+                    <div class="cont">
+                        <select v-model="objBasicInfo.DcId">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(bItem,index) in arrDataCenter" v-if="bItem.IsStop=='N' || bItem.DcId==objBasicInfo.DcId" :value="bItem.DcId">{{bItem.DcName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["客戶"]</div>
+                    <div class="cont">
+                        <select v-model="objBasicInfo.CustomerId" v-on:change="changeCustomer()">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(item,index) in arrCustomer" v-if="item.IsStop=='N' || item.CustomerId==objBasicInfo.CustomerId" :value="item.CustomerId">{{item.CustomerName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["客戶進貨單號"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objBasicInfo.CustomerOrderNo" maxlength="20" />
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["預計到貨日"]</div>
+                    <div class="cont">
+                        <input type="date" v-bind:value="filterDate(objBasicInfo.EstimatedReceiveDate)"
+                               v-on:input="objBasicInfo.EstimatedReceiveDate=$event.target.value" />
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["進貨接單日"]</div>
+                    <div class="cont">
+                        <input type="date" v-bind:value="filterDate(objBasicInfo.ActualReceiveDate)"
+                               v-on:input="objBasicInfo.ActualReceiveDate=$event.target.value" />
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["到貨方式"]</div>
+                    <div class="cont">
+                        <select v-model="objBasicInfo.ReceiveType">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option value="1">@_localizer["廠商送貨"]</option>
+                            <option value="2">@_localizer["DC提貨"]</option>
+                            <option value="3">@_localizer["DC拖櫃"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["作業方式"]</div>
+                    <div class="cont">
+                        <select v-model="objBasicInfo.OperateType">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option value="1">@_localizer["一般作業"]</option>
+                            <option value="2">@_localizer["內部作業"]</option>
+                            <option value="3">@_localizer["內部入庫"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["緊急進貨"]</div>
+                    <div class="cont">
+                        <select v-model="objBasicInfo.IsUrgentOrder">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option value="1">@_localizer["否"]</option>
+                            <option value="2">@_localizer["是"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["進貨狀態"]</div>
+                    <div class="cont">
+                        <select v-model="objBasicInfo.NotificationStatus" disabled>
+                            <option value="0">@_localizer["請選擇"]</option>
+                            @*<option value="1">待驗收</option>*@
+                        <option value="2">@_localizer["待入庫"]</option>
+                        <option value="3">@_localizer["入庫中"]</option>
+                        <option value="4">@_localizer["進貨完成"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["聯絡人"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objBasicInfo.ContactName" maxlength="20" />
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["聯絡人電話"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objBasicInfo.ContactPhone" maxlength="20" />
+                    </div>
+                </div>
+                <div class="item fullwidth">
+                    <div class="label"><span class="red">*</span>@_localizer["聯絡人地址"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objBasicInfo.ContactAddress" maxlength="100" />
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["驗收日期"]</div>
+                    <div class="cont">
+                        <input type="date" v-bind:value="filterDate(objBasicInfo.AcceptDate)"
+                               v-on:input="objBasicInfo.AcceptDate=$event.target.value" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["驗收人員"]</div>
+                    <div class="cont">
+                        <select v-model="objBasicInfo.AcceptId">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(item,index) in arrUser" v-if="item.IsStop=='N'  || item.UserId==objBasicInfo.AcceptId" :value="item.UserId">{{item.UserName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item fullwidth">
+                    <div class="label">@_localizer["備註"]</div>
+                    <div class="cont">
+                        <textarea rows="2" class="fullwidth" maxlength="200" v-model="objBasicInfo.Remarks"></textarea>
+                    </div>
+                </div>
+            </div>
+
+        </fieldset>
+    </div>
+</script>
+
+<script>
+    var PurchaseNoticeBasic = {
+        template: '#PurchaseNoticeBasic',
+        props: {
+            value: {
+                type: Object
+            }
+        },
+        components: {
+        },
+        data: function () {
+            return {
+                // 主檔
+                objBasicInfo: {
+                    OrderId: '0',
+                    OrderNo: '',
+                    DcId: '0',
+                    CustomerId: '0',
+                    ReceiveType: '0',
+                    OperateType: '0',
+                    IsUrgentOrder: '0',
+                    AcceptId: '0',
+                    NotificationStatus: '2',
+                    isChangeCustomer: false,
+                },
+                // 所有明細資訊
+                objDetailInfos: [],
+                arrCustomer: [],                 // 客戶選項
+                arrDataCenter: [],              // 物流中心下拉選單
+                arrUser: [],                            // 使用者選項
+                selectCustomerId: '0',      //目前所選的客戶
+            }
+        },
+        computed: {
+            // 取得父組件v-model資料
+            refreshVal() {
+                this.objBasicInfo = this.value.basicinfo;
+                this.objDetailInfos = this.value.objDetailInfos;
+                this.isView = this.value.isView;
+                this.selectCustomerId = this.value.selectCustomerId;
+                // 只能檢視
+                if (this.isView) {
+                    $("#divBasic input").prop('disabled', true);
+                    $("#divBasic textarea").prop('disabled', true);
+                    $("#divBasic select").prop('disabled', true);
+                    $(".uploadFile").css('display', 'none')
+                }
+            }
+        },
+        created: function () {
+            // 取得客戶下拉選單
+            this.getCustData()
+            // 取得物流中心下拉選單
+            this.GetDataCenterData();
+            // 取得使用者下拉選單
+            this.GetUserData();
+        },
+        mounted: function () {
+        },
+        methods: {
+            filterDate: function (val) {
+                return val ? val.replace('T00:00:00', '') : ''
+            },
+            // 客戶選單
+            getCustData: function () {
+                axios.get('/api/Common/Options/GetCustomerData')
+                    .then(function (res) {
+                        this.arrCustomer = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    })
+            },
+            GetDataCenterData: function () {
+                // 取得物流中心下拉選單
+                axios.get('/api/Common/Options/GetDataCenterData')
+                    .then(function (res) {
+                        this.arrDataCenter = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    });
+            },
+            GetUserData: function () {
+                // 取得使用者下拉選單
+                axios.get('/api/Common/Options/GetUserData')
+                    .then(function (res) {
+                        this.arrUser = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    });
+            },
+            // 變更客戶時
+            changeCustomer: function () {
+                if (this.objDetailInfos.length <= 0) {
+                    this.selectCustomerId = this.objBasicInfo.CustomerId;
+                    this.objBasicInfo.isChangeCustomer = true;
+                    return;
+                }
+
+                Swal.fire({
+                    title: '@_localizer["變更客戶"]',
+                    html: '@_localizer["變更客戶後，明細需重新建立"]',
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: '@_localizer["確定"]',
+                    cancelButtonText: '@_localizer["取消"]'
+                }).then(
+                    function (result) {
+                        if (result.isConfirmed) {
+                            this.objBasicInfo.isChangeCustomer = true;
+                            //清空明細
+                            this.objDetailInfos.splice(0);
+                            this.selectCustomerId = this.objBasicInfo.CustomerId;
+                        } else {
+                            //恢復原客戶值
+                            this.objBasicInfo.CustomerId = this.selectCustomerId;
+                        }
+                    }.bind(this));
+
+
+            },
+
+        }
+    }
+</script>

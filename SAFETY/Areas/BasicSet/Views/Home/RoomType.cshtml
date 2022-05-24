@@ -1,0 +1,288 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+@{
+    ViewData["Title"] = @_localizer["庫別類型資料維護"];
+}
+
+<div id="RoomTypeVue">
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["搜尋條件"]</span></legend>
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label">@_localizer["代碼"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.RoomTypeCode" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["名稱"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.RoomTypeName" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["狀態"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.IsStop">
+                            <option value="">@_localizer["請選擇"]</option>
+                            <option value="N">@_localizer["啟用"]</option>
+                            <option value="Y">@_localizer["停用"]</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="BtnCommon mid">
+                <div class="search"><span><input type="submit" value="@_localizer["搜尋"]" v-on:click="onSearch" /></span></div>
+                @*<div class="cancel"><span><input type="reset" value="清除" /></span></div>*@
+            </div>
+
+        </fieldset>
+    </div>
+
+    <div class="ListTable" v-show="arrResult.length>0">
+        <div class="table_title">
+            <div class="btnBox">
+                <div>
+                    <div class=""><a href="javascript:;" v-bind:class="{'btn_disabled':noSelect || !noEdit }" v-on:click="onDelete">@_localizer["刪除"]</a></div>
+                    <div class=""><a href="javascript:;" v-bind:class="{'btn_disabled':noSelect}" v-on:click="editSet">@_localizer["修改"]</a></div>
+                </div>
+            </div>
+        </div>
+        <table id="dataTable" class="table dataTable stripe">
+        </table>
+    </div>
+
+    <!--基本資料-->
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["基本資料"]</span></legend>
+            <div class="btnBox">
+                <div>
+                    <div class=""><a v-bind:class="{'btn_disabled':disAdd}" href="javascript:;" v-on:click="addReset">@_localizer["新增"]</a></div>
+                    <div class=""><a v-bind:class="{'btn_disabled':noEdit}" href="javascript:;" v-on:click="onSubmit">@_localizer["儲存"]</a></div>
+                    <div class=""><a v-bind:class="{'btn_disabled':noEdit}" href="javascript:;" v-on:click="onCancel">@_localizer["離開"]</a></div>
+                </div>
+            </div>
+            <div class="FormTable">
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["代碼"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.RoomTypeCode" />
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["名稱"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.RoomTypeName" />
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label"><span class="red">*</span>@_localizer["狀態"]</div>
+                    <div class="cont">
+                        <select v-model="objInfo.IsStop">
+                            <option value="">@_localizer["請選擇"]</option>
+                            <option value="N">@_localizer["啟用"]</option>
+                            <option value="Y">@_localizer["停用"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label">@_localizer["備註"]</div>
+                    <div class="cont">
+                        <textarea rows="2" style="width:100%" v-model="objInfo.Remarks" maxlength="200"></textarea>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+</div>
+
+@section Scripts{
+    <script>
+
+        var tv = new Vue({
+            el: '#RoomTypeVue',
+            computed: {
+                // 尚未選擇列
+                noSelect: function () {
+                    return (Object.keys(this.rowSelect).length === 0)
+                },
+                // 尚未點選新增或編輯
+                noEdit: function () {
+                    return (Object.keys(this.objInfo).length === 0)
+                },
+            },
+            data: {
+                // 新增按鈕樣式
+                disAdd: false,
+                // 查詢條件
+                queryInfo: {
+                    RoomTypeCode: '',
+                    RoomTypeName: '',
+                    IsStop: ''
+                },
+                // 查詢結果
+                arrResult: [],
+                // 新增/編輯
+                objInfo: {},
+                rowSelect: {},
+                coulmnSet: [],
+                columnDef: []
+            },
+            methods: {
+                onReset: function () {
+                    this.disAdd = false;
+                    this.rowSelect = {};
+                    this.objInfo = {};
+                    this.arrResult = [];
+                    $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                },
+                onSearch: function () {
+                    let thisvue = this;
+                    thisvue.disAdd = false;
+                    thisvue.rowSelect = {};
+                    thisvue.objInfo = {};
+                    thisvue.arrResult = [];
+
+                    thisvue.coulmnSet = [
+                        {
+                            title: "@_localizer["代碼"]",
+                            "data": "RoomTypeCode"
+                        },
+                        {
+                            title: "@_localizer["名稱"]",
+                            "data": "RoomTypeName"
+                        },
+                        {
+                            title: "@_localizer["備註"]",
+                            "data": "Remarks"
+                        }
+                        ,
+                        {
+                            title: "@_localizer["狀態"]",
+                            "data": "IsStop"
+                        }
+                    ];
+
+                    thisvue.columnDef = [
+                        {
+                            "className": "text-center",
+                            "targets": [3],
+                            mRender: function (result) {
+                                if (result != null) {
+                                    console.log(result);
+                                    var sbtn = result == "N" ? "@_localizer["啟用"]" : "@_localizer["停用"]";
+
+                                    return sbtn;
+                                }
+                            }
+                        }
+                    ];
+
+                    var issearch = false;
+                    LoadDataTable('@Url.Action("QueryRoomType","RoomTypeApi",new { Area = "BasicSet" })', this.queryInfo, this.coulmnSet, this.columnDef, issearch)
+                        .then(function () {
+                            thisvue.arrResult = $('#dataTable').DataTable().rows().data();
+                            $('#dataTable tbody').on('click', 'tr', function () {
+                                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                                $(this).toggleClass('selected');
+                                //console.log($('#dataTable').DataTable().rows('.selected').data().length);
+                                if ($('#dataTable').DataTable().rows('.selected').data().length > 0) {
+                                    thisvue.rowSelect = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows('.selected').data()[0]));
+                                    //console.log(this.rowSelect);
+                                } else
+                                    thisvue.rowSelect = {};
+                            });
+                        });
+
+                }
+                ,
+                onDelete: function () {
+                    let thisvue = this;
+                    if (thisvue.noSelect) {
+                        _AlertMsg(false, '@_localizer["請選擇資料"]')
+                        return false
+                    }
+                    _ConfirmAlert('w', '@_localizer["警告"]', '@_localizer["確定刪除嗎?"]', true, function () {
+                        axios.post('/api/BasicSet/RoomTypeApi/DeleteRoomType', thisvue.rowSelect)
+                            .then(function (res) {
+                                //this.arrResult = res.data.dt
+                                // 刪除成功，清空選擇資料
+                                console.log(res);
+
+                                if (res.data.isOk) {
+                                    let RemoveIndex;
+                                    var filteredElements = thisvue.arrResult.filter(function (item, index) { RemoveIndex = index; return item.RoomTypeId == thisvue.rowSelect.RoomTypeId; });
+                                    //console.log(RemoveIndex);
+                                    //let RemoveIndex = thisvue.arrResult.findIndex(e => e.RoomTypeId == thisvue.rowSelect.RoomTypeId);
+                                    thisvue.arrResult.splice(RemoveIndex, 1);
+                                    thisvue.rowSelect = {}
+                                    $('#dataTable').DataTable().rows('.selected').remove().draw(false);
+                                }
+                            }.bind(this))
+                            .catch(function (err) {
+                                console.error(err);
+                            })
+                    });
+                },
+                // 新增按鈕
+                addReset: function () {
+                    this.disAdd = !this.disAdd
+                    this.objInfo = {
+                        'RoomTypeId': 0,
+                        'RoomTypeCode': '',
+                        'RoomTypeName': '',
+                        'IsStop': 'N',
+                        'Remarks': ''
+                    };
+                    this.rowSelect = {};
+                    if (!this.noSelect)
+                    $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                },
+                // 修改
+                editSet: function () {
+                    if (this.noSelect) {
+                        _AlertMsg(false, '@_localizer["請選擇資料"]')
+                        return false
+                    }
+                    this.disAdd = !this.disAdd
+                    this.objInfo = JSON.parse(JSON.stringify(this.rowSelect))
+                },
+                // 儲存
+                onSubmit: function () {
+                    if (this.noEdit) {
+                        _AlertMsg(false, '@_localizer["請點選新增或選擇列後點選修改"]')
+                        return false
+                    }
+                    axios.post('/api/BasicSet/RoomTypeApi/UpdateRoomType', this.objInfo)
+                        .then(function (res) {
+                            _AlertMsg(res.data.isOk, res.data.msg)
+                            // 編輯成功，清空選擇資料
+                            if (res.data.isOk) {
+                                this.rowSelect = {}
+                                this.onSearch()
+
+                            }
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 離開
+                onCancel: function () {
+                    if (this.noEdit) {
+                        _AlertMsg(false, '@_localizer["請點選新增或選擇列後點選修改"]')
+                        return false
+                    }
+                    this.objInfo = {}
+                    this.rowSelect = {}
+                    this.disAdd = false;
+                }
+            }
+        });
+    </script>
+}

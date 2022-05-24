@@ -1,0 +1,252 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+@{
+    ViewData["Title"] = @_localizer["每日庫存量查詢"];
+}
+<div id="DailyVue">
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["搜尋條件"]</span></legend>
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["物流中心"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.DcId">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(bItem,index) in arrDataCenter" v-if="bItem.IsStop=='N'" :value="bItem.DcId">{{bItem.DcName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["客戶"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.CustomerId" v-on:change="changeCustomer()">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(item,index) in arrCustomer" v-if="item.IsStop=='N'" :value="item.CustomerId">{{item.CustomerName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item ">
+                    <div class="label">@_localizer["商品"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.ProductId">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option :value="item.ProductId" v-if="item.IsStop=='N'" v-for="item in arrProds">{{item.ProductName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["商品狀態"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.ProductStatus">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option value="1">@_localizer["良品"]</option>
+                            <option value="2">@_localizer["不良品"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["商品批號"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.ProductLotNo" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["報表日期"]</div>
+                    <div class="cont">
+                        <input type="date" placeholder="YYYY/MM/DD" v-model="queryInfo.ReportDate" class="date dev-calendar">
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["庫存種類"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.StockType">
+                            <option value="1">@_localizer["每日庫存"]</option>
+                            <option value="2">@_localizer["過期品"]</option>
+                            <option value="3">@_localizer["即期品"]</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="BtnCommon mid">
+                <div class="search"><span><input type="submit" value="@_localizer["搜尋"]" v-on:click="onSearch" /></span></div>
+            </div>
+        </fieldset>
+    </div>
+
+    <!--列表資料-->
+    <div class="ListTable" v-show="arrResult.length>0">
+        <table id="dataTable" class="table dataTable stripe">
+        </table>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        var vm = new Vue({
+            el: '#DailyVue',
+            components: {
+            },
+            data: function () {
+                return {
+                    // 查詢條件
+                    queryInfo: {
+                        DcId: '0',
+                        CustomerId: '0',
+                        ProductId: '0',
+                        ProductLotNo: '',
+                        ProductStatus: '0',
+                        ReportDate: this.GetTodayDate(),
+                        StockType: '1'
+                    },
+                    //objInfo: {},
+                    // 查詢結果
+                    arrResult: [],
+                    arrDataCenter: [],         // 物流中心下拉選單
+                    arrCustomer: [],            // 客戶選項
+                    arrProds: []                   // 商品選項
+                }
+            },
+            created: function () {
+                // 取得物流中心下拉選單
+                this.GetDataCenterData();
+                // 取得客戶下拉選單
+                this.GetCustData()
+            },
+            methods: {
+                GetDataCenterData: function () {
+                    // 取得物流中心下拉選單
+                    axios.get('/api/Common/Options/GetDataCenterData')
+                        .then(function (res) {
+                            this.arrDataCenter = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        });
+                },
+                // 客戶選單
+               GetCustData: function () {
+                    axios.get('/api/Common/Options/GetCustomerData')
+                        .then(function (res) {
+                            this.arrCustomer = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 商品選單
+                GetProdData: function () {
+                    axios.get('/api/Common/Options/GetProductDataByCust', { params: { CustId: this.queryInfo.CustomerId } })
+                        .then(function (res) {
+                            this.arrProds = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                //抓取當天日期
+                GetTodayDate() {
+                    const nowDate = new Date();
+                    const date = {
+                        year: nowDate.getFullYear(),
+                        month: nowDate.getMonth() + 1,
+                        date: nowDate.getDate(),
+                    }
+                    const newmonth = date.month > 10 ? date.month : '0' + date.month
+                    const day = date.date > 10 ? date.date : '0' + date.date
+                    return date.year + '-' + newmonth + '-' + day;
+                },
+                // 變更客戶時
+                changeCustomer: function () {
+                    // 取得商品下拉選單
+                    this.GetProdData();
+                    this.queryInfo.ProductId = "0";
+                },
+                onSearch: function () {
+                    let thisvue = this;
+                    if (thisvue.queryInfo.DcId === "0" || thisvue.queryInfo.DcId === "") {
+                        _AlertMsg(false, "@_localizer["請選擇物流中心"]");
+                        return;
+                    }
+                    if (thisvue.queryInfo.ReportDate == "" || thisvue.queryInfo.ReportDate == null) {
+                        _AlertMsg(false, "@_localizer["請填寫報表日期"]");
+                        return;
+                    }
+                    thisvue.objInfo = {};
+                    thisvue.arrResult = [];
+
+                    thisvue.coulmnSet = [
+                        {
+                            title: "@_localizer["有效期限"]",
+                            "defaultContent": "",
+                            "data": "ExpirationDate"
+                        },
+                        {
+                            title: "@_localizer["商品批號"]",
+                            "data": "ProductLotNo"
+                        },
+                        {
+                            title: "@_localizer["商品"]",
+                            "data": "ProductName"
+                        },
+                        {
+                            title: "@_localizer["單位"]",
+                            "data": "PackageName"
+                        },
+                        {
+                            title: "@_localizer["商品狀態"]",
+                            "data": "ProductStatus"
+                        },
+                        {
+                            title: "@_localizer["庫存數量"]",
+                            "data": "Quantity"
+                        }
+                    ];
+
+                    thisvue.columnDef = [
+                        {
+                            "className": "text-center",
+                            "targets": [0],
+                            mRender: function (result) {
+                                if (result != null && result != "") {
+                                    return result.replace('T00:00:00', '');
+                                }
+                            }
+                        },
+                        {
+                            "className": "text-center",
+                            "targets": [4],
+                            mRender: function (result) {
+                                if (result != null) {
+                                    var sbtn = "";
+                                    switch (result) {
+                                        case 1: sbtn = "@_localizer["良品"]"; break;
+                                        case 2: sbtn = "@_localizer["不良品"]"; break;
+                                    }
+                                    return sbtn;
+                                }
+                            }
+                        }
+                    ];
+
+                    var issearch = false;
+                    LoadDataTable('@Url.Action("QueryDailyStock", "DailyStockApi", new { Area = "Stock" })', this.queryInfo, this.coulmnSet, this.columnDef, issearch)
+                        .then(function () {
+                            thisvue.arrResult = $('#dataTable').DataTable().rows().data();
+                            $('#dataTable tbody').on('click', 'tr', function () {
+                                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                                $(this).toggleClass('selected');
+                                if ($('#dataTable').DataTable().rows('.selected').data().length > 0) {
+                                    thisvue.objInfo = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows('.selected').data()[0]));
+                                } else
+                                    thisvue.objInfo = {};
+                            });
+                        });
+                }
+
+            }
+        })
+    </script>
+}

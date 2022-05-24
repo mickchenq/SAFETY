@@ -1,0 +1,436 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SAFETY</title>
+
+    <link href="~/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/purchase/style.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/purchase/content.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/content.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/sweetalert2.min.css">
+    <link rel="stylesheet" href="~/css/cust.css">
+    <style>
+        .collapse{
+            display:none;
+        }
+        .show{
+            display:block;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="Wrap">
+        <div id="MySide">
+            <header id="Header">
+                <div>
+                    <div class="logo">
+                        <a href="#"><img src="~/images/logo.png" alt="@_localizer["倉庫管理系統"]"></a>
+                    </div>
+                    <div class="content">
+                        <div class="menu_trigger">
+                            <a href="javascript:;" class="menu-options active">
+                                <span>@_localizer["關閉選單"]</span><span class="menu-action"><i></i></span>
+                            </a>
+                        </div>
+                        <div class="header_right">
+                            @*<div class="header_search FormElmt">
+                                <input type="text" placeholder="全站搜尋" />
+                                <div class="btn"><input type="submit" value="搜尋" /></div>
+                            </div>*@
+                            <div>
+                                <a href="javascript:ChangeLanguage('zh-TW');" class="">中文</a>
+                                <a href="javascript:ChangeLanguage('en');" class="">English</a>
+                            </div>
+                            <div class="login_info">
+                                @*<div class="FormElmt">
+                                    <select v-model="selectKey" v-on:change="selectRole($event)">
+                                        <option v-for="item in allRoles" v-bind:value="item.WORK_HOSP_ID+'/'+item.BRH_NAME+'/'+item.UNIT_NAME+'/'+item.RANK_NAME">{{item.BRH_NAME+'/'+item.UNIT_NAME+'/'+item.RANK_NAME}}</option>
+                                    </select>
+                                </div>
+
+                                    <div class="user_name">&nbsp;{{currentRole.STF_NUM}} / {{currentRole.USER_NAME}}</div>*@
+                                <div class="user_name">{{objUser.LoginId}} / {{objUser.UserName}}</div>
+                                <div class="logout"><a asp-area="" asp-controller="Login" asp-action="LogOut">@_localizer["登出"]</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div id="sidebarMenu">
+                <div class="scrollwrap">
+                    <div class="scrollbar"><div class="track"><div class="thumb"></div></div></div>
+                    <div class="viewport" style="height: 706px;overflow-y:scroll">
+                        <div class="overview">
+                            <div class="user_info">
+                                @*<div class="desc">
+                                    <p>帳號：12345678</p>
+                                    <p>AAA</p>
+                                </div>*@
+                            </div>
+                            @*迴圈長選單*@
+                            @*{{updateCurrenRole}}
+                            <ul class="list">
+                                <template v-for="(item,index) in currentRole.User_Menus">
+                                    <li class="scan" v-bind:key="index">
+                                        <a v-on:click="item.IS_OPEN=!item.IS_OPEN">{{item.MODULE_NAME}}</a>
+                                        <ul v-if="item.IS_OPEN">
+                                            <template v-for="(itemSys,ind) in item.Sub_UserMenus">
+                                                <li v-bind:key="ind">
+                                                    <a v-on:click="itemSys.IS_OPEN=!itemSys.IS_OPEN" class="arrow">{{itemSys.SYS_NAME}}</a>
+                                                </li>
+                                                <ul v-if="itemSys.IS_OPEN">
+                                                    <template v-for="(itemFunc,ind2) in itemSys.Sub_UserFun">
+                                                        <li v-bind:key="ind2" style="border-bottom: 1px dashed #eee;">
+                                                            <a v-bind:href="itemFunc.WEB_URL" v-on:click="setPath(itemFunc.FUNC_NAME)">{{itemFunc.FUNC_NAME}}</a>
+                                                        </li>
+                                                    </template>
+                                                </ul>
+                                            </template>
+                                        </ul>
+                                    </li>
+                                </template>
+                            </ul>*@
+
+                        @*<ul class="list">
+                            <li class="po">
+                                <a data-bs-toggle="collapse" href="#BasicSetList" role="button" aria-expanded="false" aria-controls="BasicSetList">基本資料管理</a>
+                                <ul class="collapse" id="BasicSetList">
+                                    <li><a asp-area="BasicSet" asp-controller="Home" asp-action="TempLayer">溫別設定</a></li>
+                                    <li><a asp-area="BasicSet" asp-controller="Home" asp-action="DataCenter">物流中心</a></li>
+                                    <li><a asp-area="BasicSet" asp-controller="Home" asp-action="HouseType">倉別類型資料維護</a></li>
+                                    <li><a asp-area="BasicSet" asp-controller="Home" asp-action="House">倉別資料維護</a></li>
+                                    <li><a asp-area="BasicSet" asp-controller="Home" asp-action="RoomType">庫別類型資料維護</a></li>
+                                    <li><a asp-area="BasicSet" asp-controller="Home" asp-action="Room">庫別資料維護</a></li>
+                                    <li><a asp-area="BasicSet" asp-controller="Home" asp-action="Area">儲區資料</a></li>
+                                    <li><a asp-area="BasicSet" asp-controller="Home" asp-action="ShelfType">貨架類型</a></li>
+                                    <li><a asp-area="BasicSet" asp-controller="Home" asp-action="Shelf">貨架資料</a></li>
+                                    <li><a asp-area="BasicSet" asp-controller="Home" asp-action="Layer">層架資料</a></li>
+                                    <li><a asp-area="BasicSet" asp-controller="Home" asp-action="Location">儲位資料</a></li>
+
+                                </ul>
+                            </li>
+                            <li class="cust">
+                                <a data-bs-toggle="collapse" href="#CustMgmtList" role="button" aria-expanded="false" aria-controls="CustMgmtList">客戶管理</a>
+                                <ul class="collapse" id="CustMgmtList">
+                                    <li><a asp-area="CustMgmt" asp-controller="Home" asp-action="Customer">客戶資料維護</a></li>
+                                    <li><a asp-area="CustMgmt" asp-controller="Home" asp-action="Supplier">供應商資料維護</a></li>
+                                    <li><a asp-area="CustMgmt" asp-controller="Home" asp-action="ProdCategory">客戶商品分類資料維護</a></li>
+                                    <li><a asp-area="CustMgmt" asp-controller="Home" asp-action="ProdType">客戶商品類型資料維護</a></li>
+                                    <li><a asp-area="CustMgmt" asp-controller="Home" asp-action="Product">客戶商品資料維護</a></li>
+                                    <li><a asp-area="CustMgmt" asp-controller="Home" asp-action="ProdPackage">客戶商品包裝資料維護</a></li>
+                                </ul>
+                            </li>
+                            <li class="restock">
+                                <a data-bs-toggle="collapse" href="#PurchaseList" role="button" aria-expanded="false" aria-controls="PurchaseList">進貨驗收作業</a>
+                                <ul class="collapse" id="PurchaseList">
+                                    <li><a asp-area="Purchase" asp-controller="Home" asp-action="PurchaseNoticeList">進貨通知資料維護</a></li>
+                                </ul>
+                            </li>
+                            <li class="box">
+                                <a data-bs-toggle="collapse" href="#Purchase2List" role="button" aria-expanded="false" aria-controls="Purchase2List">入庫上架作業</a>
+                                <ul class="collapse" id="Purchase2List">
+                                    <li><a asp-area="Purchase" asp-controller="Home" asp-action="StockInList">上架儲位指派</a></li>
+                                </ul>
+                            </li>
+                            <li class="shipping-fast">
+                                <a data-bs-toggle="collapse" href="#ShippingList" role="button" aria-expanded="false" aria-controls="ShippingList">出貨揀貨作業</a>
+                                <ul class="collapse" id="ShippingList">
+                                    <li><a asp-area="Shipping" asp-controller="Home" asp-action="ShippingNoticeList">出貨通知資料維護</a></li>
+                                    <li><a asp-area="Shipping" asp-controller="Home" asp-action="StockOutList">出庫作業</a></li>
+                                </ul>
+                            </li>
+                            <li class="warehouse">
+                                <a data-bs-toggle="collapse" href="#InventoryList" role="button" aria-expanded="false" aria-controls="InventoryList">庫存作業</a>
+                                <ul class="collapse" id="InventoryList">
+                                    <li><a asp-area="Stock" asp-controller="Home" asp-action="InventoryList">盤點單</a></li>
+                                    <li><a asp-area="Stock" asp-controller="Home" asp-action="StockChangeList">庫存調整維護</a></li>
+                                    <li><a asp-area="Stock" asp-controller="Home" asp-action="DailyStockQuery">每日庫存量查詢</a></li>
+                                </ul>
+                            </li>
+                            <li class="location">
+                                <a data-bs-toggle="collapse" href="#StorageMgntList" role="button" aria-expanded="false" aria-controls="StorageMgntList">儲位管理</a>
+                                <ul class="collapse" id="StorageMgntList">
+                                    <li><a asp-area="StorageMgnt" asp-controller="Home" asp-action="LocationChangeList">儲位異動維護</a></li>
+                                    <li><a asp-area="StorageMgnt" asp-controller="Home" asp-action="LocationProductQuery">儲位商品狀況查詢</a></li>
+                                    <li><a asp-area="StorageMgnt" asp-controller="Home" asp-action="StorageVisualization">儲位可視化</a></li>
+                                </ul>
+                            </li>
+                            <li class="return">
+                                <a data-bs-toggle="collapse" href="#ReturnList" role="button" aria-expanded="false" aria-controls="ReturnList">退貨驗收作業</a>
+                                <ul class="collapse" id="ReturnList">
+                                    <li><a asp-area="Return" asp-controller="Home" asp-action="ReturnList">退貨通知資料維護</a></li>
+                                </ul>
+                            </li>
+                            <li class="user">
+                                <a data-bs-toggle="collapse" href="#SysUser" role="button" aria-expanded="false" aria-controls="SysUser">帳號作業</a>
+                                <ul class="collapse" id="SysUser">
+                                    <li><a asp-area="SysUsers" asp-controller="Home" asp-action="AddUserRole">角色資料維護</a></li>
+                                    <li><a asp-area="SysUsers" asp-controller="Home" asp-action="AddUser">使用者資料維護</a></li>
+                                </ul>
+                            </li>
+                        </ul>*@
+
+
+                        <ul class="list">
+                            <li v-bind:class="f.FnClass" v-for="f in objFun">
+                                <a data-bs-toggle="collapse" v-bind:href="'#'+f.FnGroup" role="button" aria-expanded="false" v-bind:aria-controls="f.FnGroup" v-on:click="ToggleMenuShowArray(f.FnGroup)">{{f.FnGroupName}}</a>
+                                <ul class="collapse" v-bind:id="f.FnGroup" v-bind:class="{ show: f.IsShow }">
+                                    <li v-for="n in f.SysFunctionVM"><a v-on:click.prevent="onhref(n.FnGroup,n.FnArea,n.FnController,n.FnPageName)">{{n.FunctionName}}</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="Center">
+            <div id="MainBar">
+                <h2>
+                    <!-- InstanceBeginEditable name="PageTitle" -->
+                    /@ViewData["Title"]
+                    <!-- InstanceEndEditable -->
+                </h2>
+                <div id="Breadcrumbs">
+                    <ul>
+                        <!-- InstanceBeginEditable name="Breadcrumbs" -->
+                        @*<li><a href="">首頁</a></li>
+                        <li><a href="">權限設定與維護</a></li>
+                        <li><a href="">角色權限設定</a></li>*@
+                        <!-- InstanceEndEditable -->
+                    </ul>
+                </div>
+            </div>
+            <div class="inner">
+                <div id="ColumnCenter">
+                    @RenderBody()
+                </div>
+                <div class="BtnTop"><a href="#" title="回最上層">TOP</a></div>
+
+                <footer id="Footer">
+                    <div class="copyright">
+                        @_localizer["穎鋒資訊"]
+                        <script type="text/javascript">
+                            var d = new Date();
+                            document.writeln(d.getFullYear());
+                        </script> &copy;
+                        All Rights Reserved.
+                    </div>
+                </footer>
+                <div class="BtnTop"><a href="#" title="回最上層">TOP</a></div>
+            </div>
+        </div>
+        <script>
+            var localizer_show = "@_localizer["顯示"]";
+            var localizer_row = "@_localizer["筆"]";
+            var localizer_to = "@_localizer["到"]";
+            var localizer_data = "@_localizer["資料"]";
+            var localizer_total = "@_localizer["共"]";
+            var localizer_all = "@_localizer["全部"]";
+
+            var localizer_sucessed = "@_localizer["成功"]";
+            var localizer_warning = "@_localizer["注意"]";
+            var localizer_confirm = "@_localizer["確定"]";
+            var localizer_cancel = "@_localizer["取消"]";
+
+            var localizer_openmenu = "@_localizer["開啟選單"]";
+            var localizer_closemenu = "@_localizer["關閉選單"]";
+        </script>
+        @*<script src="~/js/iifun/jquery-1.8.1.min.js" type="text/javascript"></script>*@
+        <script src="~/js/jquery/jquery-3.6.0.min.js"></script>
+        <script src="~/js/jquery/jquery-migrate-3.3.2.min.js"></script>
+        <script src="~/js/bootstrap/bootstrap.bundle.min.js"></script>
+        <script src="~/js/jquery/jquery.dataTables.min.js"></script>
+        <script src="~/js/iifun/jquery.tinyscrollbar.js" type="text/javascript"></script>
+        <script src="~/js/vue.js" type="text/javascript"></script>
+        <script src="~/js/axios.min.js" type="text/javascript"></script>
+        <script src="~/js/lockr.js" type="text/javascript"></script>
+        <script src="~/js/js-cookie.js"></script>
+        <script src="~/js/dataTable.js"></script>
+
+        <script src="~/js/sweetalert2.min.js"></script>
+        <script src="~/js/commonFunc.js" type="text/javascript"></script>
+      
+        @*轉場特效*@
+        <script src="~/js/vue-loading.js"></script>
+        <link href="~/css//vue-loading.css" rel="stylesheet">
+
+        <script>
+            $(function () {
+                $('#sidebarMenu > .scrollwrap').tinyscrollbar();
+            });
+            /**/
+            var titleBag = '@ViewData["Title"]';
+            /**/
+
+            function ChangeLanguage(lang)
+            {
+                document.cookie = "@Microsoft.AspNetCore.Localization.CookieRequestCultureProvider.DefaultCookieName"+"="+"c%3D"+lang+"%7Cuic%3D"+lang+";path=/;";
+                location.reload();
+            }
+        </script>
+
+        <script>
+            // Loading
+            Vue.use(VueLoading);
+            Vue.component('loading', VueLoading)
+            //Vue.component('v-select', VueSelect.VueSelect)
+
+            // 相對路徑
+            var _Root = "@Url.Content("~/")";
+            console.log(_Root);
+            axios.defaults.baseURL = _Root;
+
+            //  Axios
+            axios.defaults.headers = {
+                'Content-Type': 'application/json',
+            }
+            let _loadingErp //轉場特效
+            axios.interceptors.request.use(function (config) {
+                if (_loadingErp) {
+                    _loadingErp.hide();
+                }
+                _loadingErp = null
+                _loadingErp = Vue.$loading.show({
+                    loader: 'dots',
+                    zIndex: 99999999
+                });
+                return config;
+            }, function (error) {
+                return Promise.reject(error);
+            });
+
+            axios.interceptors.response.use(function (response) {
+                if (_loadingErp) {
+                    _loadingErp.hide();
+                }
+                return response;
+            }, function (error) {
+                console.log(error)
+                switch (error.response.status) {
+                    case 401:
+                        alert("權限已過期");
+                        window.location.href = '@Url.Action("Index","Login")'
+                        break;
+                    case 403:
+                        alert("無此操作權限");
+                        break;
+                }
+                return Promise.reject(error);;
+            });
+
+
+            /*Main*/
+            var MySide=new Vue({
+                el: '#MySide',
+                data: {
+                    objFun: [],
+                    objUser: [],
+                    menuShow:[]
+                },
+                created: function () {
+                    this.GetLoginInfo();
+                    if(sessionStorage.menuShow){
+
+                    }
+                },
+                computed: {
+
+                },
+                methods: {
+                    GetLoginInfo: function () {
+
+                        axios.get('/Home/GetLoginInfo')
+                        .then(function (res) {
+                            if (res.data.isOk) {
+                                if (res.data.dt == null) {
+                                    return;
+                                }
+                                this.objUser.LoginId = res.data.dt.SysUser.LoginId;
+                                this.objUser.UserName = res.data.dt.SysUser.UserName;
+                                this.objUser.UserType = res.data.dt.SysUser.UserType;
+                                this.GetRoleFunctionData();
+                            }
+                            else
+                                _AlertMsg(false, res.data.msg)
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        });
+                    },
+                    GetRoleFunctionData: function () {
+                        let thisvue = this;
+                        var roleid = this.objUser.UserType;
+
+                        axios.get('/api/SysUsers/SysUserApi/GetMenu',
+                        {
+                            params: { userRoleid: roleid }
+                        })
+                        .then(function (res) {
+                            if (res.data.isOk) {
+                                if (res.data.dt == null) {
+                                    return;
+                                }
+                                thisvue.objFun = res.data.dt.resfun;
+                                thisvue.objFun.forEach(x=>x.IsShow = thisvue.IsGroupShow(x.FnGroup));
+                            }
+                            else
+                                _AlertMsg(false, res.data.msg)
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        });
+                    },
+                    onhref: function (_group, _area, _controller, _action) {
+                        //console.log(_group);
+                        //sessionStorage.currGroup = _group;
+                        window.location.href = '@Url.Content("~/")' + _area + '/' + _controller + '/' + _action;
+                    },
+                    ToggleMenuShowArray:function (FormGroup){
+                        if(!sessionStorage.menuShow)
+                            sessionStorage.menuShow = "";
+                        let menuShow = sessionStorage.menuShow.split(',');
+
+                        let index = menuShow.findIndex(x=>x == FormGroup);
+                        if(index > 0){
+                            //Remove
+                            menuShow.splice(index,1);
+                        }else{
+                            //Add
+                            menuShow.push(FormGroup);
+                        }
+                        sessionStorage.menuShow = menuShow;
+                    },
+                    IsGroupShow:function(FormGroup){
+                        if(!sessionStorage.menuShow)
+                            sessionStorage.menuShow = "";
+                        let menuShow = sessionStorage.menuShow.split(',');
+                        let index = menuShow.findIndex(x=>x == FormGroup);
+                        if(index > 0){
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }
+                }
+            });
+
+            
+
+        </script>
+        @RenderSection("Scripts", required: false)
+        <script src="~/js/iifun/jquery-iifun.js" type="text/javascript"></script>
+
+    </div>
+</body>
+</html>

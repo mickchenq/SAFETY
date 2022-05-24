@@ -1,0 +1,328 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+
+@{
+    ViewData["Title"] = @_localizer["使用者資料維護"];
+}
+
+<div id="SysUserVue">
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["搜尋條件"]</span></legend>
+
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label">@_localizer["使用者帳號"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.LoginId" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["使用者名稱"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.UserName" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["使用者類型"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.UserType">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option value="1">@_localizer["系統管理者"]</option>
+                            <option value="2">@_localizer["管理者"]</option>
+                            <option value="3">@_localizer["一般使用者"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["狀態"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.IsStop">
+                            <option value="">@_localizer["請選擇"]</option>
+                            <option value="N">@_localizer["啟用"]</option>
+                            <option value="Y">@_localizer["停用"]</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="BtnCommon mid">
+                <div class="search"><span><input type="submit" value="@_localizer["搜尋"]" v-on:click="onSearch" /></span></div>
+                <!--<div class="cancel"><span><input type="submit" value="清除" v-on:click="onReset" /></span></div>-->
+            </div>
+
+        </fieldset>
+    </div>
+
+    <div class="ListTable" v-show="arrResult.length>0">
+        <div class="table_title">
+            <div class="btnBox">
+                <div>
+                    <div class=""><a href="javascript:;" v-bind:class="{'btn_disabled':noSelect || !noEdit }" v-on:click="onDelete">@_localizer["刪除"]</a></div>
+                    <div class=""><a href="javascript:;" v-bind:class="{'btn_disabled':noSelect}" v-on:click="editSet">@_localizer["修改"]</a></div>
+                </div>
+            </div>
+        </div>
+        <!--列表資料-->
+        <table id="dataTable" class="table dataTable stripe">
+        </table>
+    </div>
+
+    <!--基本資料-->
+    <div class="FormGroupWarp" id="divData">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["基本資料"]</span></legend>
+            <div class="btnBox">
+                <div>
+                    <div class=""><a v-bind:class="{'btn_disabled':disAdd}" href="javascript:;" v-on:click="addReset">@_localizer["新增"]</a></div>
+                    <div class=""><a v-bind:class="{'btn_disabled':noEdit}" href="javascript:;" v-on:click="onSubmit">@_localizer["儲存"]</a></div>
+                    <div class=""><a v-bind:class="{'btn_disabled':noEdit}" href="javascript:;" v-on:click="onCancel">@_localizer["離開"]</a></div>
+                </div>
+            </div>
+            <div class="FormTable">
+
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["使用者帳號"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.LoginId" maxlength="20" id="txtAddLoginId" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["使用者名稱"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.UserName" maxlength="20" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["密碼"]</div>
+                    <div class="cont">
+                        <input type="password" v-model="objInfo.LoginPwd" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["使用者類型"]</div>
+                    <div class="cont">
+                        <select v-model="objInfo.UserType">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option value="1">@_localizer["系統管理者"]</option>
+                            <option value="2">@_localizer["管理者"]</option>
+                            <option value="3">@_localizer["一般使用者"]</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["狀態"]</div>
+                    <div class="cont">
+                        <select v-model="objInfo.IsStop">
+                            <option value="N">@_localizer["啟用"]</option>
+                            <option value="Y">@_localizer["停用"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label">@_localizer["備註"]</div>
+                    <div class="cont">
+                        <textarea rows="2" style="width:100%" v-model="objInfo.Remarks" maxlength="200"></textarea>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+
+</div>
+
+@section Scripts{
+    <script>
+    var SysUserVue = new Vue({
+        el: "#SysUserVue",
+        data: {
+            // 新增按鈕樣式
+            disAdd: false,
+            // 查詢條件
+            queryInfo: {
+                LoginId: '',
+                UserName: '',
+                UserType: 0,
+                IsStop: ''
+            },
+            // 查詢結果
+            arrResult: [],
+            // 新增/編輯
+            objInfo: {},
+            rowSelect: {},
+            coulmnSet: [],
+            columnDef: []
+        },
+        computed: {
+            // 尚未選擇列
+            noSelect: function () {
+                return (Object.keys(this.rowSelect).length === 0)
+            },
+            // 尚未點選新增或編輯
+            noEdit: function () {
+                return (Object.keys(this.objInfo).length === 0)
+            }
+        },
+        methods: {
+            onSearch: function () {
+                let thisvue = this;
+                thisvue.disAdd = false;
+                thisvue.rowSelect = {};
+                thisvue.objInfo = {};
+                thisvue.arrResult = [];
+
+                thisvue.coulmnSet = [
+                    {
+                        title: "@_localizer["使用者名稱"]",
+                        "data": "UserName"
+                    },
+                    {
+                        title: "@_localizer["使用者帳號"]",
+                        "data": "LoginId"
+                    },
+                    {
+                        title: "@_localizer["使用者類型"]",
+                        "data": "UserType"
+                    },
+                    {
+                        title: "@_localizer["備註"]",
+                        "data": "Remarks"
+                    },
+                    {
+                        title: "@_localizer["狀態"]",
+                        "data": "IsStop"
+                    }
+                ];
+
+                thisvue.columnDef = [
+                    {
+                        "className": "text-center",
+                        "targets": [2],
+                        mRender: function (result) {
+                            if (result != null) {
+                                //console.log(result);
+                                var sbtn = result == "1" ? "@_localizer["系統管理者"]" : result == "2" ? "@_localizer["管理者"]": "@_localizer["一般使用者"]";
+                                return sbtn;
+                            }
+                        }
+                    },
+                    {
+                        "className": "text-center",
+                        "targets": [4],
+                        mRender: function (result) {
+                            if (result != null) {
+                                //console.log(result);
+                                var sbtn = result == "N" ? "@_localizer["啟用"]" : "@_localizer["停用"]";
+                                return sbtn;
+                            }
+                        }
+                    }
+                ];
+
+                var issearch = false;
+                LoadDataTable('@Url.Action("QuerySysUser", "SysUserApi", new { Area = "SysUsers" })', this.queryInfo, this.coulmnSet, this.columnDef, issearch)
+                    .then(function () {
+                        //$('#dataTable').DataTable().column("UserType").order("asc").draw();
+                        thisvue.arrResult = $('#dataTable').DataTable().rows().data();
+                        $('#dataTable tbody').on('click', 'tr', function () {
+                            $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                            $(this).toggleClass('selected');
+                            if ($('#dataTable').DataTable().rows('.selected').data().length > 0) {
+                                thisvue.rowSelect = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows('.selected').data()[0]));
+                            } else
+                                thisvue.rowSelect = {};
+                        });
+                    });
+            },
+                editSet: function () {
+                    if (this.noSelect) {
+                        _AlertMsg(false, '@_localizer["請選擇資料"]');
+                        return false;
+                    }
+                    this.disAdd = false;
+                    $('#txtAddLoginId').prop('disabled', true);
+                    //this.disAdd = true;
+                    this.objInfo = JSON.parse(JSON.stringify(this.rowSelect));
+                    //移到基本資料區塊
+                    window.location.href = "#divData";
+                },
+                onDelete: function () {
+                    let thisvue = this;
+                    if (this.noSelect) {
+                        _AlertMsg(false, '@_localizer["請選擇資料"]')
+                        return false
+                    }
+
+                    _ConfirmAlert('w', '@_localizer["警告"]', '@_localizer["確定刪除嗎?"]', true, function () {
+                        axios.post('/api/SysUsers/SysUserApi/DeleteSysUser', thisvue.rowSelect)
+                            .then(function (res) {
+                                // 刪除成功，清空選擇資料
+                                if (res.data.isOk) {
+                                    let RemoveIndex;
+                                    var filteredElements = thisvue.arrResult.filter(function (item, index) { RemoveIndex = index; return item.AreaId == thisvue.rowSelect.AreaId; });
+                                    thisvue.arrResult.splice(RemoveIndex, 1);
+                                    thisvue.rowSelect = {};
+                                    $('#dataTable').DataTable().rows('.selected').remove().draw(false);
+                                }
+                            }.bind(this))
+                            .catch(function (err) {
+                                console.error(err);
+                            })
+                    });
+            },
+            // 新增按鈕
+            addReset: function () {
+                this.disAdd = true;
+                $('#txtAddLoginId').prop('disabled', false);
+                this.objInfo = {
+                    LoginId: '',
+                    UserName: '',
+                    LoginPwd: '',
+                    UserType: 0,
+                    Remarks: '',
+                    IsStop: 'N'
+                };
+                if (!this.noSelect) {
+                    this.rowSelect = {};
+                    $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                }
+            },
+                // 儲存
+                onSubmit: function () {
+                    if (this.noEdit) {
+                        _AlertMsg(false, '@_localizer["請點選新增或選擇列後點選修改"]')
+                        return false
+                    }
+                    axios.post('/api/SysUsers/SysUserApi/SaveSysUser', this.objInfo)
+                        .then(function (res) {
+                            _AlertMsg(res.data.isOk, res.data.msg)
+                            // 編輯成功，清空選擇資料
+                            if (res.data.isOk) {
+                                this.rowSelect = {};
+                                this.onSearch();
+                                $('#txtAddLoginId').prop('disabled', false);
+                            }
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 離開
+                onCancel: function () {
+                    if (this.noEdit) {
+                        _AlertMsg(false, '@_localizer["請點選新增或選擇列後點選修改"]');
+                        return false;
+                    }
+                    this.objInfo = {};
+                    this.rowSelect = {};
+                    this.disAdd = !this.disAdd;
+                    $('#txtAddLoginId').prop('disabled', false);
+                }
+        }
+    });
+
+    </script>
+}

@@ -1,0 +1,413 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+@{
+    ViewData["Title"] = @_localizer["儲位商品狀況查詢"];
+}
+<div id="StrgPdtVue">
+    <!--列表搜尋-->
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["搜尋條件"]</span></legend>
+
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label">@_localizer["物流中心"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.DcId" v-on:change="QueryHouse">
+                            <option v-for="dc in DCs" v-bind:value="dc.DcId">{{dc.DcName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["倉別"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.HouseId" v-on:change="QueryRoom">
+                            <option v-for="h in Houses" v-bind:value="h.HouseId">{{h.HouseName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["庫別"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.RoomId" v-on:change="QueryArea">
+                            <option v-for="r in Rooms" v-bind:value="r.RoomId">{{r.RoomName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["儲區"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.AreaId">
+                            <option v-for="a in Areas" v-bind:value="a.AreaId">{{a.AreaName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["貨架類型"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.ShelfTypeId">
+                            <option v-for="a in ShelfTypes" v-bind:value="a.ShelfTypeId">{{a.ShelfTypeName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["儲位代碼"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.LocationCode" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["客戶"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.CustomerId">
+                            <option v-for="a in Customers" v-bind:value="a.CustomerId">{{a.CustomerName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["商品"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.ProductId">
+                            <option v-for="a in Products" v-bind:value="a.ProductId">{{a.ProductName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["批號"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.ProductLotNo" />
+                    </div>
+                </div>
+                @*<div class="item">
+                    <div class="label">@_localizer["製造日期"]</div>
+                    <div class="cont">
+                        <input type="date" v-model="queryInfo.MakeDateS" />
+                        <input type="date" v-model="queryInfo.MakeDateE" />
+                    </div>
+                </div>*@
+                <div class="item">
+                    <div class="label">@_localizer["有效日期"]</div>
+                    <div class="cont">
+                        <input type="date" v-model="queryInfo.ExpirationDateS" />
+                        <input type="date" v-model="queryInfo.ExpirationDateE" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["入庫日期"]</div>
+                    <div class="cont">
+                        <input type="date" v-model="queryInfo.InvDateS" />
+                        <input type="date" v-model="queryInfo.InvDateE" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="BtnCommon mid">
+                <div class="search"><span><input type="submit" value="@_localizer["搜尋"]" v-on:click="onSearch" /></span></div>
+                @*<div class="cancel"><span><input type="reset" value="清除" v-on:click="onReset" /></span></div>*@
+            </div>
+            @*<div class="toggle_btn"></div>*@
+        </fieldset>
+    </div>
+
+    <!--列表-->
+    <div class="ListTable" v-show="arrResult.length>0">
+        <div class="table_title">
+            <div class="btnBox">
+                <div>
+                </div>
+            </div>
+        </div>
+        <table id="dataTable" class="table dataTable stripe">
+        </table>
+    </div>
+
+</div>
+@section Scripts{
+    <script>
+        $(function(){
+
+        });
+
+        /*Main*/
+        var vm = new Vue({
+            el: '#StrgPdtVue',
+            components: {
+            },
+            computed: {
+
+            },
+            data: function () {
+                return {
+                    // 查詢條件
+                    queryInfo: {
+                        DcId:null,
+                        HouseId:null,
+                        RoomId:null,
+                        AreaId:null,
+                        CustomerId:null,
+                        ProductId:null,
+                        ShelfTypeId:null,
+                        LocationCode:null,
+                        ProductLotNo:null,
+                        MakeDateS:null,
+                        MakeDateE:null,
+                        InvDateS:null,
+                        InvDateE:null,
+                        ExpirationDateS:null,
+                        ExpirationDateE:null
+                    },
+                    DCs:[],
+                    Houses:[],
+                    Rooms:[],
+                    Areas:[],
+                    ShelfTypes:[],
+                    Customers:[],
+                    Products:[],
+                    ProductStatus:[{Text:"@_localizer["良品"]",Value:1},{Text:"@_localizer["不良品"]",Value:2}],
+                    // 查詢結果
+                    arrResult: [],
+                }
+            },
+            methods: {
+                onReset: function () {
+                    this.queryInfo = {
+                        DcId:null,
+                        HouseId:null,
+                        RoomId:null,
+                        AreaId:null,
+                        CustomerId:null,
+                        ProductId:null,
+                        ShelfTypeId:null,
+                        LocationCode:null,
+                        ProductLotNo:null,
+                        MakeDateS:null,
+                        MakeDateE:null,
+                        InvDateS:null,
+                        InvDateE:null,
+                        ExpirationDateS:null,
+                        ExpirationDateE:null
+                    }
+                },
+                onSearch: function () {
+                    let thisVue = this;
+                    let coulmnSet = [
+                        {
+                            title: "@_localizer["庫別"]",
+                            data: "RoomName"
+                        },
+                        {
+                            title: "@_localizer["儲位代碼"]",
+                            data: "LocationCode"
+                        },
+                        {
+                            title: "@_localizer["商品名稱"]",
+                            data: "ProductName"
+                        },
+                        {
+                            title: "@_localizer["商品狀態"]",
+                            data: "ProductStatus"
+                        },
+                        {
+                            title: "@_localizer["有效日期"]",
+                            data: "ExpirationDate"
+                        },
+                        {
+                            title: "@_localizer["庫存數量"]",
+                            data: "Quantity"
+                        },
+                    ];
+
+                    let columnDef = [
+                        {
+                            "className": "text-center",
+                            "targets": [4],
+                            mRender: function (value) {
+                                return value.substring(0, 10);
+                            }
+                        },
+                        {
+                            "className": "text-center",
+                            "targets": [3],
+                            mRender: function (value) {
+                                return thisVue.ProductStatusText(value);
+                            }
+                        },
+                    ];
+
+                    LoadDataTable('@Url.Action("QueryLocationProduct","LocationProductQueryApi",new { Area = "StorageMgnt" })', this.queryInfo, coulmnSet, columnDef, false)
+                        .then(function () {
+                            thisVue.arrResult = $('#dataTable').DataTable().rows().data();
+                            $('#dataTable tbody').on('click', 'tr', function () {
+                                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                                $(this).toggleClass('selected');
+                                //console.log($('#dataTable').DataTable().rows('.selected').data().length);
+                                if ($('#dataTable').DataTable().rows('.selected').data().length > 0) {
+                                    thisVue.rowSelect = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows('.selected').data()[0]));
+                                    //console.log(this.rowSelect);
+                                } else
+                                    thisVue.rowSelect = {};
+                            });
+                        });
+                },
+                //搜尋條件下拉選單Start
+                QueryDc:function(){
+                    let thisVue = this;
+                    return $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryDataCenter","DataCenterApi",new { Area = "BasicSet" })',
+                        data: JSON.stringify({IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    }).then(function (res) {
+                        if (res.isOk) {
+                            thisVue.DCs = res.dt;
+                        }
+                    });                    
+                },
+                QueryHouse:function(DcId){
+                    let thisVue = this;
+                    return $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryHouse","HouseApi",new { Area = "BasicSet" })',
+                        data: JSON.stringify({DcId:thisVue.queryInfo.DcId,IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    }).then(function (res) {
+                        if (res.isOk) {
+                            thisVue.Houses = res.dt;
+                        }
+                    });                    
+                },
+                QueryRoom:function(HouseId){
+                    let thisVue = this;
+                    return $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryRoom","RoomApi",new { Area = "BasicSet" })',
+                        data: JSON.stringify({HouseId:thisVue.queryInfo.HouseId,IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    }).then(function (res) {
+                        if (res.isOk) {
+                            thisVue.Rooms = res.dt;
+                        }
+                    });                    
+                },
+                QueryArea:function(RoomId){
+                    let thisVue = this;
+                    return $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryArea","AreaApi",new { Area = "BasicSet" })',
+                        data: JSON.stringify({RoomId:thisVue.queryInfo.RoomId,IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    }).then(function (res) {
+                        if (res.isOk) {
+                            thisVue.Areas = res.dt;
+                        }
+                    });                    
+                },
+                QueryShelf:function(AreaId){
+                    let thisVue = this;
+                    return $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryShelf", "ShelfApi", new { Area = "BasicSet" })',
+                        data: JSON.stringify({RoomId:thisVue.queryInfo.AreaId,IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    }).then(function (res) {
+                        if (res.isOk) {
+                            thisVue.Shelfs = res.dt;
+                        }
+                    });                    
+                },
+                QueryLayer:function(ShelfId){
+                    let thisVue = this;
+                    return $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryLayer", "LayerApi", new { Area = "BasicSet" })',
+                        data: JSON.stringify({ShelfId:ShelfId,IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    });                    
+                },
+                QueryLocation:function(LayerId){
+                    let thisVue = this;
+                    return $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryLocation", "LocationApi", new { Area = "BasicSet" })',
+                        data: JSON.stringify({LayerId:LayerId,IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    });                  
+                },
+                QueryShelfType:function(AreaId){
+                    let thisVue = this;
+                    return $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryShelfType", "ShelfTypeApi", new { Area = "BasicSet" })',
+                        data: JSON.stringify({IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    }).then(function (res) {
+                        if (res.isOk) {
+                            thisVue.ShelfTypes = res.dt;
+                        }
+                    });                    
+                },
+                QueryCustomer:function(AreaId){
+                    let thisVue = this;
+                    return $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryCustomer", "CustomerApi", new { Area = "CustMgmt" })',
+                        data: JSON.stringify({IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    }).then(function (res) {
+                        if (res.isOk) {
+                            thisVue.Customers = res.dt;
+                        }
+                    });                    
+                },
+                QueryProduct:function(AreaId){
+                    let thisVue = this;
+                    return $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryProduct", "ProductApi", new { Area = "CustMgmt" })',
+                        data: JSON.stringify({IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    }).then(function (res) {
+                        if (res.isOk) {
+                            thisVue.Products = res.dt;
+                        }
+                    });                    
+                },
+                //搜尋條件下拉選單End
+                ProductStatusText:function(ProductStatus){
+                    if(this.ProductStatus.findIndex(x=>x.Value == ProductStatus) == -1)
+                        return "";
+                    return this.ProductStatus.find(x=>x.Value == ProductStatus).Text;
+                }
+            },
+            created: function () {
+                this.QueryDc();
+                this.QueryCustomer();
+                this.QueryProduct();
+                this.QueryShelfType();
+            },
+            updated: function () {
+            }
+        });
+    </script>
+}

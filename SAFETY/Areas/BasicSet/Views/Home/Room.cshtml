@@ -1,0 +1,405 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+@{
+    ViewData["Title"] = @_localizer["庫別設定"];
+}
+
+<div id="RoomVue">
+    <!--列表搜尋-->
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["搜尋條件"]</span></legend>
+
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label">@_localizer["代碼"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.RoomCode" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["名稱"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.RoomName" />
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="label">@_localizer["類型"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.RoomTypeId">
+                            <option value="null">@_localizer["全部"]</option>
+                            <option v-for="type in RoomTypes" v-bind:value="type.RoomTypeId">{{type.RoomTypeName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["倉別"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.HouseId">
+                            <option value="null">@_localizer["全部"]</option>
+                            <option v-for="h in Houses" v-bind:value="h.HouseId">{{h.HouseName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["狀態"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.IsStop">
+                            <option value="">@_localizer["全部"]</option>
+                            <option value="N">@_localizer["啟用"]</option>
+                            <option value="Y">@_localizer["停用"]</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="BtnCommon mid">
+                <div class="search"><span><input type="submit" value="@_localizer["搜尋"]" v-on:click="onSearch" /></span></div>
+                @*<div class="cancel"><span><input type="reset" value="清除" v-on:click="onReset" /></span></div>*@
+            </div>
+            @*<div class="toggle_btn"></div>*@
+        </fieldset>
+    </div>
+
+    <div class="ListTable" v-show="arrResult.length>0">
+        <div class="table_title">
+            <div class="btnBox">
+                <div>
+                    <div class=""><a v-bind:class="{'btn_disabled':noSelect || !noEdit }" v-on:click.prevent="onDelete">@_localizer["刪除"]</a></div>
+                    @*<div class=""><a v-bind:class="{'btn_disabled':noSelect || !noEdit }">複製</a></div>*@
+                    <div class=""><a v-bind:class="{'btn_disabled':noSelect}" v-on:click.prevent="editSet">@_localizer["修改"]</a></div>
+                </div>
+            </div>
+        </div>
+        <table id="dataTable" class="table dataTable stripe">
+        </table>
+    </div>
+
+    <!--基本資料-->
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["基本資料"]</span></legend>
+            <div class="btnBox">
+                <div>
+                    <div class=""><a v-bind:class="{'btn_disabled':disAdd}" v-on:click.prevent="addReset">@_localizer["新增"]</a></div>
+                    <div class=""><a v-bind:class="{'btn_disabled':noEdit}" v-on:click.prevent="onSubmit">@_localizer["儲存"]</a></div>
+                    <div class=""><a v-bind:class="{'btn_disabled':noEdit}" v-on:click.prevent="onCancel">@_localizer["離開"]</a></div>
+                </div>
+            </div>
+            <div class="FormTable">
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["代碼"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.RoomCode" />
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["名稱"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.RoomName" />
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["類型"]</div>
+                    <div class="cont">
+                        <select v-model="objInfo.RoomTypeId">
+                            <option v-for="type in RoomTypes" v-bind:value="type.RoomTypeId">{{type.RoomTypeName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["溫別"]</div>
+                    <div class="cont">
+                        <select v-model="objInfo.TempLayerId">
+                            <option v-for="temp in TempLayers" v-bind:value="temp.TempId">{{temp.TempName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["倉別"]</div>
+                    <div class="cont">
+                        <select v-model="objInfo.HouseId">
+                            <option value="null">@_localizer["全部"]</option>
+                            <option v-for="h in Houses" v-bind:value="h.HouseId">{{h.HouseName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label">@_localizer["備註"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.Remarks" />
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label"><span class="red">*</span>@_localizer["狀態"]</div>
+                    <div class="cont">
+                        <select v-model="objInfo.IsStop">
+                            <option v-for="s in IsStop" v-bind:value="s.IsStop">{{s.Text}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </fieldset>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        /*Main*/
+        var vm = new Vue({
+            el: '#RoomVue',
+            components: {
+            },
+            computed: {
+                // 尚未選擇列
+                noSelect: function () {
+                    return (Object.keys(this.rowSelect).length === 0)
+                },
+                // 尚未點選新增或編輯
+                noEdit: function () {
+                    return (Object.keys(this.objInfo).length === 0)
+                },
+            },
+            data: function () {
+                return {
+                    // 新增按鈕樣式
+                    disAdd: false,
+                    // 查詢條件
+                    queryInfo: {
+                        RoomName: '',
+                        RoomCode: '',
+                        HouseId: null,
+                        RoomTypeId: null,
+                        IsStop: ''
+                    },
+                    // 查詢結果
+                    arrResult: [],
+                    // 新增/編輯
+                    objInfo: {},
+                    rowSelect: {},
+                    //溫別選單
+                    TempLayers: [],
+                    //庫別類型
+                    RoomTypes: [],
+                    //庫別類型
+                    Houses: [],
+                    //狀態
+                    IsStop:[{IsStop:"N",Text:"@_localizer["啟用"]"},{IsStop:"Y",Text:"@_localizer["停用"]"}]
+                }
+            },
+            methods: {
+                onReset: function () {
+                    this.disAdd = false
+                    this.rowSelect = {}
+                    this.objInfo = {}
+                    this.arrResult = []
+                    this.queryInfo = {
+                        RoomName: '',
+                        RoomCode: '',
+                        HouseId: null,
+                        RoomTypeId: null,
+                        IsStop: ''
+                    }
+                    $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                },
+                onSearch: function () {
+                    let thisVue = this;
+                    if(thisVue.queryInfo.HouseId == 'null')
+                        thisVue.queryInfo.HouseId = null;
+                    if(thisVue.queryInfo.RoomTypeId == 'null')
+                        thisVue.queryInfo.RoomTypeId = null;
+                    let coulmnSet = [
+                        {
+                            title: "@_localizer["代碼"]",
+                            data: "RoomCode"
+                        },
+                        {
+                            title: "@_localizer["名稱"]",
+                            data: "RoomName"
+                        },
+                        {
+                            title: "@_localizer["類型"]",
+                            data: "RoomTypeId"
+                        },
+                        {
+                            title: "@_localizer["倉別"]",
+                            data: "HouseId"
+                        }
+                        ,
+                        {
+                            title: "@_localizer["狀態"]",
+                            data: "IsStop"
+                        }
+                    ];
+
+                    let columnDef = [
+                        {
+                            "className": "text-center",
+                            "targets": [2],
+                            mRender: function (result) {
+                                return thisVue.RoomTypeText(result);
+                            }
+                        },
+                        {
+                            "className": "text-center",
+                            "targets": [3],
+                            mRender: function (result) {
+                                return thisVue.HouseText(result);
+                            }
+                        },
+                        {
+                            "className": "text-center",
+                            "targets": [4],
+                            mRender: function (result) {
+                                return thisVue.IsStopText(result);
+                            }
+                        },
+                    ];
+                    LoadDataTable('@Url.Action("QueryRoom","RoomApi",new { Area = "BasicSet" })', this.queryInfo, coulmnSet, columnDef, false)
+                        .then(function () {
+                            thisVue.arrResult = $('#dataTable').DataTable().rows().data();
+                            $('#dataTable tbody').on('click', 'tr', function () {
+                                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                                $(this).toggleClass('selected');
+                                //console.log($('#dataTable').DataTable().rows('.selected').data().length);
+                                if ($('#dataTable').DataTable().rows('.selected').data().length > 0) {
+                                    thisVue.rowSelect = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows('.selected').data()[0]));
+                                    //console.log(this.rowSelect);
+                                } else
+                                    thisVue.rowSelect = {};
+                            });
+                        });
+                },
+                // 修改
+                editSet: function () {
+                    if (this.noSelect) {
+                        _AlertMsg(false, '@_localizer["請選擇資料"]')
+                        return false
+                    }
+                    this.disAdd = !this.disAdd
+                    this.objInfo = JSON.parse(JSON.stringify(this.rowSelect))
+                },
+                onDelete: function () {
+                    if (this.noSelect) {
+                        _AlertMsg(false, '@_localizer["請選擇資料"]')
+                        return false
+                    }
+                    axios.post('/api/BasicSet/RoomApi/DeleteRoom', this.rowSelect)
+                        .then(function (res) {
+                            //this.arrResult = res.data.dt
+                            // 刪除成功，清空選擇資料
+                            if (res.data.isOk) {
+                                let RemoveIndex = this.arrResult.findIndex(e=>e.RoomId == this.rowSelect.RoomId);
+                                this.arrResult.splice(RemoveIndex,1);
+                                this.rowSelect = {}
+                            }
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 新增按鈕
+                addReset: function () {
+                    this.disAdd = !this.disAdd
+                    this.objInfo = {
+                        RoomId: 0,
+                        RoomCode: '',
+                        RoomName: '',
+                        RoomTypeId: 0,
+                        TempLayerId: 0,
+                        HouseId: 0,
+                        Remarks: '',
+                        IsStop: 'N'
+                    }
+                },
+                // 儲存
+                onSubmit: function () {
+                    if (this.noEdit) {
+                        _AlertMsg(false, '@_localizer["請點選新增或選擇列後點選修改"]')
+                        return false
+                    }
+                    axios.post('/api/BasicSet/RoomApi/UpdateRoom', this.objInfo)
+                        .then(function (res) {
+                            _AlertMsg(res.data.isOk, res.data.msg)
+                            // 編輯成功，清空選擇資料
+                            if (res.data.isOk) {
+                                this.rowSelect = {}
+                                this.onSearch()
+
+                            }
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 離開
+                onCancel: function () {
+                    if (this.noEdit) {
+                        _AlertMsg(false, '@_localizer["請點選新增或選擇列後點選修改"]')
+                        return false
+                    }
+                    this.objInfo = {}
+                    this.rowSelect = {}
+                    this.disAdd = !this.disAdd
+                },
+                QueryTemp:function() {
+                    let thisVue = this;
+                    axios.post('/api/BasicSet/TempLayerApi/QueryTemp', {is_stop: "N"})
+                    .then(function (res) {
+                        if (res.data.isOk) {
+                            thisVue.TempLayers = res.data.dt;
+                        }
+                    });
+                },
+                QueryRoomType:function() {
+                    let thisVue = this;
+                    axios.post('/api/BasicSet/RoomTypeApi/QueryRoomType', {IsStop: "N"})
+                    .then(function (res) {
+                        if (res.data.isOk) {
+                            thisVue.RoomTypes = res.data.dt;
+                        }
+                    });
+                },
+                RoomTypeText:function(roomTypeId) {
+                    if(this.RoomTypes.findIndex(x=>x.RoomTypeId == roomTypeId) == -1)
+                        return "";
+                    return this.RoomTypes.find(x=>x.RoomTypeId == roomTypeId).RoomTypeName;
+                },
+                QueryHouse:function() {
+                    let thisVue = this;
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryHouse","HouseApi",new { Area = "BasicSet" })',
+                        data: JSON.stringify({IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    }).then(function (res) {
+                        if (res.isOk) {
+                            thisVue.Houses = res.dt;
+                        }
+                    });
+                },
+                HouseText:function(houseId) {
+                    if(this.Houses.findIndex(x=>x.HouseId == houseId) == -1)
+                        return "";
+                    return this.Houses.find(x=>x.HouseId == houseId).HouseName;
+                },
+                IsStopText: function (isStop){
+                    if(this.IsStop.findIndex(x=>x.IsStop == isStop) == -1)
+                        return "";
+                    return this.IsStop.find(x=>x.IsStop == isStop).Text;
+                }
+            },
+            created: function () {
+                this.QueryTemp();
+                this.QueryRoomType();
+                this.QueryHouse();
+            },
+            updated: function () {
+            }
+        })
+    </script>
+}

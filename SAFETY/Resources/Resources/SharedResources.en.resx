@@ -1,0 +1,1663 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=")之儲位" xml:space="preserve">
+    <value>) location</value>
+  </data>
+  <data name="DC拖櫃" xml:space="preserve">
+    <value>DC Drag Cabinet</value>
+  </data>
+  <data name="DC提貨" xml:space="preserve">
+    <value>DC Pick Up</value>
+  </data>
+  <data name="x中間值" xml:space="preserve">
+    <value>x median</value>
+  </data>
+  <data name="y中間值" xml:space="preserve">
+    <value>y median</value>
+  </data>
+  <data name="一般作業" xml:space="preserve">
+    <value>General Work</value>
+  </data>
+  <data name="一般使用者" xml:space="preserve">
+    <value>General User</value>
+  </data>
+  <data name="上傳附件失敗" xml:space="preserve">
+    <value>Failed to upload attachment</value>
+  </data>
+  <data name="上傳附件成功" xml:space="preserve">
+    <value>Attachment uploaded successfully</value>
+  </data>
+  <data name="上層包裝" xml:space="preserve">
+    <value>Upper packaging</value>
+  </data>
+  <data name="上層包裝入數" xml:space="preserve">
+    <value>Number of upper packaging</value>
+  </data>
+  <data name="上層包裝入數必填" xml:space="preserve">
+    <value>The number of upper packaging is required</value>
+  </data>
+  <data name="上層包裝必填" xml:space="preserve">
+    <value>Upper packaging required</value>
+  </data>
+  <data name="上方走道寬度" xml:space="preserve">
+    <value>Top aisle width</value>
+  </data>
+  <data name="上架中" xml:space="preserve">
+    <value>On the shelves</value>
+  </data>
+  <data name="上架儲位指派" xml:space="preserve">
+    <value>Shelf Slot Assignment</value>
+  </data>
+  <data name="下方走道寬度" xml:space="preserve">
+    <value>Bottom aisle width</value>
+  </data>
+  <data name="不良品" xml:space="preserve">
+    <value>Defective Pproduct</value>
+  </data>
+  <data name="付款方式必填" xml:space="preserve">
+    <value>Payment method is required</value>
+  </data>
+  <data name="代碼" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="代碼已存在，請重新輸入!" xml:space="preserve">
+    <value>Code already exists, please re-enter !</value>
+  </data>
+  <data name="代碼為必填" xml:space="preserve">
+    <value>Code is required</value>
+  </data>
+  <data name="作業方式" xml:space="preserve">
+    <value>Assignment Style</value>
+  </data>
+  <data name="作業方式必填" xml:space="preserve">
+    <value>Work method required</value>
+  </data>
+  <data name="使用者名稱" xml:space="preserve">
+    <value>User Name</value>
+  </data>
+  <data name="使用者名稱必填" xml:space="preserve">
+    <value>Username is required</value>
+  </data>
+  <data name="使用者帳號" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="使用者帳號必填" xml:space="preserve">
+    <value>User account is required</value>
+  </data>
+  <data name="使用者角色" xml:space="preserve">
+    <value>User Role</value>
+  </data>
+  <data name="使用者資料維護" xml:space="preserve">
+    <value>User Setting</value>
+  </data>
+  <data name="使用者類型" xml:space="preserve">
+    <value>User Type</value>
+  </data>
+  <data name="供應商" xml:space="preserve">
+    <value>Supplier</value>
+  </data>
+  <data name="供應商代碼" xml:space="preserve">
+    <value>Supplier Code</value>
+  </data>
+  <data name="供應商代碼已存在" xml:space="preserve">
+    <value>Supplier code already exists</value>
+  </data>
+  <data name="供應商代碼必填" xml:space="preserve">
+    <value>Supplier code required</value>
+  </data>
+  <data name="供應商名稱" xml:space="preserve">
+    <value>Supplier Name</value>
+  </data>
+  <data name="供應商名稱已存在" xml:space="preserve">
+    <value>Supplier name already exists</value>
+  </data>
+  <data name="供應商名稱必填" xml:space="preserve">
+    <value>Supplier name is required</value>
+  </data>
+  <data name="供應商必填" xml:space="preserve">
+    <value>Supplier required</value>
+  </data>
+  <data name="供應商資料" xml:space="preserve">
+    <value>Supplier</value>
+  </data>
+  <data name="供應商資料維護" xml:space="preserve">
+    <value>Supplier</value>
+  </data>
+  <data name="修改" xml:space="preserve">
+    <value>Modify</value>
+  </data>
+  <data name="修改失敗" xml:space="preserve">
+    <value>Update Failed</value>
+  </data>
+  <data name="修改失敗：商品資料已在異動中" xml:space="preserve">
+    <value>Modification failed: product information is already in transaction</value>
+  </data>
+  <data name="修改失敗：商品資料已在調整中" xml:space="preserve">
+    <value>Edit failed: product information is already being adjusted</value>
+  </data>
+  <data name="修改失敗：單號不存在" xml:space="preserve">
+    <value>Modification failed: Track number does not exist</value>
+  </data>
+  <data name="修改失敗：有盤點明細資料已在盤點中" xml:space="preserve">
+    <value>Modification failed: there are inventory details already in the inventory</value>
+  </data>
+  <data name="修改失敗：該出貨通知單號已出庫" xml:space="preserve">
+    <value>Failed to modify: The shipping notice number has been shipped out</value>
+  </data>
+  <data name="修改失敗：該進貨通知單號已出庫" xml:space="preserve">
+    <value>Modification failed: the purchase notice number has been shipped out</value>
+  </data>
+  <data name="修改成功" xml:space="preserve">
+    <value>Update Sucessed</value>
+  </data>
+  <data name="倉別" xml:space="preserve">
+    <value>House</value>
+  </data>
+  <data name="倉別代碼已存在" xml:space="preserve">
+    <value>House code already exists</value>
+  </data>
+  <data name="倉別代碼必填" xml:space="preserve">
+    <value>House code is required</value>
+  </data>
+  <data name="倉別名稱已存在" xml:space="preserve">
+    <value>House name already exists</value>
+  </data>
+  <data name="倉別名稱必填" xml:space="preserve">
+    <value>House name is required</value>
+  </data>
+  <data name="倉別資料維護" xml:space="preserve">
+    <value>House Setting</value>
+  </data>
+  <data name="倉別類型必填" xml:space="preserve">
+    <value>House type is required</value>
+  </data>
+  <data name="倉別類型資料維護" xml:space="preserve">
+    <value>House Type</value>
+  </data>
+  <data name="停用" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="備註" xml:space="preserve">
+    <value>Remarks</value>
+  </data>
+  <data name="儲位" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="儲位代碼" xml:space="preserve">
+    <value>Location Code</value>
+  </data>
+  <data name="儲位使用率" xml:space="preserve">
+    <value>Location Used Rate</value>
+  </data>
+  <data name="儲位可視化" xml:space="preserve">
+    <value>Storage visualization</value>
+  </data>
+  <data name="儲位商品狀況查詢" xml:space="preserve">
+    <value>Location Product Query</value>
+  </data>
+  <data name="儲位地址" xml:space="preserve">
+    <value>TagAddr</value>
+  </data>
+  <data name="儲位異動單" xml:space="preserve">
+    <value>Storage position change order</value>
+  </data>
+  <data name="儲位異動已完成，故不可刪除資料" xml:space="preserve">
+    <value>The storage location change has been completed, so the data cannot be deleted</value>
+  </data>
+  <data name="儲位異動維護" xml:space="preserve">
+    <value>Storage Change</value>
+  </data>
+  <data name="儲位管理" xml:space="preserve">
+    <value>Storage management</value>
+  </data>
+  <data name="儲位資料" xml:space="preserve">
+    <value>Location Setting</value>
+  </data>
+  <data name="儲位閘道" xml:space="preserve">
+    <value>TagGateWay</value>
+  </data>
+  <data name="儲位閘道為必填" xml:space="preserve">
+    <value>Storage Gateway is required</value>
+  </data>
+  <data name="儲位隔數" xml:space="preserve">
+    <value>Fields</value>
+  </data>
+  <data name="儲區" xml:space="preserve">
+    <value>Area</value>
+  </data>
+  <data name="儲區代碼為必填" xml:space="preserve">
+    <value>Area code is required</value>
+  </data>
+  <data name="儲區名稱為必填" xml:space="preserve">
+    <value>Area name is required</value>
+  </data>
+  <data name="儲區為必填" xml:space="preserve">
+    <value>Storage area is required</value>
+  </data>
+  <data name="儲區資料" xml:space="preserve">
+    <value>Area</value>
+  </data>
+  <data name="儲存" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="儲存失敗" xml:space="preserve">
+    <value>Failed to save</value>
+  </data>
+  <data name="儲存成功" xml:space="preserve">
+    <value>Saved successfully</value>
+  </data>
+  <data name="入庫上架作業" xml:space="preserve">
+    <value>Inventory on the shelf</value>
+  </data>
+  <data name="入庫中" xml:space="preserve">
+    <value>In Stock</value>
+  </data>
+  <data name="入庫人員" xml:space="preserve">
+    <value>Warehousing Staff</value>
+  </data>
+  <data name="入庫件數" xml:space="preserve">
+    <value>Stock in amout</value>
+  </data>
+  <data name="入庫單" xml:space="preserve">
+    <value>Stock Receipt</value>
+  </data>
+  <data name="入庫數量" xml:space="preserve">
+    <value>Inventory Quantity</value>
+  </data>
+  <data name="入庫日期" xml:space="preserve">
+    <value>Inventory date</value>
+  </data>
+  <data name="入庫明細" xml:space="preserve">
+    <value>Inventory Details</value>
+  </data>
+  <data name="入庫明細上架儲位指派" xml:space="preserve">
+    <value>Inventory Details Shelf Storage Assignment</value>
+  </data>
+  <data name="內部作業" xml:space="preserve">
+    <value>Internal Work</value>
+  </data>
+  <data name="內部入庫" xml:space="preserve">
+    <value>Internal Storage</value>
+  </data>
+  <data name="全部" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="共" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="其他" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="出庫中" xml:space="preserve">
+    <value>Out of stock</value>
+  </data>
+  <data name="出庫人員" xml:space="preserve">
+    <value>Warehouse Staff</value>
+  </data>
+  <data name="出庫人員必填" xml:space="preserve">
+    <value>Warehouse staff required</value>
+  </data>
+  <data name="出庫件數" xml:space="preserve">
+    <value>Stock out amout</value>
+  </data>
+  <data name="出庫作業" xml:space="preserve">
+    <value>Out of Stock</value>
+  </data>
+  <data name="出庫單" xml:space="preserve">
+    <value>Outbound Order</value>
+  </data>
+  <data name="出庫數量" xml:space="preserve">
+    <value>Outbound Quantity</value>
+  </data>
+  <data name="出庫日期" xml:space="preserve">
+    <value>Out Date</value>
+  </data>
+  <data name="出庫日期必填" xml:space="preserve">
+    <value>Delivery date is required</value>
+  </data>
+  <data name="出庫明細" xml:space="preserve">
+    <value>Outbound details</value>
+  </data>
+  <data name="出庫明細儲位資料" xml:space="preserve">
+    <value>Outbound detailed storage location data</value>
+  </data>
+  <data name="出庫通知單號" xml:space="preserve">
+    <value>Outbound Notice Number</value>
+  </data>
+  <data name="出貨單位" xml:space="preserve">
+    <value>Shipping Unit</value>
+  </data>
+  <data name="出貨完成" xml:space="preserve">
+    <value>Shipment completed</value>
+  </data>
+  <data name="出貨揀貨作業" xml:space="preserve">
+    <value>Shipping Picking</value>
+  </data>
+  <data name="出貨數量" xml:space="preserve">
+    <value>Export Quantity</value>
+  </data>
+  <data name="出貨方式" xml:space="preserve">
+    <value>Shipping Method</value>
+  </data>
+  <data name="出貨方式必填" xml:space="preserve">
+    <value>Shipping method is required</value>
+  </data>
+  <data name="出貨狀態" xml:space="preserve">
+    <value>Shipping Status</value>
+  </data>
+  <data name="出貨通知單" xml:space="preserve">
+    <value>Shipping Notice</value>
+  </data>
+  <data name="出貨通知單號" xml:space="preserve">
+    <value>Shipping Notice Number</value>
+  </data>
+  <data name="出貨通知單號必填" xml:space="preserve">
+    <value>Shipping Notice Number Required</value>
+  </data>
+  <data name="出貨通知明細" xml:space="preserve">
+    <value>Shipping Notice Details</value>
+  </data>
+  <data name="出貨通知資料維護" xml:space="preserve">
+    <value>Shipping Notice</value>
+  </data>
+  <data name="刪除" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="刪除失敗" xml:space="preserve">
+    <value>Delete Failed</value>
+  </data>
+  <data name="刪除成功" xml:space="preserve">
+    <value>Delete Sucessed</value>
+  </data>
+  <data name="到" xml:space="preserve">
+    <value>to</value>
+  </data>
+  <data name="到貨方式" xml:space="preserve">
+    <value>Arrival Method</value>
+  </data>
+  <data name="到貨方式必填" xml:space="preserve">
+    <value>Delivery method is required</value>
+  </data>
+  <data name="前一個貨架" xml:space="preserve">
+    <value>Previous Shelf</value>
+  </data>
+  <data name="功能列表" xml:space="preserve">
+    <value>Function List</value>
+  </data>
+  <data name="功能權限" xml:space="preserve">
+    <value>Functional permissions</value>
+  </data>
+  <data name="功能權限設定" xml:space="preserve">
+    <value>Function permission setting</value>
+  </data>
+  <data name="包裝名稱" xml:space="preserve">
+    <value>Packaging Name</value>
+  </data>
+  <data name="包裝名稱必填" xml:space="preserve">
+    <value>Package name is required</value>
+  </data>
+  <data name="包裝寬度" xml:space="preserve">
+    <value>Packaging width</value>
+  </data>
+  <data name="包裝寬度必填" xml:space="preserve">
+    <value>Packaging width is required</value>
+  </data>
+  <data name="包裝長度" xml:space="preserve">
+    <value>Packaging length</value>
+  </data>
+  <data name="包裝長度必填" xml:space="preserve">
+    <value>Packaging length is required</value>
+  </data>
+  <data name="包裝高度" xml:space="preserve">
+    <value>Packaging height</value>
+  </data>
+  <data name="包裝高度必填" xml:space="preserve">
+    <value>Packaging height is required</value>
+  </data>
+  <data name="即期品" xml:space="preserve">
+    <value>Spot Goods</value>
+  </data>
+  <data name="取消" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="可模糊查詢" xml:space="preserve">
+    <value>Fuzzy query</value>
+  </data>
+  <data name="右方走道寬度" xml:space="preserve">
+    <value>Right aisle width</value>
+  </data>
+  <data name="名稱" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="名稱為必填" xml:space="preserve">
+    <value>Name is required</value>
+  </data>
+  <data name="否" xml:space="preserve">
+    <value>N</value>
+  </data>
+  <data name="商品" xml:space="preserve">
+    <value>Product</value>
+  </data>
+  <data name="商品代碼" xml:space="preserve">
+    <value>Product Code</value>
+  </data>
+  <data name="商品代碼已存在" xml:space="preserve">
+    <value>Product code already exists</value>
+  </data>
+  <data name="商品代碼必填" xml:space="preserve">
+    <value>Product code is required</value>
+  </data>
+  <data name="商品分類" xml:space="preserve">
+    <value>Product Category</value>
+  </data>
+  <data name="商品分類代碼" xml:space="preserve">
+    <value>Product Category Code</value>
+  </data>
+  <data name="商品分類代碼已存在" xml:space="preserve">
+    <value>Product category code already exists</value>
+  </data>
+  <data name="商品分類代碼必填" xml:space="preserve">
+    <value>Product category code is required</value>
+  </data>
+  <data name="商品分類名稱" xml:space="preserve">
+    <value>Product Category Name</value>
+  </data>
+  <data name="商品分類名稱已存在" xml:space="preserve">
+    <value>Product category name already exists</value>
+  </data>
+  <data name="商品分類名稱必填" xml:space="preserve">
+    <value>Product category name is required</value>
+  </data>
+  <data name="商品分類必填" xml:space="preserve">
+    <value>Product category required</value>
+  </data>
+  <data name="商品分類資料" xml:space="preserve">
+    <value>Product Category</value>
+  </data>
+  <data name="商品分類資料維護" xml:space="preserve">
+    <value>Product Category</value>
+  </data>
+  <data name="商品包裝資料" xml:space="preserve">
+    <value>Product Packaging</value>
+  </data>
+  <data name="商品包裝資料維護" xml:space="preserve">
+    <value>Product Packaging</value>
+  </data>
+  <data name="商品名稱" xml:space="preserve">
+    <value>Product Name</value>
+  </data>
+  <data name="商品名稱已存在" xml:space="preserve">
+    <value>Product name already exists</value>
+  </data>
+  <data name="商品名稱必填" xml:space="preserve">
+    <value>Product name is required</value>
+  </data>
+  <data name="商品型態必填" xml:space="preserve">
+    <value>Product type is required</value>
+  </data>
+  <data name="商品必填" xml:space="preserve">
+    <value>Product required</value>
+  </data>
+  <data name="商品批號" xml:space="preserve">
+    <value>Batch Number</value>
+  </data>
+  <data name="商品條碼" xml:space="preserve">
+    <value>Product Barcode</value>
+  </data>
+  <data name="商品狀態" xml:space="preserve">
+    <value>Product Status</value>
+  </data>
+  <data name="商品資料" xml:space="preserve">
+    <value>Product</value>
+  </data>
+  <data name="商品資料維護" xml:space="preserve">
+    <value>Product</value>
+  </data>
+  <data name="商品類型" xml:space="preserve">
+    <value>Product Type</value>
+  </data>
+  <data name="商品類型代碼" xml:space="preserve">
+    <value>Product Type Code</value>
+  </data>
+  <data name="商品類型代碼必填" xml:space="preserve">
+    <value>Product type code is required</value>
+  </data>
+  <data name="商品類型名稱" xml:space="preserve">
+    <value>Product Type Name</value>
+  </data>
+  <data name="商品類型名稱必填" xml:space="preserve">
+    <value>Product type name is required</value>
+  </data>
+  <data name="商品類型資料" xml:space="preserve">
+    <value>Product Type</value>
+  </data>
+  <data name="商品類型資料維護" xml:space="preserve">
+    <value>Product Type</value>
+  </data>
+  <data name="啟用" xml:space="preserve">
+    <value>Enable</value>
+  </data>
+  <data name="單位" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="單位必填" xml:space="preserve">
+    <value>Unit is required</value>
+  </data>
+  <data name="國家" xml:space="preserve">
+    <value>Country</value>
+  </data>
+  <data name="國家必填" xml:space="preserve">
+    <value>Country Required</value>
+  </data>
+  <data name="地址" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="地址必填" xml:space="preserve">
+    <value>Address required</value>
+  </data>
+  <data name="城市" xml:space="preserve">
+    <value>City</value>
+  </data>
+  <data name="城市必填" xml:space="preserve">
+    <value>City required</value>
+  </data>
+  <data name="基本資料" xml:space="preserve">
+    <value>Basic data</value>
+  </data>
+  <data name="基本資料管理" xml:space="preserve">
+    <value>Basic Data</value>
+  </data>
+  <data name="堆疊" xml:space="preserve">
+    <value>IsStackable</value>
+  </data>
+  <data name="報表日期" xml:space="preserve">
+    <value>Report Date</value>
+  </data>
+  <data name="填滿" xml:space="preserve">
+    <value>Fill Up</value>
+  </data>
+  <data name="客戶" xml:space="preserve">
+    <value>Customer</value>
+  </data>
+  <data name="客戶代碼" xml:space="preserve">
+    <value>Customer Code</value>
+  </data>
+  <data name="客戶代碼已存在" xml:space="preserve">
+    <value>Customer code already exists</value>
+  </data>
+  <data name="客戶代碼必填" xml:space="preserve">
+    <value>Customer code required</value>
+  </data>
+  <data name="客戶名稱" xml:space="preserve">
+    <value>Customer Name</value>
+  </data>
+  <data name="客戶名稱已存在" xml:space="preserve">
+    <value>Customer name already exists</value>
+  </data>
+  <data name="客戶名稱必填" xml:space="preserve">
+    <value>Customer name is required</value>
+  </data>
+  <data name="客戶必填" xml:space="preserve">
+    <value>Customer required</value>
+  </data>
+  <data name="客戶管理" xml:space="preserve">
+    <value>Customer</value>
+  </data>
+  <data name="客戶資料" xml:space="preserve">
+    <value>Customer</value>
+  </data>
+  <data name="客戶資料維護" xml:space="preserve">
+    <value>Customer</value>
+  </data>
+  <data name="客戶退貨單號" xml:space="preserve">
+    <value>Customer Return No.</value>
+  </data>
+  <data name="客戶退貨單號不可空白" xml:space="preserve">
+    <value>Customer return order number is required</value>
+  </data>
+  <data name="客戶進貨單號" xml:space="preserve">
+    <value>Customer Purchase Order Number</value>
+  </data>
+  <data name="客戶進貨單號必填" xml:space="preserve">
+    <value>Customer purchase order number is required</value>
+  </data>
+  <data name="容積" xml:space="preserve">
+    <value>Volume</value>
+  </data>
+  <data name="密碼" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="密碼必填" xml:space="preserve">
+    <value>Password required</value>
+  </data>
+  <data name="寬度" xml:space="preserve">
+    <value>Width</value>
+  </data>
+  <data name="專車" xml:space="preserve">
+    <value>Special Car</value>
+  </data>
+  <data name="層數" xml:space="preserve">
+    <value>CurrentLayer</value>
+  </data>
+  <data name="層架" xml:space="preserve">
+    <value>Layer</value>
+  </data>
+  <data name="層架代碼" xml:space="preserve">
+    <value>Layer Code</value>
+  </data>
+  <data name="層架代碼為必填" xml:space="preserve">
+    <value>LayerCode is Required.</value>
+  </data>
+  <data name="層架為必填" xml:space="preserve">
+    <value>Shelf is required</value>
+  </data>
+  <data name="層架設定" xml:space="preserve">
+    <value>Layer Setting</value>
+  </data>
+  <data name="層架資料" xml:space="preserve">
+    <value>Layer</value>
+  </data>
+  <data name="左方走道寬度" xml:space="preserve">
+    <value>Left aisle width</value>
+  </data>
+  <data name="差異數量" xml:space="preserve">
+    <value>Number of Differences</value>
+  </data>
+  <data name="已上架" xml:space="preserve">
+    <value>Listed</value>
+  </data>
+  <data name="已入庫" xml:space="preserve">
+    <value>Already in storage</value>
+  </data>
+  <data name="已入庫，故不可刪除資料" xml:space="preserve">
+    <value>It has been put into storage, so the data cannot be deleted</value>
+  </data>
+  <data name="已出庫" xml:space="preserve">
+    <value>Already Out of stock</value>
+  </data>
+  <data name="已出貨通知或加工通知，故不可刪除資料" xml:space="preserve">
+    <value>It has been notified of shipment or processing, so data cannot be deleted</value>
+  </data>
+  <data name="已出貨，故不可刪除資料" xml:space="preserve">
+    <value>It has been shipped, so the data cannot be deleted</value>
+  </data>
+  <data name="已有下層包裝，故不可刪除資料" xml:space="preserve">
+    <value>There is a lower package, so the data cannot be deleted</value>
+  </data>
+  <data name="已有出入庫資料，故不可刪除資料" xml:space="preserve">
+    <value>There is already inbound and outbound data, so the data cannot be deleted</value>
+  </data>
+  <data name="已設定商品包裝資料，故不可刪除資料" xml:space="preserve">
+    <value>The product packaging information has been set, so the data cannot be deleted</value>
+  </data>
+  <data name="已設定商品資料，故不可刪除資料" xml:space="preserve">
+    <value>The product information has been set, so the data cannot be deleted</value>
+  </data>
+  <data name="已設定庫別資料，故不可刪除資料" xml:space="preserve">
+    <value>The Room data has been set, so the data cannot be deleted</value>
+  </data>
+  <data name="帳號作業" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="平面倉" xml:space="preserve">
+    <value>Plane warehouse</value>
+  </data>
+  <data name="序號" xml:space="preserve">
+    <value>Serial Number</value>
+  </data>
+  <data name="庫別" xml:space="preserve">
+    <value>Room</value>
+  </data>
+  <data name="庫別資料維護" xml:space="preserve">
+    <value>Room</value>
+  </data>
+  <data name="庫別類型資料維護" xml:space="preserve">
+    <value>Room Type Setting</value>
+  </data>
+  <data name="庫存件數" xml:space="preserve">
+    <value>Inventory amout</value>
+  </data>
+  <data name="庫存作業" xml:space="preserve">
+    <value>Inventory</value>
+  </data>
+  <data name="庫存數量" xml:space="preserve">
+    <value>Inventory Quantity</value>
+  </data>
+  <data name="庫存種類" xml:space="preserve">
+    <value>Inventory Type</value>
+  </data>
+  <data name="庫存調整單" xml:space="preserve">
+    <value>Inventory Adjustment Form</value>
+  </data>
+  <data name="庫存調整已完成，故不可刪除資料" xml:space="preserve">
+    <value>Inventory adjustment has been completed, so data cannot be deleted</value>
+  </data>
+  <data name="庫存調整維護" xml:space="preserve">
+    <value>Inventory Adjustment</value>
+  </data>
+  <data name="廠商送貨" xml:space="preserve">
+    <value>Manufacturer Delivery</value>
+  </data>
+  <data name="待上架" xml:space="preserve">
+    <value>To be on the shelves</value>
+  </data>
+  <data name="待入庫" xml:space="preserve">
+    <value>Pending Storage</value>
+  </data>
+  <data name="待出庫" xml:space="preserve">
+    <value>To be out of the stock</value>
+  </data>
+  <data name="待退貨入庫" xml:space="preserve">
+    <value>Pending return</value>
+  </data>
+  <data name="待驗收" xml:space="preserve">
+    <value>Pending acceptance</value>
+  </data>
+  <data name="後一個貨架" xml:space="preserve">
+    <value>Next Shelf</value>
+  </data>
+  <data name="成功" xml:space="preserve">
+    <value>Sucessed</value>
+  </data>
+  <data name="批號" xml:space="preserve">
+    <value>Batch Number</value>
+  </data>
+  <data name="揀貨中" xml:space="preserve">
+    <value>Picking</value>
+  </data>
+  <data name="搜尋" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="搜尋儲位異動商品" xml:space="preserve">
+    <value>Search for products</value>
+  </data>
+  <data name="搜尋庫存調整商品" xml:space="preserve">
+    <value>Search for products</value>
+  </data>
+  <data name="搜尋條件" xml:space="preserve">
+    <value>Search Condition</value>
+  </data>
+  <data name="操作" xml:space="preserve">
+    <value>Manage</value>
+  </data>
+  <data name="數量" xml:space="preserve">
+    <value>Quantity</value>
+  </data>
+  <data name="新增" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="新增儲位異動單" xml:space="preserve">
+    <value>Add storage position change order</value>
+  </data>
+  <data name="新增入庫單" xml:space="preserve">
+    <value>Add Stock Receipt</value>
+  </data>
+  <data name="新增出庫單" xml:space="preserve">
+    <value>Add outbound order</value>
+  </data>
+  <data name="新增出貨通知" xml:space="preserve">
+    <value>Added Shipping Notice</value>
+  </data>
+  <data name="新增失敗" xml:space="preserve">
+    <value>Add Failed</value>
+  </data>
+  <data name="新增失敗：商品資料已在異動中" xml:space="preserve">
+    <value>Failed to add: product information is already in the process of change</value>
+  </data>
+  <data name="新增失敗：商品資料已在調整中" xml:space="preserve">
+    <value>Add failed: product information is already being adjusted</value>
+  </data>
+  <data name="新增失敗：有盤點明細資料已在盤點中" xml:space="preserve">
+    <value>Failed to add: there are inventory details already in the inventory</value>
+  </data>
+  <data name="新增失敗：該出貨通知單號已出庫" xml:space="preserve">
+    <value>Failed to add: The shipping notice number has been shipped out</value>
+  </data>
+  <data name="新增失敗：該進貨通知單號已出庫" xml:space="preserve">
+    <value>Failed to add: The purchase notice number has been shipped out</value>
+  </data>
+  <data name="新增庫存調整單" xml:space="preserve">
+    <value>Add Inventory Adjustment Form</value>
+  </data>
+  <data name="新增成功" xml:space="preserve">
+    <value>Add Sucessed</value>
+  </data>
+  <data name="新增明細" xml:space="preserve">
+    <value>Add Details</value>
+  </data>
+  <data name="新增盤點單" xml:space="preserve">
+    <value>Add Inventory</value>
+  </data>
+  <data name="新增退貨通知" xml:space="preserve">
+    <value>Add Return Notice</value>
+  </data>
+  <data name="新增進貨通知" xml:space="preserve">
+    <value>Add Purchase Notification</value>
+  </data>
+  <data name="是" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="是否可存放多種商品" xml:space="preserve">
+    <value>Store multiple items</value>
+  </data>
+  <data name="是否為最小單位包裝" xml:space="preserve">
+    <value>Whether it is the smallest unit package</value>
+  </data>
+  <data name="是否為最小單位包裝必填" xml:space="preserve">
+    <value>Minimum unit packaging required</value>
+  </data>
+  <data name="最低溫" xml:space="preserve">
+    <value>MinTemp</value>
+  </data>
+  <data name="最低溫不可大於最高溫，請重新輸入!" xml:space="preserve">
+    <value>Min Temp can't over Max Temp,please correct!</value>
+  </data>
+  <data name="最低溫必填" xml:space="preserve">
+    <value>Minimum temperature required</value>
+  </data>
+  <data name="最低溫為必填" xml:space="preserve">
+    <value>Minimum temperature is required</value>
+  </data>
+  <data name="最大棧板數" xml:space="preserve">
+    <value>Max pallet count</value>
+  </data>
+  <data name="最小單位包裝" xml:space="preserve">
+    <value>Smallest unit packaging</value>
+  </data>
+  <data name="最高溫" xml:space="preserve">
+    <value>MaxTemp</value>
+  </data>
+  <data name="最高溫必填" xml:space="preserve">
+    <value>Maximum temperature required</value>
+  </data>
+  <data name="最高溫為必填" xml:space="preserve">
+    <value>Maximum temperature is required</value>
+  </data>
+  <data name="有效日期" xml:space="preserve">
+    <value>Effective Date</value>
+  </data>
+  <data name="有效日期必填" xml:space="preserve">
+    <value>Expiration date is required</value>
+  </data>
+  <data name="有效期限" xml:space="preserve">
+    <value>Expiry Date</value>
+  </data>
+  <data name="有效期限不可空白" xml:space="preserve">
+    <value>Expiration period is required</value>
+  </data>
+  <data name="條碼" xml:space="preserve">
+    <value>Barcode</value>
+  </data>
+  <data name="條碼必填" xml:space="preserve">
+    <value>Barcode required</value>
+  </data>
+  <data name="檔案上傳" xml:space="preserve">
+    <value>File Upload</value>
+  </data>
+  <data name="檔案名稱" xml:space="preserve">
+    <value>File Name</value>
+  </data>
+  <data name="檔案讀取失敗" xml:space="preserve">
+    <value>File read failed</value>
+  </data>
+  <data name="每日庫存" xml:space="preserve">
+    <value>Daily Stock</value>
+  </data>
+  <data name="每日庫存量查詢" xml:space="preserve">
+    <value>Daily Inventory Query</value>
+  </data>
+  <data name="注意" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="深度" xml:space="preserve">
+    <value>Depth</value>
+  </data>
+  <data name="清除查詢條件" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="温層" xml:space="preserve">
+    <value>Temperature Layer</value>
+  </data>
+  <data name="温層必填" xml:space="preserve">
+    <value>Thermosphere required</value>
+  </data>
+  <data name="溫別" xml:space="preserve">
+    <value>TempLayer</value>
+  </data>
+  <data name="溫別設定" xml:space="preserve">
+    <value>TempLayer</value>
+  </data>
+  <data name="無符合資料" xml:space="preserve">
+    <value>No matching data</value>
+  </data>
+  <data name="物流中心" xml:space="preserve">
+    <value>Logistics Center</value>
+  </data>
+  <data name="物流中心必填" xml:space="preserve">
+    <value>Logistics Center is required</value>
+  </data>
+  <data name="狀態" xml:space="preserve">
+    <value>Status</value>
+    <comment>啟用停用</comment>
+  </data>
+  <data name="狀態必填" xml:space="preserve">
+    <value>Status required</value>
+  </data>
+  <data name="異動中" xml:space="preserve">
+    <value>Changing</value>
+  </data>
+  <data name="異動人員" xml:space="preserve">
+    <value>Change Personnel</value>
+  </data>
+  <data name="異動原因" xml:space="preserve">
+    <value>Reason for change</value>
+  </data>
+  <data name="異動完成" xml:space="preserve">
+    <value>Changing completed</value>
+  </data>
+  <data name="異動後倉別" xml:space="preserve">
+    <value>Warehouse after the change</value>
+  </data>
+  <data name="異動後儲位" xml:space="preserve">
+    <value>Storage after change</value>
+  </data>
+  <data name="異動後儲位不可與原儲位相同" xml:space="preserve">
+    <value>The storage location after the change cannot be the same as the original storage location</value>
+  </data>
+  <data name="異動後儲區" xml:space="preserve">
+    <value>Storage area after change</value>
+  </data>
+  <data name="異動後層架" xml:space="preserve">
+    <value>Layer after the change</value>
+  </data>
+  <data name="異動後庫別" xml:space="preserve">
+    <value>Room after the change</value>
+  </data>
+  <data name="異動後物流中心" xml:space="preserve">
+    <value>Logistics center after change</value>
+  </data>
+  <data name="異動後貨架" xml:space="preserve">
+    <value>Shelf after the change</value>
+  </data>
+  <data name="異動數量" xml:space="preserve">
+    <value>Number of changes</value>
+  </data>
+  <data name="異動數量不可大於庫存數量" xml:space="preserve">
+    <value>The transaction quantity cannot be greater than the stock quantity</value>
+  </data>
+  <data name="異動日期" xml:space="preserve">
+    <value>Change Date</value>
+  </data>
+  <data name="異動通知" xml:space="preserve">
+    <value>Change notification</value>
+  </data>
+  <data name="登入失敗" xml:space="preserve">
+    <value>Login failed</value>
+  </data>
+  <data name="登入成功" xml:space="preserve">
+    <value>Sign in suceesfully</value>
+  </data>
+  <data name="登出" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="盤點單" xml:space="preserve">
+    <value>Checklist</value>
+  </data>
+  <data name="確定" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="確定刪除嗎?" xml:space="preserve">
+    <value>Are you sure to delete it?</value>
+  </data>
+  <data name="確定移除此筆明細資料" xml:space="preserve">
+    <value>Are you sure you want to remove this detail</value>
+  </data>
+  <data name="確定移除此筆附件資料" xml:space="preserve">
+    <value>Are you sure you want to remove this attachment</value>
+  </data>
+  <data name="移除" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="穎鋒資訊" xml:space="preserve">
+    <value>Conicsoft</value>
+  </data>
+  <data name="第幾格" xml:space="preserve">
+    <value>Number of grids</value>
+  </data>
+  <data name="筆" xml:space="preserve">
+    <value>row</value>
+  </data>
+  <data name="管理者" xml:space="preserve">
+    <value>Manager</value>
+  </data>
+  <data name="系統入庫單號" xml:space="preserve">
+    <value>System Receipt Number</value>
+  </data>
+  <data name="系統出庫單號" xml:space="preserve">
+    <value>The system outbound order number</value>
+  </data>
+  <data name="系統出貨單號" xml:space="preserve">
+    <value>System Shipper Number</value>
+  </data>
+  <data name="系統產生單號" xml:space="preserve">
+    <value>System Order Number</value>
+  </data>
+  <data name="系統管理者" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="系統自動產生" xml:space="preserve">
+    <value>AutomaticallyGenerates</value>
+  </data>
+  <data name="系統退貨單號" xml:space="preserve">
+    <value>Return No.</value>
+  </data>
+  <data name="系統進貨單號" xml:space="preserve">
+    <value>System Purchase Order Number</value>
+  </data>
+  <data name="結束日期" xml:space="preserve">
+    <value>EndDate</value>
+  </data>
+  <data name="統一編號" xml:space="preserve">
+    <value>Uniform numbers</value>
+  </data>
+  <data name="統一編號必填" xml:space="preserve">
+    <value>Uniform number required</value>
+  </data>
+  <data name="緊急進貨" xml:space="preserve">
+    <value>Emergency Purchase</value>
+  </data>
+  <data name="緊急進貨必填" xml:space="preserve">
+    <value>Urgent purchase required</value>
+  </data>
+  <data name="編輯" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="聯絡人" xml:space="preserve">
+    <value>Contact person</value>
+  </data>
+  <data name="聯絡人地址" xml:space="preserve">
+    <value>Contact Address</value>
+  </data>
+  <data name="聯絡人地址必填" xml:space="preserve">
+    <value>Contact address is required</value>
+  </data>
+  <data name="聯絡人必填" xml:space="preserve">
+    <value>Contact is required</value>
+  </data>
+  <data name="聯絡人電話" xml:space="preserve">
+    <value>contact phone</value>
+  </data>
+  <data name="聯絡人電話必填" xml:space="preserve">
+    <value>Contact phone number required</value>
+  </data>
+  <data name="良品" xml:space="preserve">
+    <value>Good Product</value>
+  </data>
+  <data name="製造日期" xml:space="preserve">
+    <value>Manufacturing Date</value>
+  </data>
+  <data name="製造日期不可空白" xml:space="preserve">
+    <value>Manufacturing date is required</value>
+  </data>
+  <data name="角色名稱" xml:space="preserve">
+    <value>Role Name</value>
+  </data>
+  <data name="角色資料維護" xml:space="preserve">
+    <value>Role Setting</value>
+  </data>
+  <data name="該使用者角色已被使用，不可刪除" xml:space="preserve">
+    <value>The user role has already been used and cannot be deleted</value>
+  </data>
+  <data name="調整中" xml:space="preserve">
+    <value>Adjusting</value>
+  </data>
+  <data name="調整人員" xml:space="preserve">
+    <value>Adjuster</value>
+  </data>
+  <data name="調整原因" xml:space="preserve">
+    <value>Reason for adjustment</value>
+  </data>
+  <data name="調整完成" xml:space="preserve">
+    <value>Adjustment Complete</value>
+  </data>
+  <data name="調整後數量" xml:space="preserve">
+    <value>Adjusted Quantity</value>
+  </data>
+  <data name="調整數量" xml:space="preserve">
+    <value>Adjust Quantity</value>
+  </data>
+  <data name="調整日期" xml:space="preserve">
+    <value>Adjust Date</value>
+  </data>
+  <data name="調整通知" xml:space="preserve">
+    <value>Adjust Notification</value>
+  </data>
+  <data name="請先選擇客戶" xml:space="preserve">
+    <value>Please select a customer first</value>
+  </data>
+  <data name="請加入明細資料" xml:space="preserve">
+    <value>Please add details</value>
+  </data>
+  <data name="請勾選功能列表" xml:space="preserve">
+    <value>Please tick the function list</value>
+  </data>
+  <data name="請填寫上層包裝入數" xml:space="preserve">
+    <value>Please fill in the upper packaging amount</value>
+  </data>
+  <data name="請填寫包裝寬度" xml:space="preserve">
+    <value>Please fill in the packaging width</value>
+  </data>
+  <data name="請填寫包裝長度" xml:space="preserve">
+    <value>Please fill in the packaging length</value>
+  </data>
+  <data name="請填寫包裝高度" xml:space="preserve">
+    <value>Please fill in the packaging height</value>
+  </data>
+  <data name="請填寫商品批號" xml:space="preserve">
+    <value>Please fill in the product batch number</value>
+  </data>
+  <data name="請填寫報表日期" xml:space="preserve">
+    <value>Please fill in the statement date</value>
+  </data>
+  <data name="請填寫所有明細之盤點數量" xml:space="preserve">
+    <value>Please fill in the counted quantity of all details</value>
+  </data>
+  <data name="請填寫有效期限" xml:space="preserve">
+    <value>Please fill in the expiration date</value>
+  </data>
+  <data name="請填寫異動數量" xml:space="preserve">
+    <value>Please fill in the number of changes</value>
+  </data>
+  <data name="請填寫製造日期" xml:space="preserve">
+    <value>Please fill in the date of manufacture</value>
+  </data>
+  <data name="請填寫調整數量" xml:space="preserve">
+    <value>Please fill in the adjustment quantity</value>
+  </data>
+  <data name="請填寫重量" xml:space="preserve">
+    <value>Please fill in the weight</value>
+  </data>
+  <data name="請填寫預計出貨數量" xml:space="preserve">
+    <value>Please fill in the estimated shipment quantity</value>
+  </data>
+  <data name="請填寫預計進貨數量" xml:space="preserve">
+    <value>Please fill in the estimated purchase quantity</value>
+  </data>
+  <data name="請填寫驗收人員" xml:space="preserve">
+    <value>Please fill in the acceptance person</value>
+  </data>
+  <data name="請填寫驗收日期" xml:space="preserve">
+    <value>Please fill in the acceptance date</value>
+  </data>
+  <data name="請搜尋儲位異動商品" xml:space="preserve">
+    <value>Please search for products with changing storage positions</value>
+  </data>
+  <data name="請搜尋庫存調整商品" xml:space="preserve">
+    <value>Please search for inventory adjustment products</value>
+  </data>
+  <data name="請選擇" xml:space="preserve">
+    <value>Please select</value>
+  </data>
+  <data name="請選擇上層包裝" xml:space="preserve">
+    <value>Please select upper packaging</value>
+  </data>
+  <data name="請選擇供應商" xml:space="preserve">
+    <value>Please select the supplier</value>
+  </data>
+  <data name="請選擇儲位" xml:space="preserve">
+    <value>Please select a storage location</value>
+  </data>
+  <data name="請選擇儲區" xml:space="preserve">
+    <value>Please select a storage area</value>
+  </data>
+  <data name="請選擇入庫人員" xml:space="preserve">
+    <value>Please select the warehousing staff</value>
+  </data>
+  <data name="請選擇入庫日期" xml:space="preserve">
+    <value>Please select a stock date</value>
+  </data>
+  <data name="請選擇出庫人員" xml:space="preserve">
+    <value>Please select the warehouse staff</value>
+  </data>
+  <data name="請選擇出庫日期" xml:space="preserve">
+    <value>Please select out date</value>
+  </data>
+  <data name="請選擇出貨單位" xml:space="preserve">
+    <value>Please select the shipping unit</value>
+  </data>
+  <data name="請選擇出貨通知單號" xml:space="preserve">
+    <value>Please select a shipping notification number</value>
+  </data>
+  <data name="請選擇商品" xml:space="preserve">
+    <value>Please select the product</value>
+  </data>
+  <data name="請選擇商品分類" xml:space="preserve">
+    <value>Please select the product category</value>
+  </data>
+  <data name="請選擇商品型態" xml:space="preserve">
+    <value>Please select the product type</value>
+  </data>
+  <data name="請選擇商品狀態" xml:space="preserve">
+    <value>Please select item status</value>
+  </data>
+  <data name="請選擇客戶" xml:space="preserve">
+    <value>Please select the customer</value>
+  </data>
+  <data name="請選擇明細(序號:" xml:space="preserve">
+    <value>Please select details (serial number:</value>
+  </data>
+  <data name="請選擇是否為最小單位包裝" xml:space="preserve">
+    <value>Please select whether it is the smallest unit package</value>
+  </data>
+  <data name="請選擇温層" xml:space="preserve">
+    <value>Please select the temperature layer</value>
+  </data>
+  <data name="請選擇物流中心" xml:space="preserve">
+    <value>Please select a logistics center</value>
+  </data>
+  <data name="請選擇異動人員" xml:space="preserve">
+    <value>Please select a mover</value>
+  </data>
+  <data name="請選擇異動後儲位" xml:space="preserve">
+    <value>Please select the storage space after the change</value>
+  </data>
+  <data name="請選擇盤點人員" xml:space="preserve">
+    <value>Please select an inventory staff</value>
+  </data>
+  <data name="請選擇調整人員" xml:space="preserve">
+    <value>Please select an adjuster</value>
+  </data>
+  <data name="請選擇資料" xml:space="preserve">
+    <value>Please select a row</value>
+  </data>
+  <data name="請選擇進貨單位" xml:space="preserve">
+    <value>Please select the purchase unit</value>
+  </data>
+  <data name="請選擇進貨通知單號" xml:space="preserve">
+    <value>Please select the purchase order number</value>
+  </data>
+  <data name="請選擇驗收人員" xml:space="preserve">
+    <value>Please select an acceptor</value>
+  </data>
+  <data name="請點選新增或選擇列後點選修改" xml:space="preserve">
+    <value>Please click Add or select Column and then click Modify</value>
+  </data>
+  <data name="警告" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="變更倉別" xml:space="preserve">
+    <value>Change House</value>
+  </data>
+  <data name="變更倉別後，明細需重新盤點" xml:space="preserve">
+    <value>After changing the house, the details need to be re-counted</value>
+  </data>
+  <data name="變更商品" xml:space="preserve">
+    <value>Change Product</value>
+  </data>
+  <data name="變更商品後，明細需重新盤點" xml:space="preserve">
+    <value>After changing the product, the details need to be re-counted</value>
+  </data>
+  <data name="變更客戶" xml:space="preserve">
+    <value>Change Customer</value>
+  </data>
+  <data name="變更客戶後，明細需重新建立" xml:space="preserve">
+    <value>After changing the customer, the details need to be re-created</value>
+  </data>
+  <data name="變更客戶後，明細需重新盤點" xml:space="preserve">
+    <value>After changing the customer, the details need to be re-counted</value>
+  </data>
+  <data name="變更庫別" xml:space="preserve">
+    <value>Change Room</value>
+  </data>
+  <data name="變更庫別後，明細需重新盤點" xml:space="preserve">
+    <value>After changing the room, the details need to be re-counted</value>
+  </data>
+  <data name="變更物流中心" xml:space="preserve">
+    <value>Change Logistics Center</value>
+  </data>
+  <data name="變更物流中心後，明細需重新盤點" xml:space="preserve">
+    <value>After changing the logistics center, the details need to be re-counted</value>
+  </data>
+  <data name="變更物流中心後，需重新搜尋儲位異動商品" xml:space="preserve">
+    <value>After changing the logistics center, you need to re-search for the goods that have changed storage locations</value>
+  </data>
+  <data name="變更物流中心後，需重新搜尋庫存調整商品" xml:space="preserve">
+    <value>After changing the logistics center, you need to re-search for inventory adjustment products</value>
+  </data>
+  <data name="貨架" xml:space="preserve">
+    <value>Shelf</value>
+  </data>
+  <data name="貨架右下x軸" xml:space="preserve">
+    <value>Shelf top right x axis</value>
+  </data>
+  <data name="貨架右下y軸" xml:space="preserve">
+    <value>Shelf top right y axis</value>
+  </data>
+  <data name="貨架寬度(x方向)" xml:space="preserve">
+    <value>Shelf width (x direction)</value>
+  </data>
+  <data name="貨架層數" xml:space="preserve">
+    <value>Shelf layers</value>
+  </data>
+  <data name="貨架左上x軸" xml:space="preserve">
+    <value>Shelf top left x axis</value>
+  </data>
+  <data name="貨架左上y軸" xml:space="preserve">
+    <value>Shelf top left y axis</value>
+  </data>
+  <data name="貨架資料" xml:space="preserve">
+    <value>Shelf</value>
+  </data>
+  <data name="貨架長度(y方向)" xml:space="preserve">
+    <value>Shelf length (y direction)</value>
+  </data>
+  <data name="貨架類型" xml:space="preserve">
+    <value>Shelf Type</value>
+  </data>
+  <data name="貨運-DC" xml:space="preserve">
+    <value>Freight-DC</value>
+  </data>
+  <data name="貨運-客戶" xml:space="preserve">
+    <value>Freight-Customer</value>
+  </data>
+  <data name="資料" xml:space="preserve">
+    <value>data</value>
+  </data>
+  <data name="載重" xml:space="preserve">
+    <value>Weight</value>
+  </data>
+  <data name="退庫數量" xml:space="preserve">
+    <value>Return Quantity</value>
+  </data>
+  <data name="退庫明細" xml:space="preserve">
+    <value>Return Details</value>
+  </data>
+  <data name="退貨入庫中" xml:space="preserve">
+    <value>Return in stock</value>
+  </data>
+  <data name="退貨入庫完成" xml:space="preserve">
+    <value>Returns warehousing completed</value>
+  </data>
+  <data name="退貨完成" xml:space="preserve">
+    <value>Return is Complete</value>
+  </data>
+  <data name="退貨接單日期" xml:space="preserve">
+    <value>Return Order Date</value>
+  </data>
+  <data name="退貨數量必須小於等於" xml:space="preserve">
+    <value>Return quantity must be less than or equal to</value>
+  </data>
+  <data name="退貨數量必須為大於0的數值" xml:space="preserve">
+    <value>Return quantity must be a number greater than 0</value>
+  </data>
+  <data name="退貨方式" xml:space="preserve">
+    <value>Return Method</value>
+  </data>
+  <data name="退貨狀態" xml:space="preserve">
+    <value>Return Status</value>
+  </data>
+  <data name="退貨通知單" xml:space="preserve">
+    <value>Return Notice</value>
+  </data>
+  <data name="退貨通知已驗收完成，故不可刪除資料" xml:space="preserve">
+    <value>The return notification has been accepted, so the data cannot be deleted</value>
+  </data>
+  <data name="退貨通知明細" xml:space="preserve">
+    <value>Return Notice Details</value>
+  </data>
+  <data name="退貨通知資料維護" xml:space="preserve">
+    <value>Return Notification</value>
+  </data>
+  <data name="退貨驗收作業" xml:space="preserve">
+    <value>Return Acceptance</value>
+  </data>
+  <data name="送出" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="通知單Id必填" xml:space="preserve">
+    <value>Notice Id is required</value>
+  </data>
+  <data name="通知單號" xml:space="preserve">
+    <value>Notice Number</value>
+  </data>
+  <data name="通知單類別" xml:space="preserve">
+    <value>Notice Category</value>
+  </data>
+  <data name="進貨單位" xml:space="preserve">
+    <value>Purchase Unit</value>
+  </data>
+  <data name="進貨完成" xml:space="preserve">
+    <value>Restocking Completed</value>
+  </data>
+  <data name="進貨接單日" xml:space="preserve">
+    <value>Purchase Order Day</value>
+  </data>
+  <data name="進貨接單日期必填" xml:space="preserve">
+    <value>Receipt date is required</value>
+  </data>
+  <data name="進貨狀態" xml:space="preserve">
+    <value>Stock Status</value>
+  </data>
+  <data name="進貨通知單" xml:space="preserve">
+    <value>Purchase Notification</value>
+  </data>
+  <data name="進貨通知單號" xml:space="preserve">
+    <value>Purchase Order Number</value>
+  </data>
+  <data name="進貨通知已驗收完成，故不可刪除資料" xml:space="preserve">
+    <value>The purchase notification has been accepted, so the data cannot be deleted</value>
+  </data>
+  <data name="進貨通知明細" xml:space="preserve">
+    <value>Purchase Notice Details</value>
+  </data>
+  <data name="進貨通知資料維護" xml:space="preserve">
+    <value>Purchase Notification</value>
+  </data>
+  <data name="進貨驗收作業" xml:space="preserve">
+    <value>Incoming Acceptance</value>
+  </data>
+  <data name="過期品" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="選擇" xml:space="preserve">
+    <value>Choose</value>
+  </data>
+  <data name="郵遞區號" xml:space="preserve">
+    <value>Postal code</value>
+  </data>
+  <data name="郵遞區號必填" xml:space="preserve">
+    <value>Postal code required</value>
+  </data>
+  <data name="重量" xml:space="preserve">
+    <value>Weight</value>
+  </data>
+  <data name="重量必填" xml:space="preserve">
+    <value>Weight required</value>
+  </data>
+  <data name="開啟選單" xml:space="preserve">
+    <value>Open menu</value>
+  </data>
+  <data name="開始日期" xml:space="preserve">
+    <value>StartDate</value>
+  </data>
+  <data name="關閉選單" xml:space="preserve">
+    <value>Close menu</value>
+  </data>
+  <data name="離開" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="電話" xml:space="preserve">
+    <value>Telephone</value>
+  </data>
+  <data name="電話必填" xml:space="preserve">
+    <value>Phone is required</value>
+  </data>
+  <data name="預計出貨數量" xml:space="preserve">
+    <value>Estimated number of shipments</value>
+  </data>
+  <data name="預計出貨日期" xml:space="preserve">
+    <value>Estimated Shipping Date</value>
+  </data>
+  <data name="預計出貨日期必填" xml:space="preserve">
+    <value>Estimated Shipping Date Required</value>
+  </data>
+  <data name="預計到貨日" xml:space="preserve">
+    <value>Estimated Arrival Date</value>
+  </data>
+  <data name="預計到貨日期" xml:space="preserve">
+    <value>Returned Receive Date</value>
+  </data>
+  <data name="預計到貨日期必填" xml:space="preserve">
+    <value>Estimated arrival date is required</value>
+  </data>
+  <data name="預計進貨單位數量必填" xml:space="preserve">
+    <value>Estimated quantity of incoming units is required</value>
+  </data>
+  <data name="預計進貨數量" xml:space="preserve">
+    <value>Estimated Purchase Quantity</value>
+  </data>
+  <data name="類型" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="類型為必填" xml:space="preserve">
+    <value>Type is required</value>
+  </data>
+  <data name="顯示" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="首頁" xml:space="preserve">
+    <value>Home Page</value>
+  </data>
+  <data name="驗收人員" xml:space="preserve">
+    <value>Acceptance Staff</value>
+  </data>
+  <data name="驗收人員必填" xml:space="preserve">
+    <value>Acceptance personnel required</value>
+  </data>
+  <data name="驗收日期" xml:space="preserve">
+    <value>Acceptance Date</value>
+  </data>
+  <data name="驗收日期必填" xml:space="preserve">
+    <value>Acceptance date is required</value>
+  </data>
+  <data name="高度" xml:space="preserve">
+    <value>Height</value>
+  </data>
+</root>

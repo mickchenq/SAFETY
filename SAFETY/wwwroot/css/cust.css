@@ -1,0 +1,12 @@
+﻿.btn_disabled {
+    background-color: lightgray !important;
+}
+
+.row_select {
+    color: red !important;
+    font-weight: bolder;
+}
+
+.dataTable {
+    width: 100% !important;
+}

@@ -1,0 +1,307 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+@{
+    ViewData["Title"] = @_localizer["客戶資料維護"];
+}
+<div id="CustVue">
+    <!--列表搜尋-->
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["搜尋條件"]</span></legend>
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label">@_localizer["客戶代碼"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.CustomerCode" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["客戶名稱"]</div>
+                    <div class="cont">
+                        <input type="text" placeholder='@_localizer["可模糊查詢"]' v-model="queryInfo.CustomerName" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["狀態"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.IsStop">
+                            <option value="">@_localizer["請選擇"]</option>
+                            <option value="N">@_localizer["啟用"]</option>
+                            <option value="Y">@_localizer["停用"]</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="BtnCommon mid">
+                <div class="search"><span><input type="submit" value="@_localizer["搜尋"]" v-on:click="onSearch" /></span></div>
+            </div>
+
+            <div class="btnBox">
+                <div class="add">
+                    <a href="javascript:;" v-on:click="Add">@_localizer["新增"]</a>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <!--列表資料-->
+    <div class="ListTable" v-show="arrResult.length>0">
+        <table id="dataTable" class="table dataTable stripe">
+        </table>
+    </div>
+
+    @*新增/編輯視窗*@
+    <div class="popup_box large boxDetail">
+        <div class="box_wrap">
+            <div class="FormTable">
+                <div class="popup_title">{{objInfo.CustomerId=='0'? '@_localizer["新增"]':'@_localizer["修改"]'}} @_localizer["客戶資料"]</div>
+                <div class="popup_cont">
+                    <div class="SearchItems FormElmt">
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["客戶代碼"]</div>
+                            <div class="cont">
+                                <input type="text" v-if="objInfo.CustomerId =='0'" maxlength="10" v-model="objInfo.CustomerCode">
+                                <input type="text" v-if="objInfo.CustomerId != '0'" disabled="disabled" v-model="objInfo.CustomerCode">
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["客戶名稱"]</div>
+                            <div class="cont">
+                                <input type="text" maxlength="20" v-model="objInfo.CustomerName">
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["統一編號"]</div>
+                            <div class="cont">
+                                <input type="text" maxlength="20" v-model="objInfo.VatNo">
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["電話"]</div>
+                            <div class="cont">
+                                <input type="text" maxlength="20" v-model="objInfo.Phone">
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["狀態"]</div>
+                            <div class="cont">
+                                <select v-model="objInfo.IsStop">
+                                    <option value="N">@_localizer["啟用"]</option>
+                                    <option value="Y">@_localizer["停用"]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["國家"]</div>
+                            <div class="cont">
+                                <input type="text" maxlength="10" v-model="objInfo.CountryCode">
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["城市"]</div>
+                            <div class="cont">
+                                <input type="text" maxlength="20" v-model="objInfo.City">
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="label"><span class="red">*</span>@_localizer["郵遞區號"]</div>
+                            <div class="cont">
+                                <input type="text" maxlength="10" v-model="objInfo.ZipCode">
+                            </div>
+                        </div>
+                        <div class="item two">
+                            <div class="label"><span class="red">*</span>@_localizer["地址"]</div>
+                            <div class="cont">
+                                <input type="text" maxlength="100" v-model="objInfo.Addr">
+                            </div>
+                        </div>
+                        <div class="item two">
+                            <div class="label">@_localizer["備註"]</div>
+                            <div class="cont">
+                                <textarea rows="2" class="fullwidth" maxlength="200" v-model="objInfo.Remarks"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="BtnCommon mid">
+                        <div class="submit"><span><input type="button" value="@_localizer["送出"]" v-on:click="onSubmit" /></span></div>
+                        <div class="cancel"><span><input type="button" value="@_localizer["取消"]" /></span></div>
+                    </div>
+                </div>
+            </div><a class="close" title="@_localizer["關閉"]">@_localizer["關閉"]</a>
+        </div>
+    </div>
+    @*新增/編輯視窗end*@
+</div>
+@section Scripts{
+    <script>
+        var vm = new Vue({
+            el: '#CustVue',
+            components: {
+            },
+            data: function () {
+                return {
+                    // 查詢條件
+                    queryInfo: {
+                        CustomerCode: '',
+                        CustomerName: '',
+                        IsStop: ''
+                    },
+                    // 查詢結果
+                    arrResult: [],
+                    // 新增/編輯
+                    objInfo: {
+                        CustomerId:'0',
+                        CustomerCode: '',
+                        CustomerName: '',
+                        IsStop: 'N'
+                    }
+                }
+            },
+            methods: {
+                // 新增
+                Add: function () {
+                    this.objInfo = {
+                        CustomerId: '0',
+                        CustomerCode: '',
+                        CustomerName: '',
+                        IsStop: 'N'
+                    };
+                    $('.boxDetail').addClass('show');
+                    $('body').addClass('fixed');
+                },
+                onSearch: function () {
+                    let thisvue = this;
+                    thisvue.objInfo = {};
+                    thisvue.arrResult = [];
+
+                    thisvue.coulmnSet = [
+                        {
+                            title: "@_localizer["客戶代碼"]",
+                            "data": "CustomerCode"
+                        },
+                        {
+                            title: "@_localizer["客戶名稱"]",
+                            "data": "CustomerName"
+                        },
+                        {
+                            title: "@_localizer["統一編號"]",
+                            "data": "VatNo"
+                        },
+                        {
+                            title: "@_localizer["電話"]",
+                            "data": "Phone"
+                        },
+                        {
+                            title: "@_localizer["國家"]",
+                            "data": "CountryCode"
+                        },
+                        {
+                            title: "@_localizer["城市"]",
+                            "data": "City"
+                        },
+                        {
+                            title: "@_localizer["郵遞區號"]",
+                            "data": "ZipCode"
+                        },
+                        {
+                            title: "@_localizer["地址"]",
+                            "data": "Addr"
+                        },
+                        {
+                            title: "@_localizer["狀態"]",
+                            "data": "IsStop"
+                        },
+                        {
+                            title: "@_localizer["操作"]",
+                            "data": "CustomerId"
+                        }
+                    ];
+
+                    thisvue.columnDef = [
+                        {
+                            "className": "text-center",
+                            "targets": [8],
+                            mRender: function (result) {
+                                if (result != null) {
+                                    var sbtn = result == "N" ? "@_localizer["啟用"]" : "@_localizer["停用"]";
+                                    return sbtn;
+                                }
+                            }
+                        },
+                        {
+                            "className": "text-center",
+                            "targets": [9],
+                            mRender: function (result) {
+                                if (result != null) {
+                                    var sbtn = '<ul class=\"edit_btns\"><li><a href=\"javascript:;\" class=\"edit\" title=\"@_localizer["編輯"]\" onclick=\"vm.editSet()\"></a></li><li><a href=\"javascript:;\" class=\"del\" title=\"@_localizer["刪除"]\" onclick=\"vm.onDelete()\"></a></li></ul>';
+                                    return sbtn;
+                                }
+                            }
+                        }
+                    ];
+
+                    var issearch = false;
+                    LoadDataTable('@Url.Action("QueryCustomer", "CustomerApi", new { Area = "CustMgmt" })', this.queryInfo, this.coulmnSet, this.columnDef, issearch)
+                        .then(function () {
+                            thisvue.arrResult = $('#dataTable').DataTable().rows().data();
+                            $('#dataTable tbody').on('click', 'tr', function () {
+                                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                                $(this).toggleClass('selected');
+                                if ($('#dataTable').DataTable().rows('.selected').data().length > 0) {
+                                    thisvue.objInfo = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows('.selected').data()[0]));
+                                } else
+                                    thisvue.objInfo = {};
+                            });
+                        });
+                },
+                //讀取
+                editSet: function () {
+                    $('.boxDetail').addClass('show');
+                    $('body').addClass('fixed');
+                },
+                // 儲存
+                onSubmit: function () {
+                    axios.post('/api/CustMgmt/CustomerApi/SaveCustomer', this.objInfo)
+                        .then(function (res) {
+                            _AlertMsg(res.data.isOk, res.data.msg)
+                            // 編輯成功，清空選擇資料
+                            if (res.data.isOk) {
+                                $('.boxDetail').removeClass('show')
+                                $('body').removeClass('fixed')
+                                this.onSearch();
+                            }
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                onDelete: function () {
+                    let thisvue = this;
+                    _ConfirmAlert('w', '@_localizer["警告"]', '@_localizer["確定刪除嗎?"]', true, function () {
+                        axios.post('/api/CustMgmt/CustomerApi/DeleteCustomer', thisvue.objInfo)
+                            .then(function (res) {
+                                // 刪除成功，清空選擇資料
+                                if (res.data.isOk) {
+                                    let RemoveIndex;
+                                    var filteredElements = thisvue.arrResult.filter(function (item, index) { RemoveIndex = index; return item.CustomerId == thisvue.objInfo.CustomerId; });
+                                    thisvue.arrResult.splice(RemoveIndex, 1);
+                                    thisvue.objInfo = {};
+                                    $('#dataTable').DataTable().rows('.selected').remove().draw(false);
+                                }
+                                else {
+                                    _AlertMsg(false, res.data.msg);
+                                }
+                            }.bind(this))
+                            .catch(function (err) {
+                                console.error(err);
+                            })
+                    });
+                }
+
+            }
+        })
+    </script>
+}

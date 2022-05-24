@@ -1,0 +1,234 @@
+﻿@model SAFETYModel.FullStockOut
+@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+@{
+    ViewData["Title"] = @_localizer["出庫作業"];
+}
+<div id="StockOutVue">
+    <div class="ContRight">
+        <div class="tabs">
+            <ul>
+                <li v-bind:class="tab===1?'active':''">
+                    <a href="javascript:void(0)" v-on:click="tab=1">@_localizer["出庫單"]</a>
+                </li>
+                <li v-bind:class="tab===2?'active':''">
+                    <a href="javascript:void(0)" v-on:click="tab=2">@_localizer["出庫明細"]</a>
+                </li>
+                <li v-bind:class="tab===3?'active':''">
+                    <a href="javascript:void(0)" v-on:click="tab=3">@_localizer["檔案上傳"]</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div v-show="tab===1">
+        <stock-basic v-model="objMainInfo"></stock-basic>
+    </div>
+    <div v-show="tab===2">
+        <stock-detail v-model="objMainInfo"></stock-detail>
+    </div>
+    <div v-show="tab===3">
+        <stock-upload v-model="objMainInfo"></stock-upload>
+    </div>
+
+    <div class="btnBox tc">
+        <div>
+            <div class="check" v-show="!this.objMainInfo.isView"><a href="javascript:;" v-on:click="SaveOrder()">@_localizer["儲存"]</a></div>
+            <div class="cancel"><a asp-area="Shipping" asp-controller="Home" asp-action="StockOutList">@_localizer["離開"]</a></div>
+        </div>
+    </div>
+
+</div>
+@section Scripts{
+    <Partial name="/Areas/Shipping/Views/Templates/_StockOutBasic.cshtml" />
+    <Partial name="/Areas/Shipping/Views/Templates/_StockOutDetail.cshtml" />
+    <Partial name="/Areas/Shipping/Views/Templates/_StockOutUpload.cshtml" />
+    <script>
+        /*Main*/
+        var vm = new Vue({
+            el: '#StockOutVue',
+            components: {
+                "stock-basic": StockOutBasic,
+                "stock-detail": StockOutDetail,
+                "stock-upload": StockOutUpload
+            },
+            data: function () {
+                return {
+                    objMainInfo: {
+                        // 主檔
+                        basicinfo: {
+                            OrderId: '0',
+                            OrderNo: '',
+                            DcId: '0',
+                            CustomerId: '0',
+                            RelatedId: '0',
+                            StockUserId: '0',
+                            OrderDate: '',
+                            StockStatus: '1'
+                            //isChangeCustomer: false,
+                        },
+                        // 明細資料
+                        objDetailInfos: [],
+                        // 已上傳附件
+                        objMainFiles: [],
+                        // 新上傳附件
+                        objNewFiles: [],
+                        oldRelatedId: '0',
+                        isView: false
+                    },
+                    tab: 1
+                }
+            },
+            computed: {
+            },
+            created: function () {
+                // 讀取通知單資料
+                this.GetOrderData();
+            },
+            methods: {
+                // 讀取通知單資料
+                GetOrderData: function () {
+                    // 判斷是否有傳入申請單號,有:編輯 無:新增
+                    var orderid = '@Model.StockOutOrder.OrderId';
+                    if (orderid == null || orderid == "" || orderid == "0") {
+                        return;
+                    }
+
+                    axios.get('/api/Shipping/ShippingApi/GetStockOutData',
+                        {
+                            params: { orderid: orderid }
+                        })
+                        .then(function (res) {
+                            if (res.data.isOk) {
+                                if (res.data.dt == null) {
+                                    window.location.href = '@Url.Content("~/")' + 'Shipping/Home/StockOutList';
+                                    return;
+                                }
+                                this.objMainInfo.basicinfo = res.data.dt.stockOutOrder;
+                                this.objMainInfo.oldRelatedId = this.objMainInfo.basicinfo.RelatedId;
+                                this.objMainInfo.isView = res.data.dt.isView;
+                                //明細
+                                this.objMainInfo.objDetailInfos = res.data.dt.stockOutDetail;
+                                //附件
+                                this.objMainInfo.objMainFiles = res.data.dt.uploadFiles;
+                            }
+                            else
+                                _AlertMsg(false, res.data.msg)
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        });
+                },
+                //存檔
+                SaveOrder: function () {
+                      // 驗證欄位是否已填寫
+                    if (!this.VerifyData()) return;
+
+                    let resultDetail = [];
+                    let resultLocationDetail= [];
+                    for (var i = 0; i < this.objMainInfo.objDetailInfos.length; i++) {
+                        resultDetail.push(JSON.parse(JSON.stringify(this.objMainInfo.objDetailInfos[i])));
+                        resultLocationDetail.push(JSON.parse(JSON.stringify(this.objMainInfo.objDetailInfos[i])));
+                    }
+
+                    // 要Post到Api的資料集合
+                    var postData = {
+                        StockOutOrder: this.objMainInfo.basicinfo,              // 主檔
+                        StockOutDetail: resultDetail,                                         // 明細
+                        StockOutLocationDetail: resultLocationDetail,
+                        UploadFiles: this.objMainInfo.objMainFiles               //已上傳附件
+                    }
+
+                    axios.post('/api/Shipping/ShippingApi/SaveStockOut', postData)
+                        .then(function (res) {
+                            if (res.data.isOk) {
+                                if (this.objMainInfo.objNewFiles.length > 0) {
+                                    this.UploadNewFile(this.objMainInfo.basicinfo.OrderId, res.data.dt);
+                                }
+                                else {
+                                    _AlertMsg(res.data.isOk, res.data.msg, function () {
+                                        window.location.href = '@Url.Content("~/")' + 'Shipping/Home/StockOut/' + res.data.dt;
+                                    })
+                                }
+                            }
+                            else
+                                _AlertMsg(false, res.data.msg);
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                 // 新增附件
+                UploadNewFile: function (savetype, orderid) {
+                    if (orderid === "") {
+                        return;
+                    }
+                    var formData = new FormData();
+                    // 附檔
+                    for (var i = 0; i < this.objMainInfo.objNewFiles.length; i++) {
+                        formData.append("[" + i + "].UP_FILE", this.objMainInfo.objNewFiles[i].FILE_DATA);
+                    }
+
+                    const headers = {
+                        'cache': false,
+                        'contentType': false,
+                        'processData': false
+                    }
+                    axios.post('/api/Shipping/ShippingApi/UploadStockOutNewFile?orderid=' + orderid, formData, {
+                            headers: headers
+                        })
+                        .then(function (res) {
+                            if (res.data.isOk) {
+                                _AlertMsg(res.data.isOk, (savetype == "0" ? "@_localizer["新增成功"]" : "@_localizer["修改成功"]"), function () {
+                                    window.location.href = '@Url.Content("~/")' + 'Shipping/Home/StockOut/' + orderid;
+                                })
+                            }
+                            else
+                                _AlertMsg(false, res.data.msg);
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 驗證必填欄位是否有填寫
+                VerifyData: function () {
+                    var msg = "";
+                    if (this.objMainInfo.basicinfo.DcId === "0" || this.objMainInfo.basicinfo.DcId === "") {
+                        msg += "@_localizer["請選擇物流中心"]<br />";
+                    }
+                    if (this.objMainInfo.basicinfo.CustomerId == "0" || this.objMainInfo.basicinfo.CustomerId === "") {
+                        msg += "@_localizer["請選擇客戶"]<br />";
+                    }
+                    if (this.objMainInfo.basicinfo.RelatedId == "0" || this.objMainInfo.basicinfo.RelatedId === "") {
+                        msg += "@_localizer["請選擇出貨通知單號"]<br />";
+                    }
+                    if (this.objMainInfo.basicinfo.OrderDate == "" || this.objMainInfo.basicinfo.OrderDate === undefined) {
+                        msg += "@_localizer["請選擇出庫日期"]<br />";
+                    }
+                    if (this.objMainInfo.basicinfo.StockUserId == "0" || this.objMainInfo.basicinfo.StockUserId === "") {
+                        msg += "@_localizer["請選擇出庫人員"]<br />";
+                    }
+
+                    if (this.objMainInfo.objDetailInfos.length === 0) {
+                        msg += "@_localizer["請加入明細資料"]<br />";
+                    }
+
+                    for (var i = 0; i < this.objMainInfo.objDetailInfos.length; i++)
+                    {
+                        if (this.objMainInfo.objDetailInfos[i].LocationId == "0" || this.objMainInfo.objDetailInfos[i].LocationId === "") {
+                            msg += "@_localizer["請選擇明細(序號:"]" + (i + 1).toString() + "@_localizer[")之儲位"]<br />";
+                        }
+                    }
+
+                    if (msg.trim() != "") {
+                        _AlertMsg(false, msg);
+                        return false
+                    }
+                    return true
+                }
+
+            }
+        })
+    </script>
+}

@@ -1,0 +1,920 @@
+﻿@model SAFETYModel.DBModels.LocationChangeOrder
+@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+@{
+    ViewData["Title"] = @_localizer["儲位異動維護"];
+}
+<div id="ChangeVue">
+    <fieldset class="SearchBox FormGroup FormElmt">
+        <legend class="FormGroupTitle"><span>@_localizer["儲位異動單"]</span></legend>
+        <div class="FormTable">
+            <div class="item ">
+                <div class="label"><span class="red">*</span>@_localizer["系統產生單號"]</div>
+                <div class="cont">
+                    <input type="text" placeholder="@_localizer["系統自動產生"]" v-model="objMainInfo.basicinfo.OrderNo" maxlength="20" disabled />
+                </div>
+            </div>
+            <div class="item">
+                <div class="label"><span class="red">*</span>@_localizer["異動人員"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.StockAdjustId" v-bind:disabled="objMainInfo.basicinfo.OrderId !=0">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(item,index) in arrUser" v-if="item.IsStop=='N'  || item.UserId==objMainInfo.basicinfo.StockAdjustId" :value="item.UserId">{{item.UserName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["異動日期"]</div>
+                <div class="cont">
+                    <input type="text" v-bind:value="filterDate(objMainInfo.basicinfo.OrderDate)" disabled />
+                </div>
+            </div>
+            <div class="item">
+                <div class="label">@_localizer["狀態"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.ChangeStatus" disabled>
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option value="1">@_localizer["異動通知"]</option>
+                        <option value="2">@_localizer["異動中"]</option>
+                        <option value="3">@_localizer["異動完成"]</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="item">
+                <div class="label"><span class="red">*</span>@_localizer["物流中心"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.DcId" v-on:change="changeDataCenter()" v-bind:disabled="objMainInfo.basicinfo.OrderId !=0">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(bItem,index) in arrDataCenter" v-if="bItem.IsStop=='N' || bItem.DcId==objMainInfo.basicinfo.DcId" :value="bItem.DcId">{{bItem.DcName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item" v-if="objMainInfo.basicinfo.OrderId==='' || objMainInfo.basicinfo.OrderId==='0'">
+                <div class="label"></div>
+                <div class="cont">
+                    <a title="@_localizer["搜尋儲位異動商品" ]" class="btn_style" style="width:70%" v-on:click="openSearch()" v-if="objMainInfo.basicinfo.OrderId==='' || objMainInfo.basicinfo.OrderId==='0'">@_localizer["搜尋儲位異動商品"]</a>
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["庫別"]</div>
+                <div class="cont">
+                    <input type="text" v-model="objMainInfo.basicinfo.RoomName" disabled />
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["儲位"]</div>
+                <div class="cont">
+                    <input type="text" v-model="objMainInfo.basicinfo.LocationCode" disabled />
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["客戶"]</div>
+                <div class="cont">
+                    <input type="text" v-model="objMainInfo.basicinfo.CustomerName" disabled />
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["商品"]</div>
+                <div class="cont">
+                    <input type="text" v-model="objMainInfo.basicinfo.ProductName" disabled />
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["商品狀態"]</div>
+                <div class="cont">
+                    <input type="text" v-bind:value="showProductStatus(objMainInfo.basicinfo.ProductStatus)" disabled />
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["商品批號"]</div>
+                <div class="cont">
+                    <input type="text" v-model="objMainInfo.basicinfo.ProductLotNo" disabled />
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["單位"]</div>
+                <div class="cont">
+                    <input type="text" v-model="objMainInfo.basicinfo.PackageName" disabled />
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["有效期限"]</div>
+                <div class="cont">
+                    <input type="text" v-bind:value="filterDate(objMainInfo.basicinfo.ExpirationDate)" disabled />
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["庫存數量"]</div>
+                <div class="cont">
+                    <input type="text" v-model="objMainInfo.basicinfo.LocationQuantity" disabled />
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label"><span class="red">*</span>@_localizer["異動數量"]</div>
+                <div class="cont">
+                    <input type="text" oninput="value=value.replace(/[^\d]/g,'')" v-bind:disabled="objMainInfo.isView" v-model="objMainInfo.basicinfo.ChangeQuantity" />
+                </div>
+            </div>
+            <div class="item">
+                <div class="label"><span class="red">*</span>@_localizer["異動後物流中心"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.NewDcId" v-on:change="changeNewDataCenter()" v-bind:disabled="objMainInfo.isView">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(bItem,index) in arrNewDataCenter" v-if="bItem.IsStop=='N' || bItem.DcId==objMainInfo.basicinfo.NewDcId" :value="bItem.DcId">{{bItem.DcName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label"><span class="red">*</span>@_localizer["異動後倉別"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.NewHouseId" v-on:change="changeHouse(2)" v-bind:disabled="objMainInfo.isView">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(item,index) in arrNewHouse" v-if="item.IsStop=='N' || bItem.DcId==objMainInfo.basicinfo.NewHouseId" :value="item.HouseId">{{item.HouseName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label"><span class="red">*</span>@_localizer["異動後庫別"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.NewRoomId" v-on:change="changeNewRoom()" v-bind:disabled="objMainInfo.isView">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(item,index) in arrNewRoom" v-if="item.IsStop=='N' || bItem.DcId==objMainInfo.basicinfo.NewHouseId" :value="item.RoomId">{{item.RoomName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label"><span class="red">*</span>@_localizer["異動後儲區"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.NewAreaId" v-on:change="changeNewArea()" v-bind:disabled="objMainInfo.isView">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(item,index) in arrNewArea" v-if="item.IsStop=='N' || bItem.DcId==objMainInfo.basicinfo.NewAreaId" :value="item.AreaId">{{item.AreaName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label"><span class="red">*</span>@_localizer["異動後貨架"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.NewShelfId" v-on:change="changeNewShelf()" v-bind:disabled="objMainInfo.isView">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(item,index) in arrNewShelf" v-if="item.IsStop=='N' || bItem.DcId==objMainInfo.basicinfo.NewShelfId" :value="item.ShelfId">{{item.ShelfCode}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label"><span class="red">*</span>@_localizer["異動後層架"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.NewLayerId" v-on:change="changeNewLayer()" v-bind:disabled="objMainInfo.isView">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(item,index) in arrNewLayer" v-if="item.IsStop=='N' || bItem.DcId==objMainInfo.basicinfo.NewLayerId" :value="item.LayerId">{{item.LayerCode}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label"><span class="red">*</span>@_localizer["異動後儲位"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.NewLocationId" v-bind:disabled="objMainInfo.isView">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(item,index) in arrNewLocation" v-if="item.IsStop=='N' || bItem.DcId==objMainInfo.basicinfo.NewLocationId" :value="item.LocationId">{{item.LocationCode}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item fullwidth">
+                <div class="label">@_localizer["異動原因"]</div>
+                <div class="cont">
+                    <textarea rows="2" class="fullwidth" maxlength="200" v-bind:disabled="objMainInfo.isView" v-model="objMainInfo.basicinfo.ChangeReason"></textarea>
+                </div>
+            </div>
+
+        </div>
+    </fieldset>
+
+    <div class="btnBox tc">
+        <div>
+            <div class="check" v-show="!this.objMainInfo.isView"><a href="javascript:;" v-on:click="SaveLocationChange(1)">@_localizer["儲存"]</a></div>
+            <div class="check" v-show="!this.objMainInfo.isView"><a href="javascript:;" v-on:click="SaveLocationChange(3)">@_localizer["異動完成"]</a></div>
+            <div class="cancel"><a asp-area="StorageMgnt" asp-controller="Home" asp-action="LocationChangeList">@_localizer["離開"]</a></div>
+        </div>
+    </div>
+
+    @*搜尋儲位異動商品 視窗*@
+    <div class="popup_box large" id="boxDetail">
+        <div class="box_wrap">
+            <div class="FormTable" style="overflow:auto">
+                <div class="popup_title">@_localizer["搜尋儲位異動商品"]</div>
+                <div class="popup_cont">
+                    <div class="SearchBox FormElmt">
+                        <div class="SearchItems">
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>@_localizer["物流中心"]</div>
+                                <div class="cont">
+                                    <select v-model="objMainInfo.basicinfo.DcId" disabled>
+                                        <option value="0">@_localizer["請選擇"]</option>
+                                        <option v-for="(bItem,index) in arrDataCenter" v-if="bItem.IsStop=='N' || bItem.DcId==objMainInfo.basicinfo.DcId" :value="bItem.DcId">{{bItem.DcName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item ">
+                                <div class="label">@_localizer["倉別"]</div>
+                                <div class="cont">
+                                    <select v-model="objSearchData.HouseId" v-on:change="changeHouse(1)">
+                                        <option value="0">@_localizer["請選擇"]</option>
+                                        <option v-for="(item,index) in arrHouse" v-if="item.IsStop=='N'" :value="item.HouseId">{{item.HouseName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item ">
+                                <div class="label">@_localizer["庫別"]</div>
+                                <div class="cont">
+                                    <select v-model="objSearchData.RoomId">
+                                        <option value="0">@_localizer["請選擇"]</option>
+                                        <option v-for="(item,index) in arrRoom" v-if="item.IsStop=='N'" :value="item.RoomId">{{item.RoomName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">@_localizer["儲位代碼"]</div>
+                                <div class="cont">
+                                    <input type="text" v-model="objSearchData.LocationCode" />
+                                </div>
+                            </div>
+                            <div class="item ">
+                                <div class="label">@_localizer["客戶"]</div>
+                                <div class="cont">
+                                    <select v-model="objSearchData.CustomerId" v-on:change="changeCustomer()">
+                                        <option value="0">@_localizer["請選擇"]</option>
+                                        <option v-for="(item,index) in arrCustomer" v-if="item.IsStop=='N'" :value="item.CustomerId">{{item.CustomerName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item ">
+                                <div class="label">@_localizer["商品"]</div>
+                                <div class="cont">
+                                    <select v-model="objSearchData.ProductId">
+                                        <option value="0">@_localizer["請選擇"]</option>
+                                        <option v-for="(item,index) in arrProds" v-if="item.IsStop=='N'" :value="item.ProductId">{{item.ProductName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">@_localizer["商品批號"]</div>
+                                <div class="cont">
+                                    <input type="text" v-model="objSearchData.ProductLotNo" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">@_localizer["商品狀態"]</div>
+                                <div class="cont">
+                                    <select v-model="objSearchData.ProductStatus">
+                                        <option value="0">@_localizer["請選擇"]</option>
+                                        <option value="1">@_localizer["良品"]</option>
+                                        <option value="2">@_localizer["不良品"]</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item deadline">
+                                <div class="label">@_localizer["有效期限"]</div>
+                                <div class="cont">
+                                    <input type="date" placeholder="YYYY/MM/DD" title="@_localizer["開始日期"]" v-model="objSearchData.ExpirationDateStart" class="date dev-calendar"><span class="dash">~</span><input type="date" placeholder="YYYY/MM/DD" title="@_localizer["結束日期"]" v-model="objSearchData.ExpirationDateEnd" class="date dev-calendar">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="BtnCommon small">
+                            <div class="search"><span><input type="submit" v-on:click="doSearch()" value="@_localizer["搜尋"]" /></span></div>
+                            <div class=""><span><input type="button" v-on:click="clearFilter" value="@_localizer["清除查詢條件"]"></span></div>
+                        </div>
+                    </div>
+
+                    <div class="ListTable">
+                        <!--明細列表資料-->
+                        <div class="ListTable" v-show="stockData.length>0">
+                            <table id="dataTable" class="table dataTable stripe">
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="BtnCommon mid">
+                        <div class="cancel"><span><input type="submit" value="@_localizer["關閉"]" v-on:click="doClose" /></span></div>
+                    </div>
+                </div>
+            </div>
+            <a class="close" title="@_localizer["關閉"]">@_localizer["關閉"]</a>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+    <script>
+        var vm = new Vue({
+            el: '#ChangeVue',
+            components: {
+            },
+            data: function () {
+                return {
+                    objMainInfo: {
+                        // 主檔
+                        basicinfo: {
+                            OrderId: '0',
+                            OrderNo: '',
+                            ProductStatus: '0',
+                            DcId: '0',
+                            CustomerId: '0',
+                            CustomerName: '',
+                            ProductId: '0',
+                            ProductName: '',
+                            Unit: '0',
+                            PackageName: '',
+                            RoomId: '0',
+                            RoomName: '',
+                            LocationId: '0',
+                            LocationCode: '',
+                            LocationQuantity: '',
+                            NewDcId: '0',
+                            NewHouseId: '0',
+                            NewRoomId: '0',
+                            NewAreaId: '0',
+                            NewShelfId: '0',
+                            NewLayerId: '0',
+                            NewLocationId: '0',
+                            ChangeQuantity: '',
+                            StockAdjustId: '0',
+                            ExpirationDate: null,
+                            OrderDate: null,
+                            ChangeStatus: '1',
+                            ChangeReason: '',
+                        },
+                        isView: false
+                    },
+                    oldDcId: '0',
+                    // 查詢資料
+                    objSearchData: {
+                        ProductStatus: '0',
+                        CustomerId: '0',
+                        ProductId: '0',
+                        HouseId: '0',
+                        RoomId: '0',
+                        LocationCode: '',
+                        ProductLotNo: '',
+                        ExpirationDateStart: null,
+                        ExpirationDateEnd: null
+                    },
+                    stockData: [],                      //查詢結果
+                    arrUser: [],                            // 使用者選項
+                    arrCustomer: [],                 // 客戶選項
+                    arrProds: [],                        // 商品選項
+                    arrDataCenter: [],              // 物流中心下拉選單
+                    arrHouse: [],                       // 倉別下拉選單
+                    arrRoom: [],                        // 庫別下拉選單
+                    arrNewDataCenter: [],              // 異動後物流中心下拉選單
+                    arrNewHouse: [],                       // 異動後倉別下拉選單
+                    arrNewRoom: [],                        // 異動後庫別下拉選單
+                    arrNewArea: [],                        // 異動後儲區下拉選單
+                    arrNewShelf: [],                        // 異動後貨架下拉選單
+                    arrNewLayer: [],                        // 異動後層架下拉選單
+                    arrNewLocation: [],                 // 異動後儲位下拉選單
+                }
+            },
+            computed: {
+            },
+            created: function () {
+                // 讀取儲位異動單資料
+                this.GetOrderData();
+                // 取得物流中心下拉選單
+                this.GetDataCenterData();
+                // 取得客戶下拉選單
+               this.GetCustData()
+                // 取得使用者下拉選單
+                this.GetUserData();
+            },
+            methods: {
+                filterDate: function (val) {
+                    return val ? val.replace('T00:00:00', '') : ''
+                },
+                // 商品狀態
+                showProductStatus: function (id) {
+                    var val = "";
+                    id = id == null ? "" : id;
+                    switch (id.toString()) {
+                        case "1": val = "@_localizer["良品"]"; break;
+                        case "2": val = "@_localizer["不良品"]"; break;
+                    }
+                    return val;
+                },
+                GetDataCenterData: function () {
+                    // 取得物流中心下拉選單
+                    axios.get('/api/Common/Options/GetDataCenterData')
+                        .then(function (res) {
+                            this.arrDataCenter = res.data;
+                            this.arrNewDataCenter = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        });
+                },
+                // 客戶選單
+                GetCustData: function () {
+                    axios.get('/api/Common/Options/GetCustomerData')
+                        .then(function (res) {
+                            this.arrCustomer = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 商品選單
+                GetProdData: function () {
+                    axios.get('/api/Common/Options/GetProductDataByCust', { params: { CustId: this.objSearchData.CustomerId } })
+                        .then(function (res) {
+                            this.arrProds = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 倉別選單
+                GetHouseData: function (kind) {
+                    axios.get('/api/Common/Options/GetHouseDataByDc', { params: { DcId: kind == 1 ? this.objMainInfo.basicinfo.DcId : this.objMainInfo.basicinfo.NewDcId } })
+                        .then(function (res) {
+                            if (kind==1)
+                                this.arrHouse = res.data;
+                            else
+                                this.arrNewHouse = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 庫別選單
+                GetRoomData: function (kind) {
+                    axios.get('/api/Common/Options/GetRoomDataByHouse', { params: { DcId: kind == 1 ? this.objMainInfo.basicinfo.DcId : this.objMainInfo.basicinfo.NewDcId, HouseId: kind == 1 ? this.objSearchData.HouseId : this.objMainInfo.basicinfo.NewHouseId} })
+                        .then(function (res) {
+                            if (kind==1)
+                                this.arrRoom = res.data;
+                            else
+                                this.arrNewRoom = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 儲區選單
+                GetAreaData: function () {
+                    axios.get('/api/Common/Options/GetAreaDataByRoom', { params: { RoomId: this.objMainInfo.basicinfo.NewRoomId } })
+                        .then(function (res) {
+                            this.arrNewArea = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 貨架選單
+                GetShelfData: function () {
+                    axios.get('/api/Common/Options/GetShelfDataByArea', { params: { AreaId: this.objMainInfo.basicinfo.NewAreaId } })
+                        .then(function (res) {
+                            this.arrNewShelf = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 層架選單
+                GetLayerData: function () {
+                    axios.get('/api/Common/Options/GetLayerDataByShelf', { params: { ShelfId: this.objMainInfo.basicinfo.NewShelfId } })
+                        .then(function (res) {
+                            this.arrNewLayer= res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 儲位選單
+                GetLocationData: function () {
+                    axios.get('/api/Common/Options/GetLocationDataByLayer', { params: { LayerId: this.objMainInfo.basicinfo.NewLayerId } })
+                        .then(function (res) {
+                            this.arrNewLocation = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                GetUserData: function () {
+                    // 取得使用者下拉選單
+                    axios.get('/api/Common/Options/GetUserData')
+                        .then(function (res) {
+                            this.arrUser = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        });
+                },
+                // 讀取盤點單資料
+                GetOrderData: function () {
+                    // 判斷是否有傳入申請單號,有:編輯 無:新增
+                    var orderid = '@Model.OrderId';
+                    if (orderid == null || orderid == "" || orderid == "0") {
+                        return;
+                    }
+
+                    axios.get('/api/StorageMgnt/LocationChangeApi/GetLocationChangeData',
+                        {
+                            params: { orderid: orderid }
+                        })
+                        .then(function (res) {
+                            if (res.data.isOk) {
+                                if (res.data.dt == null) {
+                                    window.location.href = '@Url.Content("~/")' + 'StorageMgnt/Home/LocationChangeList';
+                                    return;
+                                }
+                                this.objMainInfo.basicinfo = res.data.dt.locationChangeOrder;
+                                this.oldDcId = this.objMainInfo.basicinfo.DcId;
+                                this.objMainInfo.isView = res.data.dt.isView;
+
+                                if (this.objMainInfo.basicinfo.DcId != 0)
+                                    this.GetHouseData(1);   // 取得倉別下拉選單
+
+                                if (this.objMainInfo.basicinfo.NewDcId != 0)
+                                    this.GetHouseData(2);   // 取得異動後倉別下拉選單
+                                if (this.objMainInfo.basicinfo.NewHouseId != 0)
+                                    this.GetRoomData(2);   // 取得異動後庫別下拉選單
+                                if (this.objMainInfo.basicinfo.NewRoomId != 0)
+                                    this.GetAreaData();   // 取得異動後儲區下拉選單
+                                if (this.objMainInfo.basicinfo.NewAreaId != 0)
+                                    this.GetShelfData();   // 取得異動後貨架下拉選單
+                                if (this.objMainInfo.basicinfo.NewShelfId != 0)
+                                    this.GetLayerData();   // 取得異動後層架下拉選單
+                                if (this.objMainInfo.basicinfo.NewLayerId != 0)
+                                    this.GetLocationData();   // 取得異動後儲位下拉選單
+                            }
+                            else
+                                _AlertMsg(false, res.data.msg)
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        });
+                },
+                // 變更客戶時
+                changeCustomer: function () {
+                    // 取得商品下拉選單
+                    this.GetProdData();
+                    this.objSearchData.ProductId = 0;
+                },
+                // 變更物流中心時
+                changeDataCenter: function () {
+                    if (this.objMainInfo.basicinfo.LocationId == null || this.objMainInfo.basicinfo.LocationId == "0") {
+                        this.oldDcId = this.objMainInfo.basicinfo.DcId;
+                        // 取得倉別下拉選單
+                        this.GetHouseData(1);
+                        this.objSearchData.HouseId = 0;
+                        this.changeHouse(1);
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: '@_localizer["變更物流中心"]',
+                        html: '@_localizer["變更物流中心後，需重新搜尋儲位異動商品"]',
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: '@_localizer["確定"]',
+                        cancelButtonText: '@_localizer["取消"]'
+                    }).then(
+                        function (result) {
+                            if (result.isConfirmed) {
+                                //清空
+                                this.objMainInfo.basicinfo.ProductStatus = "0";
+                                this.objMainInfo.basicinfo.CustomerId = "0";
+                                this.objMainInfo.basicinfo.CustomerName = "";
+                                this.objMainInfo.basicinfo.ProductId = "0";
+                                this.objMainInfo.basicinfo.ProductName = "";
+                                this.objMainInfo.basicinfo.ProductLotNo = "";
+                                this.objMainInfo.basicinfo.Unit = "0";
+                                this.objMainInfo.basicinfo.PackageName = "";
+                                this.objMainInfo.basicinfo.ExpirationDate = "";
+                                this.objMainInfo.basicinfo.RoomId = "0";
+                                this.objMainInfo.basicinfo.RoomName = "";
+                                this.objMainInfo.basicinfo.LocationId = "0";
+                                this.objMainInfo.basicinfo.LocationCode = "";
+                                this.objMainInfo.basicinfo.LocationQuantity = "";
+                                this.objMainInfo.basicinfo.ChangeQuantity = "";
+
+                                this.oldDcId = this.objMainInfo.basicinfo.DcId;
+                                // 取得倉別下拉選單
+                                this.GetHouseData(1);
+                                this.objSearchData.HouseId = 0;
+                                this.changeHouse(1);
+                            } else {
+                                //恢復原值
+                                this.objMainInfo.basicinfo.DcId = this.oldDcId;
+                            }
+                        }.bind(this));
+                },
+                // 變更倉別時
+                changeHouse: function (kind) {
+                    // 取得庫別下拉選單
+                    this.GetRoomData(kind);
+                    if (kind == 1)
+                        this.objSearchData.RoomId = 0;
+                    else {
+                        this.objMainInfo.basicinfo.NewRoomId = 0;
+                        this.arrNewRoom = [];
+                        this.objMainInfo.basicinfo.NewAreaId = 0;
+                        this.arrNewArea = [];
+                        this.objMainInfo.basicinfo.NewShelfId = 0;
+                        this.arrNewShelf = [];
+                        this.objMainInfo.basicinfo.NewLayerId = 0;
+                        this.arrNewLayer = [];
+                        this.objMainInfo.basicinfo.NewLocationId = 0;
+                        this.arrNewLocation = [];
+                    }
+                },
+                // 變更異動後物流中心時
+                changeNewDataCenter: function () {
+                    // 取得異動後倉別下拉選單
+                    this.GetHouseData(2);
+                    this.objMainInfo.basicinfo.NewHouseId = 0;
+                    this.arrNewHouse = [];
+                    this.objMainInfo.basicinfo.NewRoomId = 0;
+                    this.arrNewRoom = [];
+                    this.objMainInfo.basicinfo.NewAreaId = 0;
+                    this.arrNewArea = [];
+                    this.objMainInfo.basicinfo.NewShelfId = 0;
+                    this.arrNewShelf = [];
+                    this.objMainInfo.basicinfo.NewLayerId = 0;
+                    this.arrNewLayer = [];
+                    this.objMainInfo.basicinfo.NewLocationId = 0;
+                    this.arrNewLocation = [];
+                },
+                // 變更異動後庫別時
+                changeNewRoom: function () {
+                    // 取得儲區下拉選單
+                    this.GetAreaData();
+                    this.objMainInfo.basicinfo.NewAreaId = 0;
+                    this.arrNewArea = [];
+                    this.objMainInfo.basicinfo.NewShelfId = 0;
+                    this.arrNewShelf = [];
+                    this.objMainInfo.basicinfo.NewLayerId = 0;
+                    this.arrNewLayer = [];
+                    this.objMainInfo.basicinfo.NewLocationId = 0;
+                    this.arrNewLocation = [];
+                },
+                // 變更異動後儲區時
+                changeNewArea: function () {
+                    // 取得貨架下拉選單
+                    this.GetShelfData();
+                    this.objMainInfo.basicinfo.NewShelfId = 0;
+                    this.arrNewShelf = [];
+                    this.objMainInfo.basicinfo.NewLayerId = 0;
+                    this.arrNewLayer = [];
+                    this.objMainInfo.basicinfo.NewLocationId = 0;
+                    this.arrNewLocation = [];
+                },
+                // 變更異動後貨架時
+                changeNewShelf: function () {
+                    // 取得層架下拉選單
+                    this.GetLayerData();
+                    this.objMainInfo.basicinfo.NewLayerId = 0;
+                    this.arrNewLayer = [];
+                    this.objMainInfo.basicinfo.NewLocationId = 0;
+                    this.arrNewLocation = [];
+                    this.arrNewLocation = [];
+                },
+                // 變更異動後層架時
+                changeNewLayer: function () {
+                    // 取得儲位下拉選單
+                    this.GetLocationData();
+                    this.objMainInfo.basicinfo.NewLocationId = 0;
+                },
+                openSearch: function () {
+                    if (this.objMainInfo.basicinfo.DcId === "0" || this.objMainInfo.basicinfo.DcId === "") {
+                        _AlertMsg(false, "@_localizer["請選擇物流中心"]");
+                        return;
+                    }
+
+                    $('#boxDetail').addClass('show');
+                    $("div").scrollTop(0);
+                    $('body').addClass('fixed');
+                },
+                doSearch: function () {
+                    let thisvue = this;
+
+                    thisvue.stockData = [];
+                    thisvue.objSearchData.DcId = thisvue.objMainInfo.basicinfo.DcId;
+                    if (thisvue.objSearchData.ExpirationDateStart == "")
+                        thisvue.objSearchData.ExpirationDateStart = null;
+                    if (thisvue.objSearchData.ExpirationDateEnd == "")
+                        thisvue.objSearchData.ExpirationDateEnd = null;
+                    thisvue.coulmnSet = [
+                        {
+                            title: "@_localizer["商品狀態"]",
+                            "data": "ProductStatus"
+                        },
+                        {
+                            title: "@_localizer["物流中心"]",
+                            "data": "DcName"
+                        },
+                        {
+                            title: "@_localizer["客戶"]",
+                            "data": "CustomerName"
+                        },
+                        {
+                            title: "@_localizer["商品"]",
+                            "data": "ProductName"
+                        },
+                        {
+                            title: "@_localizer["單位"]",
+                            "data": "PackageName"
+                        },
+                        {
+                            title: "@_localizer["商品批號"]",
+                            "data": "ProductLotNo"
+                        },
+                        {
+                            title: "@_localizer["有效期限"]",
+                            "defaultContent": "",
+                            "data": "ExpirationDate"
+                        },
+                        {
+                            title: "@_localizer["庫別"]",
+                            "data": "RoomName"
+                        },
+                        {
+                            title: "@_localizer["儲位"]",
+                            "data": "LocationCode"
+                        },
+                        {
+                            title: "@_localizer["庫存數量"]",
+                            "data": "LocationQuantity"
+                        },
+                        {
+                            title: "@_localizer["選擇"]",
+                            "data": "LocationId"
+                        }
+                    ];
+
+                    thisvue.columnDef = [
+                        {
+                            "className": "text-center",
+                            "targets": [0],
+                            mRender: function (result) {
+                                if (result != null) {
+                                    var sbtn = "";
+                                    switch (result) {
+                                        case 1: sbtn = "@_localizer["良品"]"; break;
+                                        case 2: sbtn = "@_localizer["不良品"]"; break;
+                                    }
+                                    return sbtn;
+                                }
+                            }
+                        },
+                        {
+                            "className": "text-center",
+                            "targets": [6],
+                            mRender: function (result) {
+                                if (result != null && result != "") {
+                                    return result.replace('T00:00:00', '');
+                                }
+                            }
+                        },
+                        {
+                            "className": "text-center",
+                            "targets": [10],
+                            mRender: function (result) {
+                                if (result == null)
+                                    result = "";
+                                if (result != null) {
+                                    var sbtn = '<a class=\"btn_style\" style=\"width:70%;\" onclick=\"vm.SetData(this)\">@_localizer["選擇"]</a>';
+                                    return sbtn;
+                                }
+                            }
+                        }
+                    ];
+
+                    var issearch = false;
+                    LoadDataTable('@Url.Action("QuerySearchStock", "StockChangeApi", new { Area = "Stock" })', this.objSearchData, this.coulmnSet, this.columnDef, issearch)
+                        .then(function () {
+                            thisvue.stockData = $('#dataTable').DataTable().rows().data();
+                            if (thisvue.stockData.length <= 0) {
+                                _AlertMsg(false, "@_localizer["無符合資料"]");
+                            }
+                            $('#dataTable tbody').on('click', 'tr', function () {
+                                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                                $(this).toggleClass('selected');
+                            });
+                        });
+                },
+                // 關閉加入原始憑證視窗
+                doClose: function () {
+                    $('#boxDetail').removeClass('show')
+                    $('body').removeClass('fixed')
+                },
+                // 清除查詢條件
+                clearFilter: function () {
+                    this.objSearchData = {
+                        DcId: this.objMainInfo.basicinfo.DcId,
+                        ProductStatus: 0,
+                        CustomerId: '0',
+                        ProductId: '0',
+                        HouseId: '0',
+                        RoomId: '0',
+                        LocationCode: '',
+                        ProductLotNo: '',
+                        ExpirationDateStart: null,
+                        ExpirationDateEnd: null
+                    };
+                },
+                SetData: function (obj) {
+                    $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                    $(obj).parent().parent().toggleClass('selected');
+                    let objInfo = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows($(obj).parent().parent()).data()[0]));
+
+                    this.objMainInfo.basicinfo.ProductStatus = objInfo.ProductStatus;
+                    this.objMainInfo.basicinfo.CustomerId = objInfo.CustomerId;
+                    this.objMainInfo.basicinfo.CustomerName = objInfo.CustomerName;
+                    this.objMainInfo.basicinfo.ProductId = objInfo.ProductId;
+                    this.objMainInfo.basicinfo.ProductName = objInfo.ProductName;
+                    this.objMainInfo.basicinfo.ProductLotNo = objInfo.ProductLotNo;
+                    this.objMainInfo.basicinfo.Unit = objInfo.Unit;
+                    this.objMainInfo.basicinfo.PackageName = objInfo.PackageName;
+                    this.objMainInfo.basicinfo.ExpirationDate = objInfo.ExpirationDate;
+                    this.objMainInfo.basicinfo.RoomId = objInfo.RoomId;
+                    this.objMainInfo.basicinfo.RoomName = objInfo.RoomName;
+                    this.objMainInfo.basicinfo.LocationId = objInfo.LocationId;
+                    this.objMainInfo.basicinfo.LocationCode = objInfo.LocationCode;
+                    this.objMainInfo.basicinfo.LocationQuantity = objInfo.LocationQuantity;
+                    this.objMainInfo.basicinfo.ChangeQuantity = "";
+
+                    $('#boxDetail').removeClass('show');
+                    $('body').removeClass('fixed');
+                },
+                //存檔
+                SaveLocationChange: function (val) {
+                      // 驗證欄位是否已填寫
+                    if (!this.VerifyData(val)) return;
+
+                    this.objMainInfo.basicinfo.ChangeStatus = val;
+                    if (this.objMainInfo.basicinfo.OrderDate == "")
+                        this.objMainInfo.basicinfo.OrderDate = null;
+                    if (this.objMainInfo.basicinfo.ChangeQuantity == "")
+                        this.objMainInfo.basicinfo.ChangeQuantity = null;
+
+                    axios.post('/api/StorageMgnt/LocationChangeApi/SaveLocationChange', this.objMainInfo.basicinfo)
+                        .then(function (res) {
+                            if (res.data.isOk) {
+                                _AlertMsg(res.data.isOk, res.data.msg, function () {
+                                    window.location.href = '@Url.Content("~/")' + 'StorageMgnt/Home/LocationChange/' + res.data.dt;
+                                })
+                            }
+                            else
+                                _AlertMsg(false, res.data.msg);
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 驗證必填欄位是否有填寫
+                VerifyData: function (val) {
+                    var msg = "";
+                    if (this.objMainInfo.basicinfo.DcId === "0" || this.objMainInfo.basicinfo.DcId === "") {
+                        msg += "@_localizer["請選擇物流中心"]<br />";
+                    }
+                    if (this.objMainInfo.basicinfo.StockAdjustId == "0" || this.objMainInfo.basicinfo.StockAdjustId === "") {
+                        msg += "@_localizer["請選擇異動人員"]<br />";
+                    }
+
+                    if (this.objMainInfo.basicinfo.LocationId == "0" || this.objMainInfo.basicinfo.LocationId === "") {
+                        msg += "@_localizer["請搜尋儲位異動商品"]<br />";
+                    }
+                    else if (this.objMainInfo.basicinfo.LocationId == this.objMainInfo.basicinfo.NewLocationId) {
+                        msg += "@_localizer["異動後儲位不可與原儲位相同"]<br />";
+                    }
+
+                    if (this.objMainInfo.basicinfo.LocationQuantity != null && this.objMainInfo.basicinfo.LocationQuantity != "" && this.objMainInfo.basicinfo.ChangeQuantity != null && this.objMainInfo.basicinfo.ChangeQuantity != "") {
+                        if (this.objMainInfo.basicinfo.ChangeQuantity - this.objMainInfo.basicinfo.LocationQuantity > 0) {
+                             msg += "@_localizer["異動數量不可大於庫存數量"]<br />";
+                        }
+                    }
+
+                    //盤點完成
+                    if (val == 3) {
+                        if (this.objMainInfo.basicinfo.NewLocationId == "0" || this.objMainInfo.basicinfo.NewLocationId === "") {
+                            msg += "@_localizer["請選擇異動後儲位"]<br />";
+                        }
+
+                        if (this.objMainInfo.basicinfo.ChangeQuantity == null || this.objMainInfo.basicinfo.ChangeQuantity === "") {
+                            msg += "@_localizer["請填寫異動數量"]<br />";
+                        }
+                    }
+
+                    if (msg.trim() != "") {
+                        _AlertMsg(false, msg);
+                        return false
+                    }
+
+                    return true
+                }
+
+            }
+        })
+    </script>
+}

@@ -1,0 +1,399 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+@{
+    ViewData["Title"] = @_localizer["倉別資料維護"];
+}
+<div id="HouseVue">
+    <!--列表搜尋-->
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["搜尋條件"]</span></legend>
+
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label">@_localizer["代碼"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="queryInfo.HouseCode" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["名稱"]</div>
+                    <div class="cont">
+                        <input type="text" placeholder='@_localizer["可模糊查詢"]' v-model="queryInfo.HouseName" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["類型"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.HouseTypeId">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(bItem,index) in arrHouseType" v-if="bItem.IsStop=='N'" :value="bItem.HouseTypeId">{{bItem.HouseTypeName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["物流中心"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.DcId">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(bItem,index) in arrDataCenter" v-if="bItem.IsStop=='N'" :value="bItem.DcId">{{bItem.DcName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">@_localizer["狀態"]</div>
+                    <div class="cont">
+                        <select v-model="queryInfo.IsStop">
+                            <option value="">@_localizer["請選擇"]</option>
+                            <option value="N">@_localizer["啟用"]</option>
+                            <option value="Y">@_localizer["停用"]</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="BtnCommon mid">
+                <div class="search"><span><input type="submit" value="@_localizer["搜尋"]" v-on:click="onSearch" /></span></div>
+                <!--<div class="cancel"><span><input type="submit" value="清除" v-on:click="onReset" /></span></div>-->
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="ListTable" v-show="arrResult.length>0">
+        <div class="table_title">
+            <div class="btnBox">
+                <div>
+                    <div class=""><a href="javascript:;" v-bind:class="{'btn_disabled':noSelect || !noEdit }" v-on:click="onDelete">@_localizer["刪除"]</a></div>
+                    <div class=""><a href="javascript:;" v-bind:class="{'btn_disabled':noSelect}" v-on:click="editSet">@_localizer["修改"]</a></div>
+                </div>
+            </div>
+        </div>
+        <!--列表資料-->
+        <table id="dataTable" class="table dataTable stripe">
+        </table>
+
+        @*<table class="clickTable">
+                <tr>
+                    <th>倉別代碼</th>
+                    <th>倉別名稱</th>
+                    <th>倉別類型</th>
+                    <th>物流中心</th>
+                    <th>備註</th>
+                    <th>狀態</th>
+                </tr>
+                <tr v-for="(item,index) in arrResult" v-bind:class="{'row_select':item.HouseId === rowSelect.HouseId}"
+                    v-on:click="rowSelect=JSON.parse(JSON.stringify(item))">
+                    <td>{{item.HouseCode}}</td>
+                    <td>{{item.HouseName}}</td>
+                    <td>{{item.HouseTypeName}}</td>
+                    <td>{{item.DcName}}</td>
+                    <td>{{item.Remarks}}</td>
+                    <td>{{item.Status}}</td>
+                </tr>
+            </table>*@
+    </div>
+
+    <!--基本資料-->
+    <div class="FormGroupWarp" id="divData">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>@_localizer["基本資料"]</span></legend>
+            <div class="btnBox">
+                <div>
+                    <div class=""><a v-bind:class="{'btn_disabled':disAdd}" href="javascript:;" v-on:click="addReset">@_localizer["新增"]</a></div>
+                    <div class=""><a v-bind:class="{'btn_disabled':noEdit}" href="javascript:;" v-on:click="onSubmit">@_localizer["儲存"]</a></div>
+                    <div class=""><a v-bind:class="{'btn_disabled':noEdit}" href="javascript:;" v-on:click="onCancel">@_localizer["離開"]</a></div>
+                </div>
+            </div>
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["代碼"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.HouseCode" maxlength="10" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["名稱"]</div>
+                    <div class="cont">
+                        <input type="text" v-model="objInfo.HouseName" maxlength="20" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["類型"]</div>
+                    <div class="cont">
+                        <select v-model="objInfo.HouseTypeId">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(bItem,index) in arrHouseType" v-if="bItem.IsStop=='N' || objInfo.HouseTypeId==bItem.HouseTypeId" :value="bItem.HouseTypeId">{{bItem.HouseTypeName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["物流中心"]</div>
+                    <div class="cont">
+                        <select v-model="objInfo.DcId">
+                            <option value="0">@_localizer["請選擇"]</option>
+                            <option v-for="(bItem,index) in arrDataCenter" v-if="bItem.IsStop=='N' || objInfo.DcId==bItem.DcId" :value="bItem.DcId">{{bItem.DcName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>@_localizer["狀態"]</div>
+                    <div class="cont">
+                        <select v-model="objInfo.IsStop">
+                            <option value="N">@_localizer["啟用"]</option>
+                            <option value="Y">@_localizer["停用"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label">@_localizer["備註"]</div>
+                    <div class="cont">
+                        <textarea rows="2" style="width:100%" v-model="objInfo.Remarks" maxlength="200"></textarea>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+</div>
+
+@section Scripts{
+    <script>
+        var vm = new Vue({
+            el: '#HouseVue',
+            components: {
+            },
+            data: function () {
+                return {
+                    // 新增按鈕樣式
+                    disAdd: false,
+                    // 查詢條件
+                    queryInfo: {
+                        HouseCode: '',
+                        HouseName: '',
+                        HouseTypeId: '0',
+                        DcId: '0',
+                        IsStop: ''
+                    },
+                    // 查詢結果
+                    arrResult: [],
+                    // 新增/編輯
+                    objInfo: {},
+                    rowSelect: {},
+                    coulmnSet: [],
+                    columnDef: [],
+                    arrHouseType: [],        // 倉別類型下拉選單
+                    arrDataCenter: []         // 物流中心下拉選單
+                }
+            },
+            created: function () {
+                // 取得倉別類型下拉選單
+                this.GetHouseTypeData();
+                // 取得物流中心下拉選單
+                this.GetDataCenterData();
+            },
+            computed: {
+                // 尚未選擇列
+                noSelect: function () {
+                    return (Object.keys(this.rowSelect).length === 0)
+                },
+                // 尚未點選新增或編輯
+                noEdit: function () {
+                    return (Object.keys(this.objInfo).length === 0)
+                },
+            },
+            methods: {
+                GetHouseTypeData: function () {
+                    // 取得倉別類型下拉選單
+                    axios.get('/api/Common/Options/GetHouseTypeData')
+                        .then(function (res) {
+                            this.arrHouseType = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        });
+                },
+                GetDataCenterData: function () {
+                    // 取得物流中心下拉選單
+                    axios.get('/api/Common/Options/GetDataCenterData')
+                        .then(function (res) {
+                            this.arrDataCenter = res.data;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        });
+                },
+                //清除查詢條件
+                /*onReset: function () {
+                    this.disAdd = false;
+                    this.rowSelect = {};
+                    this.objInfo = {};
+                    this.arrResult = [];
+                    this.queryInfo = {
+                        HouseCode: '',
+                        HouseName: '',
+                        HouseTypeId: '0',
+                        DcId: '0',
+                        IsStop: ''
+                    };
+                    $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                },*/
+                onSearch: function () {
+                    let thisvue = this;
+                    thisvue.disAdd = false;
+                    thisvue.rowSelect = {};
+                    thisvue.objInfo = {};
+                    thisvue.arrResult = [];
+
+                    thisvue.coulmnSet = [
+                        {
+                            title: "@_localizer["代碼"]",
+                            "data": "HouseCode"
+                        },
+                        {
+                            title: "@_localizer["名稱"]",
+                            "data": "HouseName"
+                        },
+                        {
+                            title: "@_localizer["類型"]",
+                            "data": "HouseTypeName"
+                        },
+                        {
+                            title: "@_localizer["物流中心"]",
+                            "data": "DcName"
+                        },
+                        {
+                            title: "@_localizer["備註"]",
+                            "data": "Remarks"
+                        },
+                        {
+                            title: "@_localizer["狀態"]",
+                            "data": "IsStop"
+                        }
+                    ];
+
+                    thisvue.columnDef = [
+                        {
+                            "className": "text-center",
+                            "targets": [5],
+                            mRender: function (result) {
+                                if (result != null) {
+                                    //console.log(result);
+                                    var sbtn = result == "N" ? "@_localizer["啟用"]" : "@_localizer["停用"]";
+                                    return sbtn;
+                                }
+                            }
+                        }
+                    ];
+
+                    var issearch = false;
+                    LoadDataTable('@Url.Action("QueryHouse","HouseApi",new { Area = "BasicSet" })', this.queryInfo, this.coulmnSet, this.columnDef, issearch)
+                        .then(function () {
+                            thisvue.arrResult = $('#dataTable').DataTable().rows().data();
+                            $('#dataTable tbody').on('click', 'tr', function () {
+                                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                                $(this).toggleClass('selected');
+                                if ($('#dataTable').DataTable().rows('.selected').data().length > 0) {
+                                    thisvue.rowSelect = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows('.selected').data()[0]));
+                                } else
+                                    thisvue.rowSelect = {};
+                            });
+                        });
+                },
+                /*onSearch: function () {
+                    axios.post('/api/BasicSet/HouseApi/QueryHouse', this.queryInfo)
+                        .then(function (res) {
+                            this.disAdd = false;
+                            this.rowSelect = {};
+                            this.objInfo = {};
+                            this.arrResult = [];
+                            this.arrResult = res.data.dt;
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },*/
+                // 修改
+                editSet: function () {
+                    if (this.noSelect) {
+                        _AlertMsg(false, '@_localizer["請選擇資料"]');
+                        return false;
+                    }
+                    //this.disAdd = !this.disAdd;
+                    this.disAdd = true;
+                    this.objInfo = JSON.parse(JSON.stringify(this.rowSelect));
+                    //移到基本資料區塊
+                    window.location.href = "#divData";
+                },
+                onDelete: function () {
+                    let thisvue = this;
+                    if (this.noSelect) {
+                        _AlertMsg(false, '@_localizer["請選擇資料"]')
+                        return false
+                    }
+
+                    _ConfirmAlert('w', '@_localizer["警告"]', '@_localizer["確定刪除嗎?"]', true, function () {
+                        axios.post('/api/BasicSet/HouseApi/DeleteHouse', thisvue.rowSelect)
+                            .then(function (res) {
+                                // 刪除成功，清空選擇資料
+                                if (res.data.isOk) {
+                                    let RemoveIndex;
+                                    var filteredElements = thisvue.arrResult.filter(function (item, index) { RemoveIndex = index; return item.HouseId == thisvue.rowSelect.HouseId; });
+                                    thisvue.arrResult.splice(RemoveIndex, 1);
+                                    thisvue.rowSelect = {};
+                                    $('#dataTable').DataTable().rows('.selected').remove().draw(false);
+                                }
+                            }.bind(this))
+                            .catch(function (err) {
+                                console.error(err);
+                            })
+                    });
+                },
+                // 新增按鈕
+                addReset: function () {
+                    this.disAdd = !this.disAdd;
+                    this.rowSelect = {};
+                    this.objInfo = {
+                        HouseId: '0',
+                        HouseCode: '',
+                        HouseName: '',
+                        HouseTypeId: '0',
+                        DcId: '0',
+                        Remarks: '',
+                        IsStop: 'N'
+                    };
+                },
+                // 儲存
+                onSubmit: function () {
+                    if (this.noEdit) {
+                        _AlertMsg(false, '@_localizer["請點選新增或選擇列後點選修改"]')
+                        return false
+                    }
+                    axios.post('/api/BasicSet/HouseApi/SaveHouse', this.objInfo)
+                        .then(function (res) {
+                            _AlertMsg(res.data.isOk, res.data.msg)
+                            // 編輯成功，清空選擇資料
+                            if (res.data.isOk) {
+                                this.rowSelect = {};
+                                this.onSearch();
+                            }
+                        }.bind(this))
+                        .catch(function (err) {
+                            console.error(err);
+                        })
+                },
+                // 離開
+                onCancel: function () {
+                    if (this.noEdit) {
+                        _AlertMsg(false, '@_localizer["請點選新增或選擇列後點選修改"]');
+                        return false;
+                    }
+                    this.objInfo = {};
+                    this.rowSelect = {};
+                    this.disAdd = !this.disAdd;
+                }
+
+            }
+        })
+    </script>
+}

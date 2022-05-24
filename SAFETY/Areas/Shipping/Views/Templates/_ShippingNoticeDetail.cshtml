@@ -1,0 +1,345 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+<script type="text/template" id="ShippingNoticeDetail">
+    <div>
+        {{refreshVal}}
+        {{refreshSeq}}
+        <div id="DetailList">
+            <div class="btnBox" v-show="!isView">
+                <div class="add">
+                    <a href="javascript:;" class="open_box1_btn" v-on:click="AddDetail">@_localizer["新增明細"]</a>
+                </div>
+            </div>
+
+            <div class="ListTable" v-show="objDetailInfos.length>0">
+                <div class="tableFlex">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>@_localizer["商品名稱"]</th>
+                                <th>@_localizer["商品代碼"]</th>
+                                <th>@_localizer["商品條碼"]</th>
+                                <th>@_localizer["批號"]</th>
+                                <th>@_localizer["有效日期"]</th>
+                                <th>@_localizer["出貨單位"]</th>
+                                <th>@_localizer["預計出貨數量"]</th>
+                                <th>@_localizer["商品狀態"]</th>
+                                <th>@_localizer["操作"]</th>
+                            </tr>
+                            <tr v-for="(item,index) in objDetailInfos">
+                                <td>{{showProductName(item.ProductId)}}</td>
+                                <td>{{showProductCode(item.ProductId)}}</td>
+                                <td>{{showBarcode(item.ProductId)}}</td>
+                                <td>{{item.ProductLotNo}}</td>
+                                <td>{{filterDate(item.ExpirationDate)}}</td>
+                                <td>{{item.PackageName}}</td>
+                                <td>{{item.Quantity}}</td>
+                                <td>{{showProductStatus(item.ProductStatus)}}</td>
+                                <td>
+                                    <ul class="edit_btns">
+                                        <li v-show="!isView"><a href="javascript:void(0)" class="edit" title="@_localizer["編輯"]" v-on:click="EditDetail(item)"></a></li>
+                                        <li v-show="!isView"><a href="javascript:void(0)" class="del" title="@_localizer["移除"]" v-on:click="DeleteDetail(item)"></a></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        @*編輯 視窗*@
+        <div class="popup_box large" id="boxDetail">
+            <div class="box_wrap">
+                <div class="FormTable">
+                    <div class="popup_title">@_localizer["進貨通知明細"]</div>
+                    <div class="popup_cont">
+                        <div class="SearchBox  FormElmt">
+                            <div class="SearchItems">
+                                <div class="item ">
+                                    <div class="label"><span class="red">*</span>@_localizer["商品名稱"]</div>
+                                    <div class="cont">
+                                        <select v-model="objEditInfo.ProductId" v-on:change="changeProduct()">
+                                            <option value="0">@_localizer["請選擇"]</option>
+                                            <option :value="item.ProductId" v-if="item.IsStop=='N' || item.ProductId==objEditInfo.ProductId" v-for="item in arrProds">{{item.ProductName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="item ">
+                                    <div class="label"><span class="red">*</span>@_localizer["商品代碼"]</div>
+                                    <div class="cont">
+                                        <select v-model="objEditInfo.ProductId" disabled>
+                                            <option value="0">@_localizer["請選擇"]</option>
+                                            <option :value="item.ProductId" v-if="item.IsStop=='N' || item.ProductId==objEditInfo.ProductId" v-for="item in arrProds">{{item.ProductCode}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="item ">
+                                    <div class="label"><span class="red">*</span>@_localizer["商品條碼"]</div>
+                                    <div class="cont">
+                                        <select v-model="objEditInfo.ProductId" disabled>
+                                            <option value="0">@_localizer["請選擇"]</option>
+                                            <option :value="item.ProductId" v-if="item.IsStop=='N' || item.ProductId==objEditInfo.ProductId" v-for="item in arrProds">{{item.Barcode}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="item ">
+                                    <div class="label"><span class="red">*</span>@_localizer["批號"]</div>
+                                    <div class="cont">
+                                        <input type="text" v-model="objEditInfo.ProductLotNo" maxlength="20" />
+                                    </div>
+                                </div>
+                                <div class="item ">
+                                    <div class="label"><span class="red">*</span>@_localizer["有效期限"]</div>
+                                    <div class="cont">
+                                        <input type="date" v-model="objEditInfo.ExpirationDate" />
+                                    </div>
+                                </div>
+                                <div class="item ">
+                                    <div class="label"><span class="red">*</span>@_localizer["出貨單位"]</div>
+                                    <div class="cont">
+                                        <select v-model="objEditInfo.Unit">
+                                            <option value="0">@_localizer["請選擇"]</option>
+                                            <option :value="item.PackageId" v-if="item.IsStop=='N' || item.PackageId==objEditInfo.Unit" v-for="item in arrProdPackages">{{item.PackageName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="item ">
+                                    <div class="label"><span class="red">*</span>@_localizer["預計出貨數量"]</div>
+                                    <div class="cont">
+                                        <input type="text" oninput="value=value.replace(/[^\d]/g,'')" maxlength="4" v-model="objEditInfo.Quantity" />
+                                    </div>
+                                </div>
+                                <div class="item">
+                                    <div class="label"><span class="red">*</span>@_localizer["商品狀態"]</div>
+                                    <div class="cont">
+                                        <select v-model="objEditInfo.ProductStatus">
+                                            <option value="0">@_localizer["請選擇"]</option>
+                                            <option value="1">@_localizer["良品"]</option>
+                                            <option value="2">@_localizer["不良品"]</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="BtnCommon mid">
+                        <div class="submit"><span><input type="button" value="@_localizer["確定"]" v-on:click="SetDetail" /></span></div>
+                        <div class="cancel"><span><input type="submit" value="@_localizer["取消"]" v-on:click="CancelDetail" /></span></div>
+                    </div>
+                </div>
+                <a class="close" title="@_localizer["關閉"]">@_localizer["關閉"]</a>
+            </div>
+        </div>
+
+    </div>
+</script>
+
+<script>
+    var ShippingNoticeDetail = {
+        template: '#ShippingNoticeDetail',
+        props: {
+            value: {
+                type: Object
+            }
+        },
+        components: {
+        },
+        data: function () {
+            return {
+                // 主檔
+                objBasicInfo: {},
+                // 所有明細資訊
+                objDetailInfos: [],
+                // 已選擇新增/編輯的明細項次
+                objEditInfo: {},
+                // 商品選項
+                arrProds: [],
+                // 商品包裝選項
+                arrProdPackages: []
+            }
+        },
+        computed: {
+            // 取得父組件v-model資料
+            refreshVal() {
+                this.objBasicInfo = this.value.basicinfo;
+                this.objDetailInfos = this.value.objDetailInfos;
+                this.isView = this.value.isView;
+                // 取得商品下拉選單
+                if (this.objBasicInfo.isChangeCustomer) {
+                    this.getProdData();
+                    this.objBasicInfo.isChangeCustomer = false;
+                }
+            },
+            //  更新序號 (編輯時，全部刪除重建)
+            refreshSeq: function () {
+                for (var i = 0; i < this.objDetailInfos.length; i++) {
+                    // 更新明細序號
+                    this.objDetailInfos[i].DetailSeq = i + 1;
+                }
+            }
+        },
+        methods: {
+            filterDate: function (val) {
+                return val ? val.replace('T00:00:00', '') : ''
+            },
+            // 商品選單
+            getProdData: function () {
+                axios.get('/api/Common/Options/GetProductDataByCust', { params: { CustId: this.objBasicInfo.CustomerId } })
+                    .then(function (res) {
+                        this.arrProds = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    })
+            },
+            // 商品包裝選單
+            getProdPackageData: function () {
+                axios.get('/api/Common/Options/GetProductPackageData', { params: { ProductId: this.objEditInfo.ProductId } })
+                    .then(function (res) {
+                        this.arrProdPackages = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    })
+            },
+            // 商品代碼
+            showProductCode: function (id) {
+                var val = this.arrProds.find(x => x.ProductId === id)
+                return val ? val.ProductCode : ''
+            },
+            // 商品名稱
+            showProductName: function (id) {
+                var val = this.arrProds.find(x => x.ProductId === id)
+                return val ? val.ProductName : ''
+            },
+            // 條碼
+            showBarcode: function (id) {
+                var val = this.arrProds.find(x => x.ProductId === id)
+                return val ? val.Barcode : ''
+            },
+            // 商品狀態
+            showProductStatus: function (id) {
+                var val = "";
+                id = id == null ? "" : id;
+                switch (id.toString()) {
+                    case "1": val = "@_localizer["良品"]"; break;
+                    case "2": val = "@_localizer["不良品"]"; break;
+                }
+                return val;
+            },
+            //新增明細
+            AddDetail: function () {
+                if (this.objBasicInfo.CustomerId == "" || this.objBasicInfo.CustomerId === "0") {
+                    _AlertMsg(false, "@_localizer["請先選擇客戶"]");
+                    return;
+                }
+
+                if (this.objBasicInfo.isChangeCustomer) {
+                    // 取得商品下拉選單
+                    this.getProdData();
+                    this.objBasicInfo.isChangeCustomer = false;
+                }
+                this.objEditInfo = {
+                    ProductId: '0',
+                    Unit: '0',
+                    ProductStatus: '0'
+                };
+                $('#boxDetail').addClass('show');
+                $("div").scrollTop(0);
+                $('body').addClass('fixed');
+            },
+            // 變更商品時
+            changeProduct: function () {
+                // 取得商品包裝下拉選單
+                this.getProdPackageData();
+                this.objEditInfo.Unit = "0";
+            },
+            // 設定
+            SetDetail: function () {
+                var msg = "";
+                if (this.objEditInfo.ProductId == null || this.objEditInfo.ProductId == "" || this.objEditInfo.ProductId == "0")
+                    msg += "@_localizer["請選擇商品"]<br />";
+                if (this.objEditInfo.ProductLotNo == null || this.objEditInfo.ProductLotNo == "")
+                    msg += "@_localizer["請填寫商品批號"]<br />";
+                if (this.objEditInfo.Unit == null || this.objEditInfo.Unit == "" || this.objEditInfo.Unit == "0")
+                    msg += "@_localizer["請選擇出貨單位"]<br />";
+                if (this.objEditInfo.ExpirationDate == null || this.objEditInfo.ExpirationDate == "")
+                    msg += "@_localizer["請填寫有效期限"]<br />";
+                if (this.objEditInfo.Quantity == null || this.objEditInfo.Quantity == "")
+                    msg += "@_localizer["請填寫預計出貨數量"]<br />";
+                if (this.objEditInfo.ProductStatus == null || this.objEditInfo.ProductStatus == "" || this.objEditInfo.ProductStatus == "0")
+                    msg += "@_localizer["請選擇商品狀態"]<br />";
+
+                if (msg != "") {
+                    _AlertMsg(false, msg);
+                    return false;
+                }
+
+                //包裝名稱
+                var val = this.arrProdPackages.find(x => x.PackageId === this.objEditInfo.Unit)
+                this.objEditInfo.PackageName = val ? val.PackageName : '';
+
+                if (typeof (this.objEditInfo.DetailSeq) == "undefined" || this.objEditInfo.DetailSeq == null || this.objEditInfo.DetailSeq == "") {
+                    this.objDetailInfos.push(JSON.parse(JSON.stringify(this.objEditInfo)))
+                }
+                else {
+                    for (var i = 0; i < this.objDetailInfos.length; i++) {
+                        if (this.objDetailInfos[i].DetailSeq === this.objEditInfo.DetailSeq) {
+                            this.objDetailInfos[i] = JSON.parse(JSON.stringify(this.objEditInfo));
+                        }
+                    }
+                }
+
+                this.objEditInfo = {
+                    ProductId: '0',
+                    Unit: '0',
+                    ProductStatus: '0'
+                };
+                // jquery 關閉視窗
+                $('#boxDetail').removeClass('show');
+                $('body').removeClass('fixed');
+            },
+            // 關閉視窗
+            CancelDetail: function () {
+                // jquery 關閉視窗
+                $('#boxDetail').removeClass('show');
+                $('body').removeClass('fixed');
+            },
+            //編輯明細
+            EditDetail: function (editItem) {
+                this.objEditInfo = JSON.parse(JSON.stringify(editItem));
+                this.objEditInfo.ExpirationDate = this.filterDate(editItem.ExpirationDate);
+                // 取得商品包裝下拉選單
+                this.getProdPackageData();
+                $('#boxDetail').addClass('show');
+                $("div").scrollTop(0);
+                $('body').addClass('fixed');
+            },
+            //刪除明細
+            DeleteDetail: function (objItem) {
+                Swal.fire({
+                    title: '@_localizer["確定移除此筆明細資料"]',
+                    html: '',
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: '@_localizer["確定"]',
+                    cancelButtonText: '@_localizer["取消"]'
+                }).then(
+                    function (result) {
+                        if (result.isConfirmed) {
+                            for (var i = 0; i < this.objDetailInfos.length; i++) {
+                                if (this.objDetailInfos[i].DetailSeq === objItem.DetailSeq) {
+                                    this.objDetailInfos.splice(i, 1)
+                                }
+                            }
+                        }
+                    }.bind(this));
+            }
+
+        }
+    }
+</script>

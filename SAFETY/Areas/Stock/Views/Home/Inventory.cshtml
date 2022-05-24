@@ -1,0 +1,658 @@
+﻿@model SAFETYModel.FullInventory
+@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+@{
+    ViewData["Title"] = @_localizer["盤點單"];
+}
+<div id="InvVue">
+    <fieldset class="SearchBox FormGroup FormElmt">
+        <legend class="FormGroupTitle"><span>@_localizer["盤點單"]</span></legend>
+        <div class="FormTable">
+            <div class="item ">
+                <div class="label"><span class="red">*</span>@_localizer["系統產生單號"]</div>
+                <div class="cont">
+                    <input type="text" placeholder="@_localizer["系統自動產生"]" v-model="objMainInfo.basicinfo.OrderNo" maxlength="20" disabled />
+                </div>
+            </div>
+            <div class="item">
+                <div class="label"><span class="red">*</span>@_localizer["盤點人員"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.StockAdjustId" v-bind:disabled="objMainInfo.basicinfo.OrderId !=0">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(item,index) in arrUser" v-if="item.IsStop=='N'  || item.UserId==objMainInfo.basicinfo.StockAdjustId" :value="item.UserId">{{item.UserName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["盤點日期"]</div>
+                <div class="cont">
+                    <input type="text" v-bind:value="filterDate(objMainInfo.basicinfo.OrderDate)" disabled />
+                </div>
+            </div>
+            <div class="item">
+                <div class="label"><span class="red">*</span>@_localizer["物流中心"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.DcId" v-on:change="changeDataCenter()" v-bind:disabled="objMainInfo.basicinfo.OrderId !=0">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(bItem,index) in arrDataCenter" v-if="bItem.IsStop=='N' || bItem.DcId==objMainInfo.basicinfo.DcId" :value="bItem.DcId">{{bItem.DcName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["倉別"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.HouseId" v-on:change="changeHouse()" v-bind:disabled="objMainInfo.basicinfo.OrderId !=0">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(item,index) in arrHouse" v-if="item.IsStop=='N' || item.HouseId==objMainInfo.basicinfo.HouseId" :value="item.HouseId">{{item.HouseName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["庫別"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.RoomId" v-on:change="changeRoom()" v-bind:disabled="objMainInfo.basicinfo.OrderId !=0">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(item,index) in arrRoom" v-if="item.IsStop=='N' || item.RoomId==objMainInfo.basicinfo.RoomId" :value="item.RoomId">{{item.RoomName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["客戶"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.CustomerId" v-on:change="changeCustomer()" v-bind:disabled="objMainInfo.basicinfo.OrderId !=0">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(item,index) in arrCustomer" v-if="item.IsStop=='N' || item.CustomerId==objMainInfo.basicinfo.CustomerId" :value="item.CustomerId">{{item.CustomerName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item ">
+                <div class="label">@_localizer["商品"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.ProductId" v-on:change="changeProduct()" v-bind:disabled="objMainInfo.basicinfo.OrderId !=0">
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option v-for="(item,index) in arrProds" v-if="item.IsStop=='N' || item.ProductId==objMainInfo.basicinfo.ProductId" :value="item.ProductId">{{item.ProductName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item">
+                <div class="label">@_localizer["狀態"]</div>
+                <div class="cont">
+                    <select v-model="objMainInfo.basicinfo.AdjustStatus" disabled>
+                        <option value="0">@_localizer["請選擇"]</option>
+                        <option value="1">@_localizer["盤點通知"]</option>
+                        <option value="2">@_localizer["盤點中"]</option>
+                        <option value="3">@_localizer["盤點完成"]</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item" v-if="objMainInfo.basicinfo.OrderId==='' || objMainInfo.basicinfo.OrderId==='0'">
+                <div class="label"></div>
+                <div class="cont">
+                    <a title="@_localizer["盤點"]" class="btn_style" style="width:30%" v-on:click="DoInventory('search')" v-if="objMainInfo.basicinfo.OrderId==='' || objMainInfo.basicinfo.OrderId==='0'">@_localizer["盤點"]</a>
+                </div>
+            </div>
+
+        </div>
+    </fieldset>
+
+
+    <div class="ListItemTable FormElmt">
+
+        <!--明細列表資料-->
+        <div class="ListTable" v-show="objMainInfo.objDetailInfos.length>0">
+            <table id="dataTable" class="table dataTable stripe">
+            </table>
+        </div>
+
+    </div>
+
+    <div class="btnBox tc">
+        <div>
+            <div class="check" v-show="!this.objMainInfo.isView"><a href="javascript:;" v-on:click="SaveInventory(1)">@_localizer["儲存"]</a></div>
+            <div class="check" v-show="!this.objMainInfo.isView"><a href="javascript:;" v-on:click="SaveInventory(3)">@_localizer["盤點完成"]</a></div>
+            <div class="cancel"><a asp-area="Stock" asp-controller="Home" asp-action="InventoryList">@_localizer["離開"]</a></div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+    <script>
+    /*Main*/
+    var vm = new Vue({
+        el: '#InvVue',
+        components: {
+        },
+        data: function () {
+            return {
+                objMainInfo: {
+                    // 主檔
+                    basicinfo: {
+                        OrderId: '0',
+                        OrderNo: '',
+                        DcId: '0',
+                        HouseId: '0',
+                        RoomId: '0',
+                        CustomerId: '0',
+                        ProductId: '0',
+                        StockAdjustId: '0',
+                        OrderDate: null,
+                        AdjustStatus: '1'
+                    },
+                    // 明細資料
+                    objDetailInfos: [],
+                    isView: false
+                },
+                oldDcId: '0',
+                oldHouseId: '0',
+                oldRoomId: '0',
+                oldCustomerId: '0',
+                oldProductId: '0',
+                arrUser: [],                            // 使用者選項
+                arrCustomer: [],                 // 客戶選項
+                arrProds: [],                        // 商品選項
+                arrDataCenter: [],              // 物流中心下拉選單
+                arrHouse: [],                       // 倉別下拉選單
+                arrRoom: [],                        // 庫別下拉選單
+            }
+        },
+        computed: {
+        },
+        created: function () {
+            // 讀取盤點單資料
+            this.GetOrderData();
+            // 取得客戶下拉選單
+            this.GetCustData()
+            // 取得物流中心下拉選單
+            this.GetDataCenterData();
+            // 取得使用者下拉選單
+            this.GetUserData();
+        },
+        methods: {
+            filterDate: function (val) {
+                return val ? val.replace('T00:00:00', '') : ''
+            },
+            // 客戶選單
+            GetCustData: function () {
+                axios.get('/api/Common/Options/GetCustomerData')
+                    .then(function (res) {
+                        this.arrCustomer = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    })
+            },
+            // 商品選單
+            GetProdData: function () {
+                axios.get('/api/Common/Options/GetProductDataByCust', { params: { CustId: this.objMainInfo.basicinfo.CustomerId } })
+                    .then(function (res) {
+                        this.arrProds = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    })
+            },
+            GetDataCenterData: function () {
+                // 取得物流中心下拉選單
+                axios.get('/api/Common/Options/GetDataCenterData')
+                    .then(function (res) {
+                        this.arrDataCenter = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    });
+            },
+            // 倉別選單
+            GetHouseData: function () {
+                axios.get('/api/Common/Options/GetHouseDataByDc', { params: { DcId: this.objMainInfo.basicinfo.DcId } })
+                    .then(function (res) {
+                        this.arrHouse = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    })
+            },
+            // 庫別選單
+            GetRoomData: function () {
+                axios.get('/api/Common/Options/GetRoomDataByHouse', { params: { DcId: this.objMainInfo.basicinfo.DcId, HouseId: this.objMainInfo.basicinfo.HouseId} })
+                    .then(function (res) {
+                        this.arrRoom = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    })
+            },
+            GetUserData: function () {
+                // 取得使用者下拉選單
+                axios.get('/api/Common/Options/GetUserData')
+                    .then(function (res) {
+                        this.arrUser = res.data;
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    });
+            },
+            // 讀取盤點單資料
+            GetOrderData: function () {
+                // 判斷是否有傳入申請單號,有:編輯 無:新增
+                var orderid = '@Model.StockAdjustment.OrderId';
+                if (orderid == null || orderid == "" || orderid == "0") {
+                    return;
+                }
+
+                axios.get('/api/Stock/InventoryApi/GetInventoryData',
+                    {
+                        params: { orderid: orderid }
+                    })
+                    .then(function (res) {
+                        if (res.data.isOk) {
+                            if (res.data.dt == null) {
+                                window.location.href = '@Url.Content("~/")' + 'Stock/Home/InventoryList';
+                                return;
+                            }
+                            this.objMainInfo.basicinfo = res.data.dt.stockAdjustment;
+                            this.oldDcId = this.objMainInfo.basicinfo.DcId;
+                            this.oldHouseId = this.objMainInfo.basicinfo.HouseId;
+                            this.oldRoomId = this.objMainInfo.basicinfo.RoomId;
+                            this.oldCustomerId = this.objMainInfo.basicinfo.CustomerId;
+                            this.oldProductId = this.objMainInfo.basicinfo.ProductId;
+                            this.objMainInfo.isView = res.data.dt.isView;
+                            //明細
+                            this.DoInventory('get');
+
+                            if (this.objMainInfo.basicinfo.DcId != 0)
+                                this.GetHouseData();   // 取得倉別下拉選單
+                            if (this.objMainInfo.basicinfo.HouseId != 0)
+                                this.GetRoomData();   // 取得庫別下拉選單
+                            if (this.objMainInfo.basicinfo.CustomerId != 0)
+                                this.GetProdData();   // 取得商品下拉選單
+                        }
+                        else
+                            _AlertMsg(false, res.data.msg)
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    });
+            },
+            // 變更客戶時
+            changeCustomer: function () {
+                if (this.objMainInfo.objDetailInfos.length <= 0) {
+                    this.oldCustomerId = this.objMainInfo.basicinfo.CustomerId;
+                    // 取得商品下拉選單
+                    this.GetProdData();
+                    this.objMainInfo.basicinfo.ProductId = 0;
+                    return;
+                }
+
+                Swal.fire({
+                    title: '@_localizer["變更客戶"]',
+                    html: '@_localizer["變更客戶後，明細需重新盤點"]',
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: '@_localizer["確定"]',
+                    cancelButtonText: '@_localizer["取消"]'
+                }).then(
+                    function (result) {
+                        if (result.isConfirmed) {
+                            //清空明細
+                            this.objMainInfo.objDetailInfos.splice(0, this.objMainInfo.objDetailInfos.length);
+                            this.oldCustomerId = this.objMainInfo.basicinfo.CustomerId;
+                            // 取得商品下拉選單
+                            this.GetProdData();
+                            this.objMainInfo.basicinfo.ProductId = 0;
+                        } else {
+                            //恢復原客戶值
+                            this.objMainInfo.basicinfo.CustomerId = this.oldCustomerId ;
+                        }
+                    }.bind(this));
+            },
+            // 變更商品時
+            changeProduct: function () {
+                if (this.objMainInfo.objDetailInfos.length <= 0) {
+                    this.oldProductId = this.objMainInfo.basicinfo.ProductId;
+                    return;
+                }
+
+                Swal.fire({
+                    title: '@_localizer["變更商品"]',
+                    html: '@_localizer["變更商品後，明細需重新盤點"]',
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: '@_localizer["確定"]',
+                    cancelButtonText: '@_localizer["取消"]'
+                }).then(
+                    function (result) {
+                        if (result.isConfirmed) {
+                            //清空明細
+                            this.objMainInfo.objDetailInfos.splice(0, this.objMainInfo.objDetailInfos.length);
+                            this.oldProductId = this.objMainInfo.basicinfo.ProductId;
+                        } else {
+                            //恢復原值
+                            this.objMainInfo.basicinfo.ProductId = this.oldProductId;
+                        }
+                    }.bind(this));
+            },
+            // 變更物流中心時
+            changeDataCenter: function () {
+                if (this.objMainInfo.objDetailInfos.length <= 0) {
+                    this.oldDcId = this.objMainInfo.basicinfo.DcId;
+                    // 取得倉別下拉選單
+                    this.GetHouseData();
+                    this.objMainInfo.basicinfo.HouseId = 0;
+                    this.changeHouse();
+                    return;
+                }
+
+                Swal.fire({
+                    title: '@_localizer["變更物流中心"]',
+                    html: '@_localizer["變更物流中心後，明細需重新盤點"]',
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: '@_localizer["確定"]',
+                    cancelButtonText: '@_localizer["取消"]'
+                }).then(
+                    function (result) {
+                        if (result.isConfirmed) {
+                            //清空明細
+                            this.objMainInfo.objDetailInfos.splice(0, this.objMainInfo.objDetailInfos.length);
+                            this.oldDcId = this.objMainInfo.basicinfo.DcId;
+                            // 取得倉別下拉選單
+                            this.GetHouseData();
+                            this.objMainInfo.basicinfo.HouseId = 0;
+                            this.changeHouse();
+                        } else {
+                            //恢復原值
+                            this.objMainInfo.basicinfo.DcId = this.oldDcId;
+                        }
+                    }.bind(this));
+            },
+            // 變更倉別時
+            changeHouse: function () {
+                if (this.objMainInfo.objDetailInfos.length <= 0) {
+                    this.oldHouseId = this.objMainInfo.basicinfo.HouseId;
+                    // 取得庫別下拉選單
+                    this.GetRoomData();
+                    this.objMainInfo.basicinfo.RoomId = 0;
+                    return;
+                }
+
+                Swal.fire({
+                    title: '@_localizer["變更倉別"]',
+                    html: '@_localizer["變更倉別後，明細需重新盤點"]',
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: '@_localizer["確定"]',
+                    cancelButtonText: '@_localizer["取消"]'
+                }).then(
+                    function (result) {
+                        if (result.isConfirmed) {
+                            //清空明細
+                            this.objMainInfo.objDetailInfos.splice(0, this.objMainInfo.objDetailInfos.length);
+                            this.oldHouseId = this.objMainInfo.basicinfo.HouseId;
+                            // 取得庫別下拉選單
+                            this.GetRoomData();
+                            this.objMainInfo.basicinfo.RoomId = 0;
+                        } else {
+                            //恢復原值
+                            this.objMainInfo.basicinfo.HouseId = this.oldHouseId;
+                        }
+                    }.bind(this));
+            },
+            // 變更庫別時
+            changeRoom: function () {
+                if (this.objMainInfo.objDetailInfos.length <= 0) {
+                    this.oldRoomId = this.objMainInfo.basicinfo.RoomId;
+                    return;
+                }
+
+                Swal.fire({
+                    title: '@_localizer["變更庫別"]',
+                    html: '@_localizer["變更庫別後，明細需重新盤點"]',
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: '@_localizer["確定"]',
+                    cancelButtonText: '@_localizer["取消"]'
+                }).then(
+                    function (result) {
+                        if (result.isConfirmed) {
+                            //清空明細
+                            this.objMainInfo.objDetailInfos.splice(0, this.objMainInfo.objDetailInfos.length);
+                            this.oldRoomId = this.objMainInfo.basicinfo.RoomId;
+                        } else {
+                            //恢復原值
+                            this.objMainInfo.basicinfo.RoomId = this.oldRoomId;
+                        }
+                    }.bind(this));
+            },
+            //盤點明細
+            DoInventory: function (kind) {
+                if (this.objMainInfo.basicinfo.DcId === "0" || this.objMainInfo.basicinfo.DcId === "") {
+                    _AlertMsg(false, "@_localizer["請選擇物流中心"]");
+                    return;
+                }
+
+                let thisvue = this;
+                thisvue.objInfo = {};
+                thisvue.objMainInfo.objDetailInfos = [];
+
+                thisvue.coulmnSet = [
+                    {
+                        title: "@_localizer["商品狀態"]",
+                        "data": "ProductStatus"
+                    },
+                    {
+                        title: "@_localizer["物流中心"]",
+                        "data": "DcName"
+                    },
+                    {
+                        title: "@_localizer["商品"]",
+                        "data": "ProductName"
+                    },
+                    {
+                        title: "@_localizer["單位"]",
+                        "data": "PackageName"
+                    },
+                    {
+                        title: "@_localizer["商品批號"]",
+                        "data": "ProductLotNo"
+                    },
+                    {
+                        title: "@_localizer["有效期限"]",
+                        "defaultContent": "",
+                        "data": "ExpirationDate"
+                    },
+                    {
+                        title: "@_localizer["庫別"]",
+                        "data": "RoomName"
+                    },
+                    {
+                        title: "@_localizer["儲位"]",
+                        "data": "LocationCode"
+                    },
+                    {
+                        title: "@_localizer["庫存數量"]",
+                        "data": "LocationQuantity"
+                    },
+                    {
+                        title: "@_localizer["盤點數量"]",
+                        "defaultContent": "",
+                        "data": "AdjustQuantity"
+                    },
+                    {
+                        title: "@_localizer["差異數量"]",
+                        "defaultContent": "",
+                        "data": "DiffQuantity"
+                    }
+                ];
+
+                thisvue.columnDef = [
+                    {
+                        "className": "text-center",
+                        "targets": [0],
+                        mRender: function (result) {
+                            if (result != null) {
+                                var sbtn = "";
+                                switch (result) {
+                                    case 1: sbtn = "@_localizer["良品"]"; break;
+                                    case 2: sbtn = "@_localizer["不良品"]"; break;
+                                }
+                                return sbtn;
+                            }
+                        }
+                    },
+                    {
+                        "className": "text-center",
+                        "targets": [5],
+                        mRender: function (result) {
+                            if (result != null && result != "") {
+                                return result.replace('T00:00:00', '');
+                            }
+                        }
+                    },
+                    {
+                        "className": "text-center",
+                        "targets": [9],
+                        mRender: function (result) {
+                            if (result == null)
+                                result = "";
+                            if (result != null) {
+                                var sbtn = '';
+                                if (vm.objMainInfo.isView)
+                                    sbtn = '<ul class=\"edit_btns\"><li><input type=\"text\" value=\"' + result + '\" oninput=\"value=value.replace(/[^\\d]/g,\'\')\" onchange=\"vm.CalDiffQuantity(this)\" onfocus=\"vm.getSelect(this)\" style=\"width:70px;\" readonly></li></ul>';
+                                else
+                                    sbtn = '<ul class=\"edit_btns\"><li><input type=\"text\" value=\"' + result + '\" oninput=\"value=value.replace(/[^\\d]/g,\'\')\" onchange=\"vm.CalDiffQuantity(this)\" onfocus=\"vm.getSelect(this)\" style=\"width:70px;\"></li><li><a href=\"javascript:;\" class=\"edit\" title=\"@_localizer["填滿"]\" onclick=\"vm.FillUp(this)\"></a></li></ul>';
+                                return sbtn;
+                            }
+                        }
+                    }
+                ];
+
+                var issearch = false;
+                if (kind == "search") {
+                    LoadDataTable('@Url.Action("QueryAdjustmentDetail", "InventoryApi", new { Area = "Stock" })', this.objMainInfo.basicinfo, this.coulmnSet, this.columnDef, issearch)
+                        .then(function () {
+                            thisvue.objMainInfo.objDetailInfos = $('#dataTable').DataTable().rows().data();
+                            if (thisvue.objMainInfo.objDetailInfos.length <= 0) {
+                                _AlertMsg(false, "@_localizer["無符合資料"]");
+                            }
+                            $('#dataTable tbody').on('click', 'tr', function () {
+                                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                                $(this).toggleClass('selected');
+                                if ($('#dataTable').DataTable().rows('.selected').data().length > 0) {
+                                    thisvue.objInfo = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows('.selected').data()[0]));
+                                } else
+                                    thisvue.objInfo = {};
+                            });
+                        });
+                }
+                else {
+                    LoadDataTable('@Url.Action("GetInventoryDetailData", "InventoryApi", new { Area = "Stock" })', this.objMainInfo.basicinfo, this.coulmnSet, this.columnDef, issearch)
+                        .then(function () {
+                            thisvue.objMainInfo.objDetailInfos = $('#dataTable').DataTable().rows().data();
+                            $('#dataTable tbody').on('click', 'tr', function () {
+                                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                                $(this).toggleClass('selected');
+                                if ($('#dataTable').DataTable().rows('.selected').data().length > 0) {
+                                    thisvue.objInfo = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows('.selected').data()[0]));
+                                } else
+                                    thisvue.objInfo = {};
+                            });
+                        });
+                }
+            },
+            getSelect: function (obj) {
+                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                $(obj).parent().parent().parent().parent().toggleClass('selected');
+                this.objInfo = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows($(obj).parent().parent().parent().parent()).data()[0]));
+            },
+            CalDiffQuantity: function (obj) {
+                this.objInfo.AdjustQuantity = $(obj).val();
+                this.objInfo.DiffQuantity = $(obj).val() - this.objInfo.LocationQuantity;
+                var row = $('#dataTable').DataTable().rows($(obj).parent().parent().parent().parent());
+                //盤點數量
+                $('#dataTable').DataTable().cell(row.indexes(), 9).data($(obj).val());
+                //差異數量
+                $('#dataTable').DataTable().cell(row.indexes(), 10).data(this.objInfo.DiffQuantity);
+            },
+            FillUp: function (obj) {
+                $('#dataTable').DataTable().$('tbody tr.selected').removeClass('selected');
+                $(obj).parent().parent().parent().parent().toggleClass('selected');
+                this.objInfo = JSON.parse(JSON.stringify($('#dataTable').DataTable().rows($(obj).parent().parent().parent().parent()).data()[0]));
+                var row = $('#dataTable').DataTable().rows($(obj).parent().parent().parent().parent());
+                //盤點數量
+                $('#dataTable').DataTable().cell(row.indexes(), 9).data(this.objInfo.LocationQuantity);
+                //差異數量
+                $('#dataTable').DataTable().cell(row.indexes(), 10).data(0);
+                this.objInfo.AdjustQuantity = this.objInfo.LocationQuantity;
+                this.objInfo.DiffQuantity = 0;
+            },
+            //存檔
+            SaveInventory: function (val) {
+                    // 驗證欄位是否已填寫
+                if (!this.VerifyData(val)) return;
+
+                this.objMainInfo.basicinfo.AdjustStatus = val;
+                let resultDetail = [];
+                for (var i = 0; i < this.objMainInfo.objDetailInfos.length; i++) {
+                    if (this.objMainInfo.objDetailInfos[i].AdjustQuantity == "")
+                        this.objMainInfo.objDetailInfos[i].AdjustQuantity = null;
+                    resultDetail.push(JSON.parse(JSON.stringify(this.objMainInfo.objDetailInfos[i])));
+                }
+
+                // 要Post到Api的資料集合
+                var postData = {
+                    StockAdjustment: this.objMainInfo.basicinfo,              // 主檔
+                    StockAdjustmentDetail: resultDetail                               // 明細
+                }
+
+                axios.post('/api/Stock/InventoryApi/SaveInventory', postData)
+                    .then(function (res) {
+                        if (res.data.isOk) {
+                            _AlertMsg(res.data.isOk, res.data.msg, function () {
+                                window.location.href = '@Url.Content("~/")' + 'Stock/Home/Inventory/' + res.data.dt;
+                            })
+                        }
+                        else
+                            _AlertMsg(false, res.data.msg);
+                    }.bind(this))
+                    .catch(function (err) {
+                        console.error(err);
+                    })
+            },
+            // 驗證必填欄位是否有填寫
+            VerifyData: function (val) {
+                var msg = "";
+                if (this.objMainInfo.basicinfo.DcId === "0" || this.objMainInfo.basicinfo.DcId === "") {
+                    msg += "@_localizer["請選擇物流中心"]<br />";
+                }
+                if (this.objMainInfo.basicinfo.StockAdjustId == "0" || this.objMainInfo.basicinfo.StockAdjustId === "") {
+                    msg += "@_localizer["請選擇盤點人員"]<br />";
+                }
+
+                if (this.objMainInfo.objDetailInfos.length === 0) {
+                    msg += "@_localizer["請加入明細資料"]<br />";
+                }
+                //盤點完成
+                if (val == 3) {
+                    for (var i = 0; i < this.objMainInfo.objDetailInfos.length; i++)
+                    {
+                        if (this.objMainInfo.objDetailInfos[i].AdjustQuantity == null || this.objMainInfo.objDetailInfos[i].AdjustQuantity === "") {
+                            msg += "@_localizer["請填寫所有明細之盤點數量"]<br />";
+                            break;
+                        }
+                    }
+                }
+
+                if (msg.trim() != "") {
+                    _AlertMsg(false, msg);
+                    return false
+                }
+
+                return true
+            }
+
+        }
+    })
+    </script>
+}

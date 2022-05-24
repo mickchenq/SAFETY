@@ -1,0 +1,1028 @@
+﻿<div id="ColumnCenter">
+
+    <!--基本資料-->
+    <div class="FormGroupWarp">
+        <fieldset class="SearchBox FormGroup FormElmt">
+            <legend class="FormGroupTitle"><span>請購單基本資料</span></legend>
+
+            <div class="FormTable">
+                <div class="item">
+                    <div class="label">請購單號</div>
+                    <div class="cont">
+                        <input type="text" value="F202004100001" disabled />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">請購摘要</div>
+                    <div class="cont">
+                        <input type="text" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>會計年度</div>
+                    <div class="cont">
+                        <select>
+                            <option>109</option>
+                            <option>108</option>
+                            <option>107</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>付款方式</div>
+                    <div class="cont">
+                        <select>
+                            <option>支付處匯款</option>
+                            <option>零用金</option>
+                            <option>公務借款單沖抵</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>請購日期</div>
+                    <div class="cont">
+                        <input type="text" value="109/12/01" disabled />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>請購院區</div>
+                    <div class="cont">
+                        <select>
+                            <option>仁愛院區</option>
+                            <option>忠孝院區</option>
+                            <option>昆明院區</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item has_inline_btn">
+                    <!--當有加入按鈕時，加上has_inline_btn這個class-->
+                    <div class="label"><span class="red">*</span>請購單位代碼</div>
+                    <div class="cont">
+                        <input type="text" />
+                        <a href="javascript:;" class="btn_style btn_search" title="查詢單位代碼"></a>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">請購單位名稱</div>
+                    <div class="cont">
+                        <input type="text" value="麻醉科" disabled />
+                    </div>
+                </div>
+                <div class="item has_inline_btn">
+                    <!--當有加入按鈕時，加上has_inline_btn這個class-->
+                    <div class="label"><span class="red">*</span>請購人員員編</div>
+                    <div class="cont">
+                        <input type="text" />
+                        <a href="javascript:;" class="btn_style btn_search" title="查詢員編"></a>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">請購人員姓名</div>
+                    <div class="cont">
+                        <input type="text" value="部門人員A" disabled />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">請購人員電話</div>
+                    <div class="cont">
+                        <input type="text" disabled />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">登錄人員姓名</div>
+                    <div class="cont">
+                        <input type="text" disabled />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">請購費用總計</div>
+                    <div class="cont">
+                        <input type="text" disabled />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">庫別資訊</div>
+                    <div class="cont">
+                        <input type="text" disabled />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>請購資料來源</div>
+                    <div class="cont">
+                        <select>
+                            <option>一般請購登錄</option>
+                            <option>低於安全存量轉請購</option>
+                            <option>寄售批價轉請購</option>
+                            <option>請領轉請購</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">來源單號</div>
+                    <div class="cont">
+                        <input type="text" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label"><span class="red">*</span>請購單有效期限</div>
+                    <div class="cont">
+                        <input type="text" placeholder="YYYY/MM/DD" class="date dev-calendar" />
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">請購原因</div>
+                    <div class="cont">
+                        <select>
+                            <option>請選擇</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="item two">
+                    <div class="label">請購原因說明</div>
+                    <div class="cont">
+                        <input type="text" />
+                    </div>
+                </div>
+                <div class="item fullwidth">
+                    <div class="label">請購單備註說明</div>
+                    <div class="cont">
+                        <input type="text" />
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <!--End 基本資料-->
+    <!--品項-->
+    <div class="ListItemTable">
+        <div class="item_title">
+            <div class="text">請購單號：F202004100001</div>
+        </div>
+        <div class="table_title">
+            <div class="text">請購品項</div>
+            <div class="btnBox">
+                <div>
+                    <div class="add"><a href="">新增一般請購單</a></div>
+                    <div class="add"><a href="">新增庫存品請購單</a></div>
+                    <div class="add"><a href="">新增維修請購單</a></div>
+                </div>
+            </div>
+        </div>
+        <!--第一組-->
+        <div class="item">
+            <table class="item_table">
+                <tr>
+                    <th>項次</th>
+                    <th>採購代碼</th>
+                    <th>料品代碼</th>
+                    <th>請購數量</th>
+                    <th>需求院區</th>
+                    <th>合約品項</th>
+                    <th>附件檢視</th>
+                    <th>管理維護</th>
+                </tr>
+                <tr>
+                    <td><a href="javascript:;" class="open_collapse_cont" title="顯示明細">001</a></td>
+                    <td>AAA</td>
+                    <td>a001</td>
+                    <td>5</td>
+                    <td></td>
+                    <td></td>
+                    <td><a href="javascript:;" class="open_attachment" title="只顯示附件">顯示附件</a></td>
+                    <td>
+                        <ul class="edit_btns">
+                            <li><a href="javascript:;" class="edit" title="編輯"></a></li>
+                            <li><a href="javascript:;" class="del" title="刪除"></a></li>
+                            <li><a href="javascript:;" class="copy" title="複製"></a></li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+            <!--收合區-->
+            <div class="collapse_cont">
+                <div class="FormGroupWarp item_detail">
+                    <fieldset class="FormGroup FormElmt">
+                        <legend class="FormGroupTitle">
+                            <span>
+                                <select>
+                                    <option selected>一般請購單</option>
+                                    <option>庫存品請購單</option>
+                                    <option>維修請購單</option>
+                                </select>
+                            </span>
+                        </legend>
+
+                        <div class="FormTable">
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>採購代碼</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">採購名稱</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">料品代碼</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>請選擇</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">料品名稱</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">需求規格</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">會計科目代碼</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">會計科目名稱</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>請購數量</div>
+                                <div class="cont">
+                                    <input type="text" value="5" /><!--預設為0-->
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">採購單位</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">採購包裝說明</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>公共費用</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>否</option>
+                                        <option>是</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>環保標章優先</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>否</option>
+                                        <option>是</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">預定需求日期</div>
+                                <div class="cont">
+                                    <input type="text" placeholder="YYYY/MM/DD" class="date dev-calendar" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>送貨地點代碼</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>請選擇</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item two">
+                                <div class="label">送貨地點</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>需求院區</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>仁愛院區</option>
+                                        <option>忠孝院區</option>
+                                        <option>昆明院區</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>需求部門代碼</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item two">
+                                <div class="label">需求部門名稱</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">是否為合約品項</div>
+                                <div class="cont"><input type="text" value="是" disabled /><!--自動帶入 "是"或"否"--></div>
+                            </div>
+                            <div class="item has_inline_btn">
+                                <div class="label">合約案號</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                    <a href="javascript:;" class="btn_style btn_search" title="查詢合約案號"></a>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">合約效期</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">合約餘量 / 餘額</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">預估單價金額</div>
+                                <div class="cont"><input type="text" /></div>
+                            </div>
+                            <div class="item">
+                                <div class="label">預估總金額</div>
+                                <div class="cont">
+                                    <input type="text" placeholder="不可超過十萬" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">浮動單價品項</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>否</option>
+                                        <option>是</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">浮動單價限額</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item fullwidth">
+                                <div class="label">備註</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!--附件內容-->
+                <div class="FormGroupWarp item_attachment">
+                    <fieldset class="FormGroup FormElmt">
+                        <legend class="FormGroupTitle"><span>附件內容</span></legend>
+                        <table>
+                            <tr>
+                                <th>編號</th>
+                                <th>上傳日期與時間</th>
+                                <th>檔案名稱</th>
+                                <th>管理維護</th>
+                            </tr>
+                            <tr>
+                                <td>001</td>
+                                <td>2020-06-24 16:00</td>
+                                <td><a href="" target="_blank">報價單.pdf</a></td>
+                                <td>
+                                    <ul class="edit_btns">
+                                        <li><a href="" class="del" title="刪除"></a></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>002</td>
+                                <td>2020-06-24 16:00</td>
+                                <td><a href="" target="_blank">規格說明.xlsx</a></td>
+                                <td>
+                                    <ul class="edit_btns">
+                                        <li><a href="" class="del" title="刪除"></a></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="FormTable">
+                            <div class="item fullwidth has_inline_btn">
+                                <!--當有加入按鈕時，加上has_inline_btn這個class-->
+                                <div class="label">新增檔案</div>
+                                <div class="cont">
+                                    <input type="file" />
+                                    <a href="javascript:;" class="btn_style btn_add" title="新增檔案"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <!--收合區 end-->
+        </div>
+        <!--第一組 end-->
+        <!--第二組-->
+        <div class="item">
+            <table class="item_table">
+                <tr>
+                    <th>項次</th>
+                    <th>採購代碼</th>
+                    <th>料品代碼</th>
+                    <th>請購數量</th>
+                    <th>需求院區</th>
+                    <th>合約品項</th>
+                    <th>附件檢視</th>
+                    <th>管理維護</th>
+                </tr>
+                <tr>
+                    <td><a href="javascript:;" class="open_collapse_cont" title="顯示明細">002</a></td>
+                    <td>BBB</td>
+                    <td>a002</td>
+                    <td>5</td>
+                    <td></td>
+                    <td></td>
+                    <td><a href="javascript:;" class="open_attachment" title="只顯示附件">顯示附件</a></td>
+                    <td>
+                        <ul class="edit_btns">
+                            <li><a href="javascript:;" class="edit" title="編輯"></a></li>
+                            <li><a href="javascript:;" class="del" title="刪除"></a></li>
+                            <li><a href="javascript:;" class="copy" title="複製"></a></li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+            <!--收合區-->
+            <div class="collapse_cont">
+                <div class="FormGroupWarp item_detail">
+                    <fieldset class="FormGroup FormElmt">
+                        <legend class="FormGroupTitle">
+                            <span>
+                                <select>
+                                    <option>一般請購單</option>
+                                    <option selected>庫存品請購單</option>
+                                    <option>維修請購單</option>
+                                </select>
+                            </span>
+                        </legend>
+                        <div class="FormTable">
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>採購代碼</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">採購名稱</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">料品代碼</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>請選擇</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">料品名稱</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">需求規格</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">會計科目代碼</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">會計科目名稱</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>請購數量</div>
+                                <div class="cont">
+                                    <input type="text" value="5" /><!--預設為0-->
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">採購單位</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">採購包裝說明</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">庫存單位</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>公共費用</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>否</option>
+                                        <option>是</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>環保標章優先</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>否</option>
+                                        <option>是</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">預定需求日期</div>
+                                <div class="cont">
+                                    <input type="text" placeholder="YYYY/MM/DD" class="date dev-calendar" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>送貨地點代碼</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>請選擇</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">送貨地點</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>需求院區</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>仁愛院區</option>
+                                        <option>忠孝院區</option>
+                                        <option>昆明院區</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>需求部門代碼</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item two">
+                                <div class="label">需求部門名稱</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">在途庫存(院區)</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">庫存數量(院區)</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">在途庫存(全院)</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">庫存數量(全院)</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">是否為合約品項</div>
+                                <div class="cont"><input type="text" value="是" disabled /><!--自動帶入 "是"或"否"--></div>
+                            </div>
+                            <div class="item has_inline_btn">
+                                <div class="label">合約案號</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                    <a href="javascript:;" class="btn_style btn_search" title="查詢合約案號"></a>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">合約效期</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">合約餘量 / 餘額</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">預估單價金額</div>
+                                <div class="cont"><input type="text" /></div>
+                            </div>
+                            <div class="item">
+                                <div class="label">預估總金額</div>
+                                <div class="cont">
+                                    <input type="text" placeholder="不可超過十萬" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">浮動單價品項</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>否</option>
+                                        <option>是</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">浮動單價限額</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item fullwidth">
+                                <div class="label">備註</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!--附件內容-->
+                <div class="FormGroupWarp item_attachment">
+                    <fieldset class="FormGroup FormElmt">
+                        <legend class="FormGroupTitle"><span>附件內容</span></legend>
+                        <table>
+                            <tr>
+                                <th>編號</th>
+                                <th>上傳日期與時間</th>
+                                <th>檔案名稱</th>
+                                <th>管理維護</th>
+                            </tr>
+                            <tr>
+                                <td>001</td>
+                                <td>2020-06-24 16:00</td>
+                                <td><a href="" target="_blank">報價單.pdf</a></td>
+                                <td>
+                                    <ul class="edit_btns">
+                                        <li><a href="" class="del" title="刪除"></a></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>002</td>
+                                <td>2020-06-24 16:00</td>
+                                <td><a href="" target="_blank">規格說明.xlsx</a></td>
+                                <td>
+                                    <ul class="edit_btns">
+                                        <li><a href="" class="del" title="刪除"></a></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="FormTable">
+                            <div class="item fullwidth has_inline_btn">
+                                <!--當有加入按鈕時，加上has_inline_btn這個class-->
+                                <div class="label">新增檔案</div>
+                                <div class="cont">
+                                    <input type="file" />
+                                    <a href="javascript:;" class="btn_style btn_add" title="新增檔案"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <!--收合區 end-->
+        </div>
+        <!--第二組 end-->
+        <!--第三組-->
+        <div class="item">
+            <table class="item_table">
+                <tr>
+                    <th>項次</th>
+                    <th>採購代碼</th>
+                    <th>料品代碼</th>
+                    <th>請購數量</th>
+                    <th>需求院區</th>
+                    <th>合約品項</th>
+                    <th>附件檢視</th>
+                    <th>管理維護</th>
+                </tr>
+                <tr>
+                    <td><a href="javascript:;" class="open_collapse_cont" title="顯示明細">003</a></td>
+                    <td>CCC</td>
+                    <td>a003</td>
+                    <td>5</td>
+                    <td></td>
+                    <td></td>
+                    <td><a href="javascript:;" class="open_attachment" title="只顯示附件">顯示附件</a></td>
+                    <td>
+                        <ul class="edit_btns">
+                            <li><a href="javascript:;" class="edit" title="編輯"></a></li>
+                            <li><a href="javascript:;" class="del" title="刪除"></a></li>
+                            <li><a href="javascript:;" class="copy" title="複製"></a></li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+            <!--收合區-->
+            <div class="collapse_cont">
+                <div class="FormGroupWarp item_detail">
+                    <fieldset class="FormGroup FormElmt">
+                        <legend class="FormGroupTitle">
+                            <span>
+                                <select>
+                                    <option>一般請購單</option>
+                                    <option>庫存品請購單</option>
+                                    <option selected>維修請購單</option>
+                                </select>
+                            </span>
+                        </legend>
+                        <div class="FormTable">
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>採購代碼</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">採購名稱</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>料品代碼</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>請選擇</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">料品名稱</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">需求規格</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">會計科目代碼</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">會計科目名稱</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>請購數量</div>
+                                <div class="cont">
+                                    <input type="text" value="5" /><!--預設為0-->
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">採購單位</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">採購包裝說明</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>公共費用</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>否</option>
+                                        <option>是</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">預定需求日期</div>
+                                <div class="cont">
+                                    <input type="text" placeholder="YYYY/MM/DD" class="date dev-calendar" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">財產編號</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">財產分號</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item two">
+                                <div class="label">財產名稱(名稱 / 別名)</div>
+                                <div class="cont">
+                                    <input type="text" disabled /><!--自動代資料-->
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>需求院區</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>仁愛院區</option>
+                                        <option>忠孝院區</option>
+                                        <option>昆明院區</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>需求部門代碼</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <div class="item two">
+                                <div class="label">需求部門名稱</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">是否為合約品項</div>
+                                <div class="cont"><input type="text" value="是" disabled /><!--自動帶入 "是"或"否"--></div>
+                            </div>
+                            <div class="item has_inline_btn">
+                                <div class="label">合約案號</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                    <a href="javascript:;" class="btn_style btn_search" title="查詢合約案號"></a>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">合約效期</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">合約餘量 / 餘額</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">預估單價金額</div>
+                                <div class="cont"><input type="text" /></div>
+                            </div>
+                            <div class="item">
+                                <div class="label">預估總金額</div>
+                                <div class="cont">
+                                    <input type="text" placeholder="不可超過十萬" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label"><span class="red">*</span>送貨地點代碼</div>
+                                <div class="cont">
+                                    <select>
+                                        <option>請選擇</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="label">送貨地點</div>
+                                <div class="cont">
+                                    <input type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item fullwidth">
+                                <div class="label">備註</div>
+                                <div class="cont">
+                                    <input type="text" />
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!--附件內容-->
+                <div class="FormGroupWarp item_attachment">
+                    <fieldset class="FormGroup FormElmt">
+                        <legend class="FormGroupTitle"><span>附件內容</span></legend>
+                        <table>
+                            <tr>
+                                <th>編號</th>
+                                <th>上傳日期與時間</th>
+                                <th>檔案名稱</th>
+                                <th>管理維護</th>
+                            </tr>
+                            <tr>
+                                <td>001</td>
+                                <td>2020-06-24 16:00</td>
+                                <td><a href="" target="_blank">報價單.pdf</a></td>
+                                <td>
+                                    <ul class="edit_btns">
+                                        <li><a href="" class="del" title="刪除"></a></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>002</td>
+                                <td>2020-06-24 16:00</td>
+                                <td><a href="" target="_blank">規格說明.xlsx</a></td>
+                                <td>
+                                    <ul class="edit_btns">
+                                        <li><a href="" class="del" title="刪除"></a></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="FormTable">
+                            <div class="item fullwidth has_inline_btn">
+                                <!--當有加入按鈕時，加上has_inline_btn這個class-->
+                                <div class="label">新增檔案</div>
+                                <div class="cont">
+                                    <input type="file" />
+                                    <a href="javascript:;" class="btn_style btn_add" title="新增檔案"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <!--收合區 end-->
+        </div>
+        <!--第三組 end-->
+    </div>
+    <!--End 品項-->
+
+    <div class="btnBox tc">
+        <div>
+            <div class="back"><a href="manage_list.html">回到列表</a></div>
+            <div class="save"><a href="">暫存</a></div>
+            <div class="check"><a href="">確認送出</a></div>
+        </div>
+    </div>
+</div>

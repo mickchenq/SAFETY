@@ -1,0 +1,234 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SAFETY.Resources
+@inject IHtmlLocalizer<SharedResources> _localizer
+@{
+    ViewData["Title"] = _localizer["首頁"];
+}
+<style>
+    .inner{
+        margin-left:0px;
+        margin-right:0px;
+        max-width:none;
+    }
+    .whiteBox{
+        background: #fff;
+        border-radius: 8px;
+        padding: 12px 20px 12px;
+        box-shadow: 0 0 10px rgb(0 0 0 / 10%);
+        margin-right:10px;
+        margin-top:10px;
+    }
+    .col-3{
+        width:30%;
+    }
+    .row{
+        display:flex;
+        flex-direction:row;
+        flex-wrap:wrap;
+    }
+</style>
+<div>
+    <div id="HomePageVue">
+        <div class="row">
+            <div class="whiteBox col-3">
+                <canvas id="StockInChart">
+
+                </canvas>
+            </div>
+            <div class="whiteBox col-3">
+                <canvas id="StockOutChart">
+
+                </canvas>
+            </div>
+            <div class="whiteBox col-3">
+                <canvas id="InventoryChart">
+
+                </canvas>
+            </div>
+            <div class="whiteBox col-3">
+                <canvas id="StorageUsedRateChart">
+
+                </canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="~/js/Chart.js/chart.min.js" ></script>
+
+    <script type="text/javascript">
+        var tv = new Vue({
+            el:"#HomePageVue",
+            data:{
+                StockInData:[],
+                StockOutData:[],
+                InventoryData:[],
+                StorageUsedRate:[],
+                labels:['Q1','Q2','Q3','Q4'],
+            },
+            methods:{
+                QueryStockInData:function(){
+                    let thisVue = this;
+                    return $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryStockInData", "DashboardApi", new { Area = "Stock" })',
+                        data: JSON.stringify({IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    }).then(function (res) {
+                        if (res.isOk) {
+                            thisVue.StockInData = res.dt;
+                        }
+                    });                    
+                },
+                QueryStockOutData:function(){
+                    let thisVue = this;
+                    return $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryStockOutData", "DashboardApi", new { Area = "Stock" })',
+                        data: JSON.stringify({IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    }).then(function (res) {
+                        if (res.isOk) {
+                            thisVue.StockOutData = res.dt;
+                        }
+                    });                    
+                },
+                QueryInventoryData:function(){
+                    let thisVue = this;
+                    return $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryInventoryData", "DashboardApi", new { Area = "Stock" })',
+                        data: JSON.stringify({IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    }).then(function (res) {
+                        if (res.isOk) {
+                            thisVue.InventoryData = res.dt;
+                        }
+                    });                    
+                },
+                QueryStorageUsedRate:function(){
+                    let thisVue = this;
+                    return $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("QueryStorageUsedRate", "DashboardApi", new { Area = "Stock" })',
+                        data: JSON.stringify({IsStop: "N"}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        async: true,
+                    }).then(function (res) {
+                        if (res.isOk) {
+                            thisVue.StorageUsedRate = res.dt;
+                        }
+                    });                    
+                },
+                DrawStockInChart:function(){
+                    let DataSet = {
+                        labels: this.labels,
+                        datasets: [{
+                            label: '@_localizer["入庫件數"]',
+                            backgroundColor: 'rgb(155, 155, 255)',
+                            borderColor: 'rgb(155, 155, 255)',
+                            data: this.StockInData,
+                        }]};
+                    let StockInChart = new Chart(document.getElementById('StockInChart'),{type: 'line',data: DataSet,options: {}});   
+                },
+                DrawStockOutChart:function(){
+                    let DataSet = {
+                        labels: this.labels,
+                        datasets: [{
+                            label: '@_localizer["出庫件數"]',
+                            backgroundColor: 'rgb(255, 99, 132)',
+                            borderColor: 'rgb(255, 99, 132)',
+                            data: this.StockOutData,
+                        }]};
+                    let StockOutChart = new Chart(document.getElementById('StockOutChart'),{type: 'line',data: DataSet,options: {}});   
+                },
+                DrawInventoryChart:function(){
+                    let DataSet = {
+                        labels: this.labels,
+                        datasets: [{
+                            label: '@_localizer["庫存件數"]',
+                            backgroundColor: 'rgb(155, 255, 155)',
+                            borderColor: 'rgb(155, 255, 155)',
+                            data: this.InventoryData,
+                        }]};
+                    let InventoryChart = new Chart(document.getElementById('InventoryChart'),{type: 'line',data: DataSet,options: {}});   
+                },
+                DrawStorageUsedRateChart:function(){
+                    //顯示中心文字外掛
+                    const CenterText = {
+                        id:"CenterText",
+                        beforeDraw: function(chart,args,options) {
+                        var width = chart.chartArea.width,
+                            height = chart.chartArea.height,
+                            top = chart.chartArea.top,
+                            ctx = chart.ctx;
+
+                        ctx.restore();
+                        var fontSize = (height / 114).toFixed(2);
+                        ctx.font = fontSize + "em sans-serif";
+                        ctx.textBaseline = "middle";
+                        ctx.textAlign = 'center';
+
+                        var text = options.text,
+                            textX = width / 2,
+                            textY = top + height / 2;
+                        ctx.fillText(text, textX, textY);
+                        ctx.save();
+                        }
+                    };
+
+                    let DataSet = {
+                        labels: [],
+                        datasets: [{
+                            label: '@_localizer["儲位使用率"]',
+                            backgroundColor: ['rgb(155, 255, 155)','transparent'],
+                            data: this.StorageUsedRate,
+                            cutout:'90%'
+                        }]};
+                    let config = {
+                        type: 'doughnut'
+                        ,data: DataSet
+                        ,options: {
+                            plugins: {
+                                title: {display: true,text: '@_localizer["儲位使用率"]'},
+                                CenterText:{text: this.StorageUsedRate[0] + "%"}
+                            }
+                        },
+                      plugins:[CenterText]
+                    }
+                    let InventoryChart = new Chart(document.getElementById('StorageUsedRateChart'),config);   
+                },
+            },
+            created:function(){
+                let thisVue = this;
+                thisVue.QueryStockInData().then(function(){
+                    thisVue.DrawStockInChart();
+                });
+                thisVue.QueryStockOutData().then(function(){
+                    thisVue.DrawStockOutChart();
+                });
+                thisVue.QueryInventoryData().then(function(){
+                    thisVue.DrawInventoryChart();
+                });
+                thisVue.QueryStorageUsedRate().then(function(){
+                    thisVue.DrawStorageUsedRateChart();
+                });
+            },
+            computed:{
+
+            }
+        });
+
+        $(()=>{
+
+        });
+    </script>
+}
